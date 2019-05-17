@@ -10895,7 +10895,7 @@ textarea.typeahead {
   padding: 0.56rem 1.375rem;
   font-size: 1rem;
   line-height: 1;
-  border-radius: 0.1875rem;
+  border-radius: 0;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -21891,9 +21891,9 @@ pre {
   content: "";
   width: 20px;
   height: 20px;
+  border: solid #222222 1px;
   border-radius: 100%;
-  border: solid #f2f2f2;
-  border-width: 2px;
+  /*border-width: 2px;*/
   -webkit-transition: all;
   -moz-transition: all;
   -ms-transition: all;

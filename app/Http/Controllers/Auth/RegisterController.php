@@ -49,10 +49,20 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
+            'first_name' => ['string', 'max:199'],
+            'middle_name' => ['string', 'max:199'],
+            'last_name' => ['string', 'max:199'],
             'username' => ['required', 'string', 'max:255','unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'phone_number' => ['required', 'string', 'max:255','unique:users'],
+            'date_of_birth' => [ 'string', 'max:255'],
+            'place_of_birth' => ['string', 'max:255'],
+            'school_attended' => [ 'string', 'max:255'],
+            'year_completed' => ['string', 'max:255'],
+            'pin' => [ 'string', 'max:255'],
+            'qualification' => [ 'string', 'max:255'],
+            'document' => ['string', 'max:255'],
+            'role' => ['string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -70,6 +80,15 @@ class RegisterController extends Controller
             'last_name' => $data['last_name'],
             'username' => $data['username'],
             'email' => $data['email'],
+            'phone_number' => $data['phone_number'],
+            'date_of_birth' => $data['date_of_birth'],
+            'place_of_birth' => $data['place_of_birth'],
+            'school_attended' => $data['school_attended'],
+            'year_completed' => $data['year_completed'],
+            'pin' => $data['pin'],
+            'qualification' => $data['qualification'],
+            'document' => $data['document'],
+            'role' => $data['role'],
             'password' => Hash::make($data['password']),
         ]);
     }
