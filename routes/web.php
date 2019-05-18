@@ -32,3 +32,29 @@ Route::resource('patients','PatientController');
  */
 
 Route::resource('users','UserController');
+Route::post('/bulk_delete','UserController@bulk_delete')->name('bulk_delete');
+
+
+
+/*
+ * Patients Route
+ */
+
+Route::resource('preferences','PreferenceController');
+
+
+
+/*
+ * Insurance Route
+ */
+Route::resource('insurance','InsuranceController');
+Route::post('/bulk_deleteInsurance','InsuranceController@bulk_deleteInsurance')->name('bulk_deleteInsurance');
+
+
+/*
+ * Charges Route
+ */
+Route::resource('charges','ChargeController');
+Route::post('/bulk_deleteCharge','ChargeController@bulk_deleteCharge')->name('bulk_deleteCharge');
+
+

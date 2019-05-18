@@ -78,17 +78,17 @@
                 <div class="col-lg-3 mx-auto">
                     <div class="auto-form-wrapper">
                         <div class="text-center mb-5">
-                            GC Health Center
+                            <img height="auto" width="200" src="{{asset('public/images/logo.jpeg')}}" class="img-fluid" alt="">
                         </div>
-                        <form method="POST" action="{{ route('login') }}">
+                        <form novalidate class="needs-validation" method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input type="text" placeholder="Username" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                                    <input type="text" style="border-radius: 0" placeholder="Username" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
                                     <div class="input-group-append">
-                                        <span class="input-group-text"><i class="icon-check"></i></span>
+                                        <span class="input-group-text"><i class="icon-user"></i></span>
                                     </div>
-                                    @error('email')
+                                    @error('username')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -97,9 +97,9 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <input type="password" id="password" placeholder="Password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                    <input type="password" style="border-radius: 0"  id="password" placeholder="Password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                                     <div class="input-group-append">
-                                        <span class="input-group-text"><i class="icon-check"></i></span>
+                                        <span class="input-group-text"><i class="icon-lock"></i></span>
                                     </div>
                                     @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -111,23 +111,20 @@
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary submit-btn btn-block">Login</button>
                             </div>
-                            <div class="form-group d-flex justify-content-center">
-                                <div class="form-check form-check-flat mt-0">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                        Keep me signed in
-                                    </label>
+                            <div class="form-group row">
+                                <div class="col-md-8">
+                                    <div class="form-check form-check-flat mt-0">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                            Remember Me
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group d-flex justify-content-center">
-                                <a href="{{ route('password.request') }}" class="text-small forgot-password text-black">Forgot Password</a>
                             </div>
                         </form>
                     </div>
                     <ul class="auth-footer">
-                        <li><a href="#">Conditions</a></li>
-                        <li><a href="#">Help</a></li>
-                        <li><a href="#">Terms</a></li>
+                        <li><a href="{{ route('password.request') }}">Forgot Password</a></li>
                     </ul>
                     <p class="footer-text text-center mt-2">© {{date('Y')}} GC Health Center. All rights reserved.</p>
                     <p class="footer-text text-center">Powered by ANA Technologies</p>

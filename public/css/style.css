@@ -10371,7 +10371,7 @@ pre code {
 .jsgrid .jsgrid-table .jsgrid-filter-row select::placeholder, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number]::placeholder, .select2-container--default .select2-selection--single::placeholder, .select2-container--default .select2-selection--single .select2-search__field::placeholder, .tt-hint::placeholder,
 .tt-query::placeholder,
 .typeahead::placeholder {
-  color: #c9c8c8;
+  color: #222222;
   opacity: 1;
 }
 

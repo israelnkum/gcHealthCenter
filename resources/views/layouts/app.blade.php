@@ -26,8 +26,8 @@
         <div class="nav-top flex-grow-1">
             <div class="container d-flex flex-row h-100 align-items-center">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center">
-                    <a class="navbar-brand brand-logo" href="index-2.html"><img src="public/images/logo.svg" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="index-2.html"><img src="public/images/logo-mini.svg" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo" href="{{route('home')}}"><img src="{{asset('public/images/logo.jpeg')}}" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="public/images/logo-mini.svg" alt="logo"/></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
                     <form class="search-field d-none d-md-flex" action="#">
@@ -231,7 +231,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="pages/documentation/documentation.html" class="nav-link">
+                        <a href="{{route('preferences.index')}}" class="nav-link">
                             <i class="link-icon icon-docs"></i>
                             <span class="menu-title">Preferences</span>
                         </a>
@@ -261,11 +261,19 @@
 <!-- endinject -->
 <script src="{{asset('public/js/dashboard.js')}}"></script>
 <!-- inject:js -->
+
+
 <script src="{{asset('public/js/template.js')}}"></script>
 <script src="{{asset('public/js/todolist.js')}}"></script>
 <script src="{{asset('public/js/select2.js')}}"></script>
+
+<script src="{{asset('public/js/formpickers.js')}}"></script>
+<script src="{{asset('form-addons.js')}}"></script>
+<script src="{{asset('form-repeater.js')}}"></script>
 <script src="{{asset('public/js/mask.init.js')}}"></script>
 <script src="{{asset('public/js/users.js')}}"></script>
+<script src="{{asset('public/js/preferences.js')}}"></script>
+
 <!-- endinject -->
 
 

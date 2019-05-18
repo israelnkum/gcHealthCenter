@@ -23,7 +23,7 @@ $(function () {
 });
 
 
-$('#submit').click(function () {
+$('#btn_submit_bulk_delete').click(function () {
     $('#bulkDeleteForm').submit();
 });
 
@@ -38,7 +38,7 @@ $('#submit').click(function () {
                 search: ""
             }
     });
-    table.column(4).visible(false);
+    // table.column(4).visible(false);
     table.on('click','.edit',function () {
         $tr = $(this).closest('tr');
 
@@ -52,18 +52,18 @@ $('#submit').click(function () {
 //     console.log(data);
 
 
-        $('#level_name').val(data[2]);
-        $('#duesAmount').val(data[3]);
-        $('#souvenirAmount').val(data[6]);
+         $('#edit_username').val(data[4]);
+        $('#edit_email').val(data[5]);
+        $('#edit_phone_number').val(data[6]);
 
 
 
-        let myArray = data[4].substring(0, data[4].length - 1).split(',');
-        $('#edit_souvenirs').val(myArray).trigger('change');
+         //let myArray = data[4].substring(0, data[4].length - 1).split(',');
+         $('#edit_role').val(data[7]).trigger('change');
 
-        $('#editLevelForm').attr('action', '/levels/'+data[1]);
-        $('#editLevelModal').modal('show');
-        $('#editLevelTitle').text(data[2]);
+        $('#editStaffForm').attr('action', 'users/'+data[3]);
+        $('#editStaff').modal('show');
+        $('#editStaffTitle').text(data[4]);
     });
 
 
