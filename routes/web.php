@@ -25,6 +25,33 @@ Route::get('/home', 'HomeController@index')->name('home');
  */
 
 Route::resource('patients','PatientController');
+Route::post('/searchPatient','PatientController@searchPatient')->name('searchPatient');
+
+
+
+
+/*
+ * Registration Route
+ */
+
+Route::resource('registration','OpdRegistrationController');
+
+
+/*
+ * Registration Route
+ */
+
+Route::resource('vitals','VitalsController');
+Route::post('/searchRegistrationForVitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');
+
+
+/*
+ * consultation Route
+ */
+
+Route::resource('consultation','ConsultationController');
+Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
+
 
 
 /*

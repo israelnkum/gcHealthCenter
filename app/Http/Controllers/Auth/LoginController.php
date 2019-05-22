@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -40,5 +42,18 @@ class LoginController extends Controller
     {
         return 'username';
     }
+
+    public static function updateLastLoginDate()
+    {
+        if (Auth::check())
+        {
+            $user= User::find(Auth::User()->id);
+            $user->update_at=\Carbon\Carbon::now()->toDateTimeString();
+        }
+
+
+    }
+
+
 
 }

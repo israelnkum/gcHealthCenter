@@ -1,7 +1,7 @@
 $(function(e) {
     "use strict";
     $(".date").inputmask("dd/mm/yyyy"),
-    $(".phone-inputmask").inputmask("9999999999"),
+    $(".phone-inputmask").inputmask("9999999999",{greedy: false,clearincomplete: true}),
         $(".phone_number").inputmask("+233 999 999 999",{greedy: false,clearincomplete: true}),
         $(".cgpa").inputmask("9.99"),
     $(".international-inputmask").inputmask("+9(999)999-9999"), 
@@ -10,7 +10,7 @@ $(function(e) {
     $(".cc-inputmask").inputmask("9999 9999 9999 9999"), 
     $(".ssn-inputmask").inputmask("999-99-9999"), 
     $(".isbn-inputmask").inputmask("999-99-999-9999-9"), 
-    $(".currency-inputmask").inputmask("$9999"), 
+    $(".currency-inputmask").inputmask("$9999"),
     $(".percentage-inputmask").inputmask("99%"), 
     $(".decimal-inputmask").inputmask({
         alias: "decimal"

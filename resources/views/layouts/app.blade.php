@@ -172,8 +172,9 @@
                         </li>--}}
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                                <img src="public/images/faces/face4.jpg" alt="profile"/>
-                                <span class="nav-profile-name text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>
+                                {{--                                <img src="public/images/faces/face4.jpg" alt="profile"/>--}}
+                                {{--                                <span class="nav-profile-name text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>--}}
+                                <span class="text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a class="dropdown-item">
@@ -198,8 +199,8 @@
                             </div>
                         </li>
                     </ul>
-                    <button class="navbar-toggler align-self-center" type="button" data-toggle="minimize">
-                        <span class="icon-menu"></span>
+                    <button class="navbar-toggler text-white align-self-center" type="button" data-toggle="minimize">
+                        <span class="icon-menu text-white"></span>
                     </button>
                 </div>
             </div>
@@ -211,17 +212,31 @@
                         <a href="{{route('home')}}" class="nav-link"><i class="link-icon icon-screen-desktop"></i><span class="menu-title">Home</span></a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{route('patients.index')}}" class="nav-link">
-                            <i class="link-icon icon-user"></i>
-                            <span class="menu-title">Patients</span>
+                        <a href="#" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
+                        <div class="submenu">
+                            <ul class="submenu-item">
+                                <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}">Patients</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}">All Patients</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}">Vitals</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route('consultation.index')}}" class="nav-link">
+                            <i class="link-icon icon-energy"></i>
+                            <span class="menu-title">Consulting</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="pages/widgets.html" class="nav-link"><i class="link-icon icon-drop"></i><span class="menu-title">Pharmacy</span></a>
+                        <a href="pages/widgets.html" class="nav-link">
+                            <i class="link-icon icon-drop"></i><span class="menu-title">Pharmacy</span></a>
                     </li>
 
                     <li class="nav-item">
                         <a href="#" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
                     </li>
 
                     <li class="nav-item">
@@ -242,11 +257,14 @@
     </nav>
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel">
+            <div class="container mt-3">
+                @include('layouts.messages')
+            </div>
             @yield('content')
             <footer class="footer">
                 <div class="w-100 clearfix">
-                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018 <a href="http://www.urbanui.com/" target="_blank">Urbanui</a>. All rights reserved.</span>
-                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="icon-heart text-danger"></i></span>
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">&copy; {{date('Y')}} GC Health Clinic. All rights reserved.</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Powered by ANA Technologies</span>
                 </div>
             </footer>
             <!-- partial -->
@@ -262,18 +280,22 @@
 <script src="{{asset('public/js/dashboard.js')}}"></script>
 <!-- inject:js -->
 
+<script src="{{asset('public/js/formpickers.js')}}"></script>
+<script src="{{asset('public/js/form-addons.js')}}"></script>
 
 <script src="{{asset('public/js/template.js')}}"></script>
 <script src="{{asset('public/js/todolist.js')}}"></script>
 <script src="{{asset('public/js/select2.js')}}"></script>
 
-<script src="{{asset('public/js/formpickers.js')}}"></script>
-<script src="{{asset('form-addons.js')}}"></script>
-<script src="{{asset('form-repeater.js')}}"></script>
+<script src="{{asset('public/js/form-repeater.js')}}"></script>
 <script src="{{asset('public/js/mask.init.js')}}"></script>
 <script src="{{asset('public/js/users.js')}}"></script>
 <script src="{{asset('public/js/preferences.js')}}"></script>
+<script src="{{asset('public/js/patients.js')}}"></script>
+<script src="{{asset('public/js/vitals.js')}}"></script>
 
+<script src="{{asset('public/js/form-validation.js')}}"></script>
+<script src="{{asset('public/js/bt-maxLength.js')}}"></script>
 <!-- endinject -->
 
 
@@ -311,6 +333,27 @@
             });
         }, false);
     })();
+    $(document).ready(function () {
+        window.setTimeout(function () {
+            $('.alert').fadeTo(1000,0).slideUp(1000, function () {
+                $(this).remove();
+            });
+        },3000);
+    });
 </script>
+
+{{--<script>
+    $(document).ready(function () {
+        if ($('#blood_pressure'+i).val()>37){
+            $('.sugar').fadeIn(1000).slideDown(1000);
+            $('#rdt').attr('required',true);
+            $('#glucose').attr('required',true);
+        } else{
+            $('.sugar').fadeOut(1000).slideUp(1000);
+            $('#rdt').removeAttr('required');
+            $('#glucose').removeAttr('required');
+        }
+    })
+</script>--}}
 </body>
 </html>

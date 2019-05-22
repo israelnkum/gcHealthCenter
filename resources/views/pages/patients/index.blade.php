@@ -4,27 +4,275 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-12 grid-margin grid-margin-md-0 stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 text-left">
-                                <h4 class="card-title">Patient Information</h4>
+            <div class="col-md-6 grid-margin offset-md-2">
+                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="post">
+                    @csrf
+                    <div class="form-group row mb-0">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
+                                <div class="input-group-prepend">
+                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Search by Folder Number or Patient's Last Name or Phone Number
+                                </div>
                             </div>
-                            <div class="col-md-6 text-right mb-3">
-                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteStaff">
-                                    <i class="icon icon-trash"></i> Delete Selected
-                                </button>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newPatient">
-                                    <i class="icon icon-plus"></i> New Patient
-                                </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2">
+            {{--<button type="button" class="btn btn-danger  mr-3" data-toggle="modal" data-target="#deleteStaff">
+                <i class="icon icon-trash"></i> Delete Selected
+            </button>--}}
+            <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">
+                    <i class="icon icon-plus"></i> New Patient
+                </button>
+            </div>
+        </div>
+        @if($data == "none")
+        @elseif(count($data) == 0)
+            <p>No Result Found</p>
+        @elseif(count($data) == 1)
+            <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Patient's Information</h4>
+                            <div class="row ml-md-0 mr-md-0 vertical-tab tab-minimal">
+                                <ul class="nav nav-tabs col-md-2 " role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="tab-2-1" data-toggle="tab" href="#patient-profile" role="tab" aria-controls="patient-profile" aria-selected="true">
+                                            <i class="icon-user"></i>
+                                            Profile
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-registration" role="tab" aria-controls="patient-registration" aria-selected="false">
+                                            <i class="icon-pencil"></i>
+                                            Registration
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-records" role="tab" aria-controls="patient-records" aria-selected="false">
+                                            <i class="icon-note"></i>
+                                            Records
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content col-md-10">
+                                    <div class="tab-pane fade show active" id="patient-profile" role="tabpanel" aria-labelledby="tab-2-1">
+                                        <div class="row">
+                                            <div class="col-md-12 text-right">
+                                                <ul class="list">
+                                                    <li class="d-inline-block">
+                                                        <a class="text-dark p-1" href="{{route('patients.edit',$data[0]->id)}}">
+                                                            <i class="icon icon-note  mt-3"  style="font-size: 20px"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="d-inline-block">
+                                                        <form method="post" action="{{route('patients.destroy',$data[0]->id)}}">
+                                                            {!! method_field('delete') !!}
+                                                            @csrf
+                                                            <button class="btn bg-transparent text-dark p-1">
+                                                                <i class="icon icon-trash" style="font-size: 20px"></i>
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-12 pl-md-5">
+                                                <h4 class="mb-3"><span class="text-uppercase text-danger">Folder Number</span> :{{$data[0]->folder_number}}</h4>
+                                                <div class="wrapper mb-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <h6 class=" mb-0 text-uppercase text-primary">Personal Information</h6>
+                                                            <div class="card-body mt-0 p-1">
+                                                                <p style="line-height: 13px" class="mt-2"><b>Surname</b> : <u>{{$data[0]->last_name}}</u></p>
+                                                                <p style="line-height: 13px"><b>First Name :</b> <u>{{$data[0]->first_name}}</u> </p>
+                                                                <p style="line-height: 13px"><b>Date Of Birth</b> : <u>{{$data[0]->date_of_birth}}</u></p>
+                                                                <p style="line-height: 13px"><b>Occupation</b> : <u>{{$data[0]->occupation}}</u></p>
+                                                                <p style="line-height: 13px"><b>Gender</b> : <u>{{$data[0]->gender}}</u></p>
+                                                                <p style="line-height: 13px"><b>Religion</b> : <u>{{$data[0]->religion}}</u></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <h6 class=" mb-0 text-uppercase text-primary">Contact Information</h6>
+                                                            <div class="card-body mt-0 p-1">
+                                                                <p style="line-height: 13px" class="mt-2"><b>Marital Status</b> : <u>{{$data[0]->marital_status}}</u></p>
+                                                                <p style="line-height: 13px"><b>Address :</b> <u>{{$data[0]->postal_address}}</u> </p>
+                                                                <p style="line-height: 13px"><b>Home Address</b> : <u>{{$data[0]->house_number}}</u></p>
+                                                                <p style="line-height: 13px"><b>Locality</b> : <u>{{$data[0]->locality}}</u></p>
+                                                                <p style="line-height: 13px"><b>Phone Number</b> : <u>{{$data[0]->phone_number}}</u></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-5">
+                                                        <div class="col-md-6">
+                                                            <h6 class=" mb-0 text-uppercase text-primary">Other Information</h6>
+                                                            <div class="card-body mt-0 p-1">
+                                                                <p style="line-height: 20px" class="mt-2">{{$data[0]->other_information}}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="card-body mt-0 p-1">
+                                                                <p style="line-height: 13px" class="mt-2"><b>Relative</b> : <u>{{$data[0]->name_of_nearest_relative}}</u></p>
+                                                                <p style="line-height: 13px"><b>Phone Number :</b> <u>{{$data[0]->number_of_nearest_relative}}</u> </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="patient-registration" role="tabpanel" aria-labelledby="tab-2-2">
+                                        <div class="row">
+                                            <div class="col-md-7 pl-md-5">
+                                                <div class="wrapper mb-4">
+                                                    <h4 class="mb-3">Recent Registration</h4>
+                                                    <?php
+                                                    $registration = $data[0]->registration;
+                                                    ?>
+                                                    {{--                                                    {!! $registration !!}--}}
+                                                    @foreach($registration as $registered)
+                                                        <div class="d-flex align-items-center py-3 border-bottom">
+                                                            <div class="ml-3">
+                                                                <h6 class="mb-1">{{$registered->insurance_type}}</h6>
+                                                                <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->created_at}}</small>
+                                                            </div>
+                                                            <?php
+                                                            $last_seen =\Carbon\Carbon::createFromTimeStamp(strtotime($registered->updated_at))->diffForHumans();
+                                                            ?>
+                                                            <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"> {!! $last_seen !!}</i>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
+                                                <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
+                                                    @csrf
+                                                    <div class="form-row form-group">
+                                                        <div class="col-md-6">
+                                                            <div class="form-check form-check-flat mt-0">
+                                                                <label class="form-check-label">
+                                                                    <input type="checkbox" class="form-check-input" name="register_patient" id="register_patient">
+                                                                    Register
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-check form-check-flat mt-0" id="patient_insured_div" style="display: none;">
+                                                                <label class="form-check-label">
+                                                                    <input type="checkbox" class="form-check-input" disabled  name="insured" id="patient_insured">
+                                                                    Insured
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-row form-group">
+                                                        <div class="col-md-6" >
+                                                            <div id="patient_charge_div" style="display: none;">
+                                                                <label>Charge</label>
+                                                                <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                    <option value="">~Charge~</option>
+                                                                    @foreach($charges as $charge)
+                                                                        <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    Charge is required.
+                                                                </div>
+                                                            </div>
+                                                            <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div  id="patient_insurance_number_div" style="display: none;">
+                                                                <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control mb-1" id="patient_insurance_number" placeholder="Insurance Number">
+                                                                <div class="invalid-feedback">
+                                                                    Insurance Number Required
+                                                                </div>
+
+                                                                <label class="mt-2">Insurance Type</label>
+                                                                        <select title="Select Insurance Type"   name="insurance_type" id="patient_insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                    <option value="">~Insurance Type~</option>
+                                                                    @foreach($insuranceType as $type)
+                                                                        <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <div class="invalid-feedback">
+                                                                    Insurance Type is required.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row ">
+                                                       <div class="col-md-12 text-right">
+                                                           <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
+                                                       </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="patient-records" role="tabpanel" aria-labelledby="tab-2-2">
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <img class="img-fluid rounded" src="../../images/samples/tab_preview/04.png" alt="tab Preview">
+                                            </div>
+                                            <div class="col-md-7 pl-md-5">
+                                                <div class="wrapper mb-4">
+                                                    <h4 class="mb-3"><i class="icon-present mr-3"></i>Anonymous Proxy</h4>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+                                                </div>
+                                                <div class="wrapper mt-4 pt-4">
+                                                    <h4 class="mb-3"><i class="icon-tag mr-3"></i>Addiction When Gambling</h4>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @elseif(count($data) > 1)
+
+            <div class="row">
+                @foreach($data as $dat)
+                    @if($dat->status != 1)
+                        <div class="col-md-6 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class=" text-uppercase mb-0">{{$dat->last_name." ".$dat->first_name}}</h6>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{route('patients.show',$dat->id)}}" style="text-decoration: none" class="">
+
+                                            <div class="d-inline-block pt-3">
+                                                <div class="d-md-flex">
+                                                    <h5 class="mb-0 text-uppercase"><span class="text-danger">Folder Number:</span> {{$dat->folder_number}}</h5>
+                                                </div>
+                                                <small class="text-gray">{{$dat->phone_number}}</small>
+                                            </div>
+                                        </a>
+                                        <div class="d-inline-block">
+                                            <div class=" px-4 py-2 rounded">
+                                                <a href="{{route('patients.edit',$dat->id)}}" class="text-dark" style="text-decoration: none;"><i class="icon-note icon-lg"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
+        @endif
     </div>
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
@@ -33,42 +281,63 @@
 
 
 
-    <!-- new Staff modal -->
+    <!-- new patient modal -->
     <div class="modal fade" id="newPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="post" action="{{route('patients.store')}}" class="needs-validation" novalidate>
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">New Staff</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">New Patient</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body pt-0">
                         <div class="form-row">
-                            <div class="col-md-6 mb-3">
-                                <input title="Enter Surname" type="text" name="last_name" class="form-control" id="last_name" placeholder="Surname"  required>
+                            <div class="col-md-3">
+                                <select title="Select Title" id="title" name="title" class="js-example-basic-single form-control" style="width: 100%" required>
+                                    <option value="">~Title~</option>
+                                    <option value="Mr">Mr</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Miss">Miss</option>
+                                </select>
                                 <div class="invalid-feedback">
-                                    Surname is required
+                                    Title is required.
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <input title="Enter First name" type="text" name="first_name" class="form-control" id="first_name" placeholder="First Name"  required>
                                 <div class="invalid-feedback">
                                     First Name is required
                                 </div>
                             </div>
+                            <div class="col-md-3 mb-3">
+                                <input title="Enter Last Name" type="text" name="last_name" class="form-control" id="last_name" placeholder="Last Name"  required>
+                                <div class="invalid-feedback">
+                                    Last Name is required
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <input title="Enter Other Name" type="text" name="other_name" class="form-control" id="other_name" placeholder="Other Name"  >
+
+                            </div>
                         </div>
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input placeholder="Date of Birth" class="form-control" data-inputmask="'alias': 'date'" required>
-                                <div class="invalid-feedback">
-                                    Date of Birth is required.
+                                <div class="row">
+                                    <label for="dateOfBirth" class="col-md-4 col-form-label">Date of Birth</label>
+
+                                    <div class="col-md-8">
+                                        <input placeholder="Date of Birth" type="date" name="date_of_birth" class="form-control date datepicker"  required>
+                                        <div class="invalid-feedback">
+                                            Date of Birth is required.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <select title="Select Role" name="role" class="js-example-basic-single form-control" style="width: 100%" required>
+                                <select title="Select Gender" name="gender" id="gender" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Gender~</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -93,6 +362,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
                                 <input title="Enter Locality" type="text" name="locality" class="form-control" id="locality" placeholder="Locality"  required>
@@ -101,7 +371,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <input required type="text"  class="form-control phone_number"  id="phone_number" minlength="10"   name="phone_number" placeholder="Phone Number">
+                                <input required type="text"  class="form-control phone-inputmask"  id="phone_number" minlength="10"   name="phone_number" placeholder="Phone Number">
                                 <div class="invalid-feedback">
                                     Phone Number is required.
                                 </div>
@@ -115,7 +385,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <select title="Select Role" name="religion" class="js-example-basic-single form-control" style="width: 100%" required>
+                                <select title="Select Religion" id="religion" name="religion" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Religion~</option>
                                     <option value="Christianity">Christianity</option>
                                     <option value="Islam">Islam</option>
@@ -137,15 +407,15 @@
                                 </div>--}}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <input type="text"  class="form-control phone_number"  id="relative_phone_number" minlength="10"   name="relative_phone_number" placeholder="Relative Phone Number">
+                                <input type="text"  class="form-control  phone-inputmask"  id="relative_phone_number" minlength="10"   name="relative_phone_number" placeholder="Relative Phone Number">
                                 {{--<div class="invalid-feedback">
                                     Phone Number is required.
                                 </div>--}}
                             </div>
                         </div>
                         <div class="form-row form-group">
-                            <div class="col-md-12">
-                                <select title="Select Role" name="marital_status" class="js-example-basic-single form-control" style="width: 100%" required>
+                            <div class="col-md-6">
+                                <select title="Select Marital Status" id="marital_status" name="marital_status" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Marital Status~</option>
                                     <option value="Single">Single</option>
                                     <option value="Married">Married</option>
@@ -156,11 +426,69 @@
                                     Marital Status is required.
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check form-check-flat mt-0">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="register_patient" id="register">
+                                                Register
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-check-flat mt-0" id="insured_div" style="display: none;">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" disabled  name="insured" id="insured">
+                                                {{--                                                <input type="checkbox" class="form-check-input" disabled name="insured" id="insured">--}}
+                                                Insured
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <textarea name="other_information" id="other_information" placeholder="Other Information" class="form-control" rows="4"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6" >
+                                        <div id="charge_div" style="display: none;">
+                                            <select title="Select Marital Status"  name="charges" id="charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                <option value="">~Charge~</option>
+                                                @foreach($charges as $charge)
+                                                    <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Charge is required.
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div  id="insurance_number_div" style="display: none;">
+                                            <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control mb-1" id="insurance_number" placeholder="Insurance Number">
+                                            <div class="invalid-feedback">
+                                                Insurance Number Required
+                                            </div>
+
+                                            <select title="Select Marital Status"  name="insurance_type" id="insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
+                                                <option value="">~Insurance Type~</option>
+                                                @foreach($insuranceType as $type)
+                                                    <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Insurance Type is required.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -168,7 +496,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             <i class="icon icon-close"></i> Close
                         </button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" id="btn_add_patient" class="btn btn-primary">
                             <i class="icon icon-plus"></i> Add Patient
                         </button>
                     </div>
@@ -176,7 +504,6 @@
             </form>
         </div>
     </div>
-
 
     <!-- edit Staff modal -->
     <div class="modal fade" id="editStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -243,9 +570,6 @@
             </form>
         </div>
     </div>
-
-
-
 
     <!-- Confirm bulk Staff modal -->
     <div class="modal fade" id="deleteStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

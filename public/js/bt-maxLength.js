@@ -7,7 +7,7 @@
 
   $('#defaultconfig-2').maxlength({
     alwaysShow: true,
-    threshold: 20,
+    threshold: 10,
     warningClass: "badge mt-1 badge-success",
     limitReachedClass: "badge mt-1 badge-danger"
   });
