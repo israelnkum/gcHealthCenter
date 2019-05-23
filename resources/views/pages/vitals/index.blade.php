@@ -34,17 +34,6 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Recent Registration's</h4>
-                        {{--@foreach($registration as $registered)
-                            <div class="d-flex align-items-center py-3 border-bottom">
---}}{{--                                <img class="img-sm rounded-circle" src="../images/faces/face5.jpg" alt="profile">--}}{{--
-                                <div class="ml-3">
-                                    <h6 class="mb-1 text-primary">{{$registered->patient->folder_number}}</h6>
-                                    <h5 class="mb-1 text-danger">{{$registered->patient->first_name." ".$registered->patient->other_name." ".$registered->patient->last_name}}</h5>
-                                    <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->patient->phone_number}}</small>
-                                </div>
-                                <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"></i>
-                            </div>
-                            @endforeach--}}
                         <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
                             @php($i =1)
                             @foreach($registration as $registered)

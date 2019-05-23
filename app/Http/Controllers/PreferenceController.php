@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Charge;
+use App\Diagnose;
 use App\Insurance;
 use Illuminate\Http\Request;
 
@@ -22,9 +23,13 @@ class PreferenceController extends Controller
     {
         $insurance= Insurance::all();
         $charges = Charge::all();
+        $diagnoses = Diagnose::with('user')->get();
+
+//        return $diagnoses;
         return view('pages.preferences.index')
             ->with('insurance',$insurance)
-            ->with('charges',$charges);
+            ->with('charges',$charges)
+            ->with('diagnoses',$diagnoses);
     }
 
     /**

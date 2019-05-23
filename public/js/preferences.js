@@ -128,4 +128,71 @@ $('#btn_bulk_delete_insurance').click(function () {
     /*
     End Chages
      */
+
+
+
+
+
+    /*
+  Start Diagnoses
+   */
+    $('#checkAllDiagnoses').change(function () {
+        $('.checkItemDiagnoses').prop("checked",$(this).prop("checked"));
+        if ($('input[name="selected_diagnoses[]"]:checked').length >0){
+            $('#deleteSelectedDiagnoses').removeAttr('disabled');
+        }  else{
+            $('#deleteSelectedDiagnoses').attr('disabled','disabled');
+
+        }
+    });
+
+
+    $(function () {
+        $('.checkItemDiagnoses').click(function () {
+            if ($('input[name="selected_diagnoses[]"]:checked').length >0){
+                $('#deleteSelectedDiagnoses').removeAttr('disabled');
+            }  else{
+                $('#deleteSelectedDiagnoses').attr('disabled','disabled');
+
+            }
+        });
+    });
+
+
+    $('#btn_bulk_delete_diagnoses').click(function () {
+        $('#bulkDeleteDiagnosesForm').submit();
+    });
+
+
+    let diagnoses_table = $('#diagnoses_table').DataTable({
+        "aLengthMenu": [
+            [10, 30, 50, 100, -1],
+            [10, 30, 50, 100, "All"]
+        ],
+        "iDisplayLength": 10,
+        "language": {
+            search: ""
+        }
+    });
+    // table.column(4).visible(false);
+    diagnoses_table.on('click','.edit',function () {
+        $tr = $(this).closest('tr');
+
+        if ($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+        }
+
+        let data = diagnoses_table.row($tr).data();
+
+        $('#edit_diagnoses').val(data[3]);
+        $('#diagnoses_description').val(data[4]);
+
+        $('#editDiagnosesForm').attr('action', 'diagnoses/'+data[2]);
+        $('#editDiagnosesModal').modal('show');
+        $('#editDiagnosesTitle').text(data[3]);
+    });
+
+    /*
+    End Chages
+     */
 });

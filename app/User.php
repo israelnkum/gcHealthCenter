@@ -53,4 +53,7 @@ class User extends Authenticatable
     ];
 
 
+    public function diagnoses(){
+        return $this->hasMany('App\Diagnoses');
+    }
 }

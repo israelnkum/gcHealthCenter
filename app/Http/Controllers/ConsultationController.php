@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Patient;
 use App\Registration;
+use App\Vital;
 use Illuminate\Http\Request;
 
 class ConsultationController extends Controller
@@ -15,11 +16,17 @@ class ConsultationController extends Controller
      */
     public function index()
     {
-        $registration = Patient::with('registration','vitals')->limit(1)->orderBy('created_at','asc')->latest()->first();
+        $registration = Registration::with('patient')
+            ->where('vitals',1)->limit(1)
+            ->orderBy('created_at','asc')
+            ->get();
 
-//        return $registration;
+      $getVitals = Vital::where('patient_id',$registration[0]->patient_id)->get();
+
+
         return view('pages.consultations.index')
-            ->with('registration',$registration);
+            ->with('registration',$registration)
+            ->with('getVitals',$getVitals);
     }
 
     /**

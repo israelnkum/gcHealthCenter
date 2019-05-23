@@ -65,121 +65,122 @@
                         <div class="card-body">
                             <h4 class="card-title">Recent Registration's</h4>
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
+                                @if(count($registration) == null)
 
-                                @foreach($registration as $registered)
-                                    <div class="card">
-                                        {{--                                        {!! $registered->vitals !!}--}}
-                                        <div class="card-header" role="tab" id="heading-4">
-                                            <a data-toggle="collapse" href="#GC{{$registered->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
-                                                <div class="row">
-                                                    <div class="col-md-6">
+                                @else
+                                    @foreach($registration as $registered)
+                                        <div class="card">
+                                            <div class="card-header" role="tab" id="heading-4">
+                                                <a data-toggle="collapse" href="#GC{{$registered->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
 
-                                                        <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
-                                                            <i class="icon-folder mr-1"></i> {{$registered->folder_number}}
-                                                        </h2>
-                                                        <h5 class="mb-1 text-danger">
-                                                            <i class="icon-user mr-1"></i>
-                                                            {{$registered->title." ".$registered->first_name." ".$registered->other_name." ".$registered->last_name}}
-                                                        </h5>
-                                                        <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->phone_number}}</small>
+                                                            <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
+                                                                <i class="icon-folder mr-1"></i> {{$registered->folder_number}}
+                                                            </h2>
+                                                            <h5 class="mb-1 text-danger">
+                                                                <i class="icon-user mr-1"></i>
+                                                                {{$registered->title." ".$registered->first_name." ".$registered->other_name." ".$registered->last_name}}
+                                                            </h5>
+                                                            <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->phone_number}}</small>
 
+                                                        </div>
+                                                        <div class="col-md-5 text-right mr-1">
+                                                            Date Of Birth: <span class="font-weight-bold">{{$registered->date_of_birth}}</span><br>
+                                                            Age: <span class="font-weight-bold">{{$registered->age}}</span><br>
+                                                            Gender: <span class="font-weight-bold">{{$registered->gender}}</span><br>
+                                                            Marital Status: <span class="font-weight-bold">{{$registered->marital_status}}</span><br>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-5 text-right mr-1">
-                                                        Date Of Birth: <span class="font-weight-bold">{{$registered->date_of_birth}}</span><br>
-                                                        Age: <span class="font-weight-bold">{{$registered->age}}</span><br>
-                                                        Gender: <span class="font-weight-bold">{{$registered->gender}}</span><br>
-                                                        Marital Status: <span class="font-weight-bold">{{$registered->marital_status}}</span><br>
-                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div id="GC{{$registered->registration_number}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
+                                                <div class="card-body">
+                                                    @php($allRegistration = $registered->registration)
+                                                    @php($i =1)
+                                                    @foreach($allRegistration as $userRegistration)
+                                                        @if($userRegistration->vitals == 1)
+                                                            <form class="needs-validation" novalidate method="post" action="{{route('vitals.update',$registered->vitals[$i-1]->id)}}">
+                                                                @csrf
+                                                                {{method_field('put')}}
+                                                                @else
+                                                                    <form class="needs-validation" novalidate method="post" action="{{route('vitals.store')}}">
+                                                                        @csrf
+                                                                        @endif
+                                                                        <input type="hidden" name="registration_id" value="{{$userRegistration->id}}">
+                                                                        <input type="hidden" name="patient_id" value="{{$registered->id}}">
+                                                                        <div class="form-group row">
+                                                                            <label for="blood_pressure" class="col-sm-2 col-form-label">Blood Pressure(BP)</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input required type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->blood_pressure !!}@endif"
+                                                                                       name="blood_pressure" class="form-control" id="blood_pressure{!! $i !!}">
+                                                                                <div class="invalid-feedback">
+                                                                                    Blood pressure is required
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <label for="weight" class="col-sm-2 col-form-label text-right">Weight</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input required type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->weight !!}@endif" class="form-control" id="weight" name="weight">
+                                                                                <div class="invalid-feedback">
+                                                                                    Weight  is required
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label for="temperature" class="col-sm-2 col-form-label">Temperature</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input required value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->temperature !!}@endif" type="number" class="form-control" id="temperature" name="temperature">
+                                                                                <div class="invalid-feedback">
+                                                                                    Temperature is required
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <label for="pulse" class="col-sm-2 col-form-label text-right">Pulse</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input required type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->pulse !!}@endif" name="pulse" class="form-control" id="pulse">
+                                                                                <div class="invalid-feedback">
+                                                                                    Pulse is required
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="form-group row sugar{!! $i !!}" style="display: none">
+                                                                            <label for="rdt" class="col-sm-2 col-form-label">RDT (Malaria)</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif" class="form-control" id="rdt" name="rdt">
+                                                                                <div class="invalid-feedback">
+                                                                                    RDT (Malaria) is required
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <label for="glucose" class="col-sm-2 col-form-label text-right">Glucose(Sugar Level)</label>
+                                                                            <div class="col-sm-3">
+                                                                                <input type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->glucose !!}@endif" class="form-control" id="glucose" name="glucose">
+                                                                                <div class="invalid-feedback">
+                                                                                    Glucose (Sugar Level) is required
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="form-group row">
+                                                                            <div class="col-sm-10 text-right">
+                                                                                @if($userRegistration->vitals == 1)
+                                                                                    <button type="submit" class="btn btn-success">Update Vitals</button>
+                                                                                @else
+                                                                                    <button type="submit" class="btn btn-primary"> Add Vitals </button>
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                            @php($i++)
+                                                            @endforeach
                                                 </div>
-                                            </a>
-                                        </div>
-                                        <div id="GC{{$registered->registration_number}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
-                                            <div class="card-body">
-                                                @php($allRegistration = $registered->registration)
-                                                @php($i =1)
-
-                                                @for($a=0; $a<count($allRegistration); $a++)
-                                                    @if($allRegistration[$a]->vitals == 1)
-                                                        <form class="needs-validation" novalidate method="post" action="{{route('vitals.update',$registered->vitals[$i-1]->id)}}">
-                                                            @csrf
-                                                            {{method_field('put')}}
-                                                            @else
-                                                                <form class="needs-validation" novalidate method="post" action="{{route('vitals.store')}}">
-                                                                    @csrf
-                                                                    @endif
-                                                                    <input type="hidden" name="registration_id" value="{{$allRegistration[$a]->id}}">
-                                                                    <input type="hidden" name="patient_id" value="{{$registered->id}}">
-                                                                    <div class="form-group row">
-                                                                        <label for="blood_pressure" class="col-sm-2 col-form-label">Blood Pressure(BP)</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input required type="number" value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->blood_pressure !!}@endif"
-                                                                                   name="blood_pressure" class="form-control" id="blood_pressure{!! $i !!}">
-                                                                            <div class="invalid-feedback">
-                                                                                Blood pressure is required
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <label for="weight" class="col-sm-2 col-form-label text-right">Weight</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input required type="number" value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->weight !!}@endif" class="form-control" id="weight" name="weight">
-                                                                            <div class="invalid-feedback">
-                                                                                Weight  is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="temperature" class="col-sm-2 col-form-label">Temperature</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input required value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->temperature !!}@endif" type="number" class="form-control" id="temperature" name="temperature">
-                                                                            <div class="invalid-feedback">
-                                                                                Temperature is required
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <label for="pulse" class="col-sm-2 col-form-label text-right">Pulse</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input required type="number" value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->pulse !!}@endif" name="pulse" class="form-control" id="pulse">
-                                                                            <div class="invalid-feedback">
-                                                                                Pulse is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row sugar{!! $i !!}" style="display: none">
-                                                                        <label for="rdt" class="col-sm-2 col-form-label">RDT (Malaria)</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input type="number" value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif" class="form-control" id="rdt" name="rdt">
-                                                                            <div class="invalid-feedback">
-                                                                                RDT (Malaria) is required
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <label for="glucose" class="col-sm-2 col-form-label text-right">Glucose(Sugar Level)</label>
-                                                                        <div class="col-sm-3">
-                                                                            <input type="number" value="@if($allRegistration[$a]->vitals == 1){!! $registered->vitals[$i-1]->glucose !!}@endif" class="form-control" id="glucose" name="glucose">
-                                                                            <div class="invalid-feedback">
-                                                                                Glucose (Sugar Level) is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-10 text-right">
-                                                                            @if($allRegistration[$a]->vitals == 1)
-                                                                                <button type="submit" class="btn btn-success">Update Vitals</button>
-                                                                            @else
-                                                                                <button type="submit" class="btn btn-primary"> Add Vitals </button>
-                                                                            @endif
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
-                                                        @php($i++)
-                                                        @endfor
                                             </div>
                                         </div>
-                                    </div>
 
-                                @endforeach
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                     </div>

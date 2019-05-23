@@ -35,6 +35,7 @@ class CreatePatientsTable extends Migration
             $table->string('name_of_nearest_relative')->nullable();
             $table->string('number_of_nearest_relative')->nullable();
             $table->tinyInteger('status')->default(0);
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

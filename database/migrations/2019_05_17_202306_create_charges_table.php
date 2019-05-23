@@ -17,6 +17,7 @@ class CreateChargesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->decimal('amount');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

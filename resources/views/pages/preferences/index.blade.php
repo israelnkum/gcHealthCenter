@@ -16,6 +16,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="charges-tab" data-toggle="pill" href="#charges" role="tab" aria-controls="charges" aria-selected="false">Charges</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="charges-tab" data-toggle="pill" href="#diagnose" role="tab" aria-controls="diagnose" aria-selected="false">Diagnoses</a>
+                                </li>
                             </ul>
                             <div class="row ">
                                 <div class="col-md-9">
@@ -214,6 +217,203 @@
                                             </div>
                                         </div>
                                         {{--End charges TAb--}}
+
+
+                                        {{--Start Diagnoses TAb--}}
+                                        <div class="tab-pane fade" id="diagnose" role="tabpanel" aria-labelledby="diagnose-tab">
+                                            <div class="card-body">
+                                                <form action="{{route('bulk_deleteDiagnoses')}}" id="bulkDeleteDiagnosesForm" method="POST">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">
+                                                            <h4 class="card-title">All Diagnoses</h4>
+                                                        </div>
+                                                        <div class="col-md-6 text-right mb-3">
+                                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDiagnoses" id="deleteSelectedDiagnoses" disabled>
+                                                                <i class="icon icon-trash"></i> Delete Selected
+                                                            </button>
+                                                            <!-- Button trigger modal -->
+                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newDiagnosesModal">
+                                                                <i class="icon icon-plus"></i> New Diagnoses
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <table class="table" id="diagnoses_table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <div class="form-check form-check-flat">
+                                                                    <label class="form-check-label">
+                                                                        <input type="checkbox"  class="form-check-input"  id="checkAllDiagnoses">
+                                                                    </label>
+                                                                </div>
+                                                            </th>
+                                                            <th>N<u>o</u></th>
+                                                            <th>ID</th>
+                                                            <th>Name</th>
+                                                            <th>Description</th>
+                                                            <th>Added By</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @php
+                                                            $i=1;
+                                                        @endphp
+                                                        @foreach($diagnoses as $diag)
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="form-check form-check-flat">
+                                                                        <label class="form-check-label">
+                                                                            <input type="checkbox" value="{{$diag->id}}" class="form-check-input checkItemDiagnoses" name="selected_diagnoses[]">
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{!! $i !!}</td>
+                                                                <td>{{$diag->id}}</td>
+                                                                <td>{{$diag->name}}</td>
+                                                                <td>{{$diag->description}}</td>
+                                                                <td>{{$diag->user->first_name." ".$diag->user->last_name}}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-sm btn-inverse-light edit">
+                                                                        <i class="icon icon-pencil"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            @php
+                                                                $i = $i+1;
+                                                            @endphp
+                                                        @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {{--End Diagnoses TAb--}}
+
+
+
+                                    <!-- new Diagnoses modal -->
+                                        <div class="modal fade" id="newDiagnosesModal" tabindex="-1" role="dialog" aria-labelledby="diagnosesModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <form method="post" action="{{route('diagnoses.store')}}" class="needs-validation" novalidate>
+                                                    @csrf
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">New Diagnoses</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body pt-0">
+                                                            <div class="form-row">
+                                                                <div class="col-md-12 mb-3">
+                                                                    <label for="name">Diagnoses Name</label>
+                                                                    <input title="Enter Diagnoses Name" type="text" name="diagnoses" class="form-control" id="diagnoses" required>
+                                                                    <div class="invalid-feedback">
+                                                                        Diagnoses Name is required
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-row">
+                                                                <div class="col-md-12 mb-3">
+                                                                    <label for="description">Description</label>
+                                                                    <textarea name="description" class="form-control" id="description" rows="5"></textarea>
+                                                                    <div class="invalid-feedback">
+                                                                        Description is required.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                <i class="icon icon-close"></i> Close
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon icon-plus"></i> Add Diagnoses
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- edit Diagnoses modal -->
+                                        <div class="modal fade" id="editDiagnosesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <form method="post" action="/diagnoses" id="editDiagnosesForm" class="needs-validation" novalidate>
+                                                    @csrf
+                                                    {!! method_field('put') !!}
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editDiagnosesTitle">Edit Diagnoses</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body pt-0">
+                                                            <div class="form-row">
+                                                                <div class="col-md-12 mb-3">
+                                                                    <label for="name">Diagnoses Name</label>
+                                                                    <input title="Enter Diagnoses Name" type="text" name="diagnoses" class="form-control" id="edit_diagnoses" required>
+                                                                    <div class="invalid-feedback">
+                                                                        Diagnoses Name is required
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-row">
+                                                                <div class="col-md-12 mb-3">
+                                                                    <label for="description">Description</label>
+                                                                    <textarea name="description" class="form-control" id="diagnoses_description" rows="5"></textarea>
+                                                                    <div class="invalid-feedback">
+                                                                        Description is required.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                                <i class="icon icon-close"></i> Close
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="icon icon-pencil"></i> Edit Diagnoses
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Delete Diagnoses modal -->
+                                        <div class="modal fade" id="deleteDiagnoses" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Delete Diagnoses</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body pt-0">
+                                                        <p>Are you want to delete selected Diagnoses?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                            <i class="icon icon-close"></i> Close
+                                                        </button>
+                                                        <button type="submit" id="btn_bulk_delete_diagnoses" class="btn btn-primary">
+                                                            <i class="icon icon-trash"></i> Yes! Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                 </div>
                             </div>
@@ -351,7 +551,6 @@
 
 
 
-
     <!-- new Charge modal -->
     <div class="modal fade" id="newChargeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -470,5 +669,8 @@
             </div>
         </div>
     </div>
+
+
+
 
 @endsection

@@ -23,6 +23,7 @@ class VitalsController extends Controller
         $registration = Registration::with('patient')
             ->where('vitals',0)->limit(5)->orderBy('created_at','asc')->get();
 
+//        return $registration;
         return view('pages.vitals.index')
             ->with('registration',$registration);
     }
@@ -76,6 +77,7 @@ class VitalsController extends Controller
             ->where('id',$id)
             ->get();
 
+//        return $registration;
         foreach ($registration as $registered){
 
         }

@@ -79,6 +79,15 @@ Route::post('/bulk_deleteInsurance','InsuranceController@bulk_deleteInsurance')-
 
 
 /*
+ * Insurance Route
+ */
+Route::resource('diagnoses','DiagnoseController');
+Route::post('/bulk_deleteDiagnoses','DiagnoseController@bulk_deleteDiagnoses')->name('bulk_deleteDiagnoses');
+
+
+
+
+/*
  * Charges Route
  */
 Route::resource('charges','ChargeController');

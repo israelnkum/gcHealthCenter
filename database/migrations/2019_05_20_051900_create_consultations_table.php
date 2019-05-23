@@ -23,6 +23,7 @@ class CreateConsultationsTable extends Migration
             $table->string('detain_admit');
             $table->string('labs')->nullable();
             $table->string('ultra_sound_scan')->nullable();
+            $table->integer('user_id');
             $table->timestamps();
         });
     }
