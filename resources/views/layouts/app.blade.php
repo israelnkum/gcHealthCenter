@@ -293,9 +293,10 @@
 <script src="{{asset('public/js/preferences.js')}}"></script>
 <script src="{{asset('public/js/patients.js')}}"></script>
 <script src="{{asset('public/js/vitals.js')}}"></script>
-
+<script src="{{asset('public/js/consultation.js')}}"></script>
 <script src="{{asset('public/js/form-validation.js')}}"></script>
 <script src="{{asset('public/js/bt-maxLength.js')}}"></script>
+
 <!-- endinject -->
 
 

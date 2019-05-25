@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Charge;
 use Illuminate\Http\Request;
 
-class ChargeController extends Controller
+class DrugController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -39,14 +34,7 @@ class ChargeController extends Controller
      */
     public function store(Request $request)
     {
-        $ins = new Charge();
-        $ins->name = $request->input('name');
-        $ins->amount = $request->input('amount');
-
-        $ins->save();
-
-        return redirect('/preferences')
-            ->with('success','New Charge Added');
+        //
     }
 
     /**
@@ -71,26 +59,6 @@ class ChargeController extends Controller
         //
     }
 
-
-    /*
-    * Bulk delete Insurance
-    */
-    public function  bulk_deleteCharge(Request $request){
-
-        $selected_id = $request->input('selected_charges');
-
-
-        foreach ($selected_id as $value){
-            $level = Charge::find($value);
-            $level->delete();
-        }
-
-        //  toastr()->success('success');
-        return redirect('/preferences')
-            ->with('success','Charge(s) Deleted');
-
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -100,14 +68,7 @@ class ChargeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $ins = Charge::find($id);
-        $ins->name = $request->input('name');
-        $ins->amount = $request->input('amount');
-
-        $ins->save();
-
-        return redirect('/preferences')
-            ->with('success','Charge Updated');
+        //
     }
 
     /**

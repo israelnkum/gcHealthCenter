@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Charge;
 use App\Registration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OpdRegistrationController extends Controller
 {
@@ -35,8 +36,9 @@ class OpdRegistrationController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
@@ -49,10 +51,10 @@ class OpdRegistrationController extends Controller
                 $register->patient_id = $request->input('patient_id');
                 $register->isInsured = 1;
                 $register->insurance_type = substr($request->input('insurance_type'),0,strpos($request->input('insurance_type'),','));
-                $register->insurance_number = $request->input('insurance_number');
+                $register->insurance_number = strtoupper($request->input('insurance_number'));
                 $register->insurance_amount = str_replace(',','',substr($request->input('insurance_type'),strpos($request->input('insurance_type'),',')));
                 $register->registration_fee = $charges->amount;
-
+                $register->user_id=Auth::user()->id;
                 $register->save();
             }else{
                 if ($charges->name == "Insured"){
@@ -65,11 +67,13 @@ class OpdRegistrationController extends Controller
                 $register->patient_id = $request->input('patient_id');
                 $register->isInsured = 0;
                 $register->registration_fee = $charges->amount;
+                $register->user_id=Auth::user()->id;
                 $register->save();
             }
         }
 
-        return redirect()->route('patients.show',[$request->input('patient_id')]);
+        return redirect()->route('patients.show',[$request->input('patient_id')])
+            ->with('success','Registration Successful');
 
     }
 

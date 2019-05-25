@@ -3,7 +3,7 @@ $(function(e) {
     $(".date").inputmask("dd/mm/yyyy"),
     $(".phone-inputmask").inputmask("9999999999",{greedy: false,clearincomplete: true}),
         $(".phone_number").inputmask("+233 999 999 999",{greedy: false,clearincomplete: true}),
-        $(".cgpa").inputmask("9.99"),
+        $(".bloodPressure").inputmask("999/99"),
     $(".international-inputmask").inputmask("+9(999)999-9999"), 
     $(".xphone-inputmask").inputmask("(999) 999-9999 / x999999"), 
     $(".purchase-inputmask").inputmask("aaaa 9999-****"), 

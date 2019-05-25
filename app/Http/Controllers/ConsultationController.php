@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Consultation;
+use App\Diagnose;
 use App\Patient;
 use App\Registration;
 use App\Vital;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ConsultationController extends Controller
 {
@@ -17,16 +21,26 @@ class ConsultationController extends Controller
     public function index()
     {
         $registration = Registration::with('patient')
-            ->where('vitals',1)->limit(1)
+            ->where('vitals',1)
+            ->whereDate('created_at', Carbon::today())
+            ->limit(1)
             ->orderBy('created_at','asc')
             ->get();
 
-      $getVitals = Vital::where('patient_id',$registration[0]->patient_id)->get();
+//       return count($registration);
+        if (count($registration) == 1){
+            $getVitals = Vital::where('patient_id',$registration[0]->patient_id)->get();
+        }else{
+            $getVitals =[];
+        }
+
+        $diagnosis = Diagnose::all();
 
 
         return view('pages.consultations.index')
             ->with('registration',$registration)
-            ->with('getVitals',$getVitals);
+            ->with('getVitals',$getVitals)
+            ->with('diagnosis',$diagnosis);
     }
 
     /**
@@ -47,7 +61,28 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+
+        $consultation = new Consultation();
+        $consultation ->complains=$request->input('complains');
+        $consultation ->finding=$request->input('finding');
+        $consultation ->physical_examination=$request->input('physical_examination');
+        $consultation ->diagnosis=$request->input('treatment_medication');
+        $consultation ->treatment_medication=$request->input('treatment_medication');
+        $consultation ->detain_admit=$request->input('detain_admit');
+        $consultation ->labs=$request->input('labs');
+        $consultation ->ultra_sound_scan=$request->input('ultra_sound_scan');
+        $consultation ->user_id=Auth::user()->id;
+
+        $consultation->save();
+
+
+        $registration = Registration::find($request->input('registration_id'));
+        $registration->vitals = 1;
+        $registration->save();
+
+        return redirect()->route('consultations.index')
+            ->with('success','Consulting Success');
     }
 
     /**

@@ -34,7 +34,14 @@
         </div>
         @if($data == "none")
         @elseif(count($data) == 0)
-            <p>No Result Found</p>
+            <div class="">
+                <div class="card-body text-center">
+                    <h4 class="card-title"></h4>
+                    <img class="img-fluid mt-0" src="{{asset('public/images/no_result.png')}}" alt="">
+                    <br>
+                    <label for="" class="badge badge-danger p-3">Search Again</label>
+                </div>
+            </div>
         @elseif(count($data) == 1)
             <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
@@ -136,93 +143,180 @@
                                                     $registration = $data[0]->registration;
                                                     ?>
                                                     {{--                                                    {!! $registration !!}--}}
-                                                    @foreach($registration as $registered)
-                                                        <div class="d-flex align-items-center py-3 border-bottom">
-                                                            <div class="ml-3">
-                                                                <h6 class="mb-1">{{$registered->insurance_type}}</h6>
-                                                                <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->created_at}}</small>
+                                                    @foreach($registration as $key => $registered)
+                                                        @if($key == count( $registration ) -1 )
+                                                            <div class="d-flex align-items-center py-3 border-bottom">
+                                                                <div class="ml-3">
+                                                                    <h6 class="mb-1">New Registration</h6>
+                                                                    <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->created_at}}</small>
+                                                                </div>
+                                                                <div class="ml-3">
+                                                                    @if($registered->insurance_type =="")
+                                                                        <span class="badge badge-info text-white">Non insured</span>
+                                                                    @else
+                                                                        <h6 class="mb-1">{{$registered->insurance_type}}</h6>
+                                                                    @endif
+                                                                    <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->insurance_number}}</small>
+                                                                </div>
+                                                                <?php
+                                                                $last_seen =\Carbon\Carbon::createFromTimeStamp(strtotime($registered->updated_at))->diffForHumans();
+                                                                ?>
+                                                                <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"> {!! $last_seen !!}</i>
                                                             </div>
-                                                            <?php
-                                                            $last_seen =\Carbon\Carbon::createFromTimeStamp(strtotime($registered->updated_at))->diffForHumans();
-                                                            ?>
-                                                            <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"> {!! $last_seen !!}</i>
-                                                        </div>
+
+                                                        @endif
                                                     @endforeach
                                                 </div>
                                             </div>
-                                            <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
-                                                <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
-                                                    @csrf
-                                                    <div class="form-row form-group">
-                                                        <div class="col-md-6">
-                                                            <div class="form-check form-check-flat mt-0">
-                                                                <label class="form-check-label">
-                                                                    <input type="checkbox" class="form-check-input" name="register_patient" id="register_patient">
-                                                                    Register
-                                                                </label>
+                                            @if(count($registration)  == 0)
+                                                <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
+                                                    <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
+                                                        @csrf
+                                                        <div class="form-row form-group">
+                                                            <div class="col-md-6">
+                                                                <div class="form-check form-check-flat mt-0">
+                                                                    <label class="form-check-label">
+                                                                        <input type="checkbox" class="form-check-input" name="register_patient" id="register_patient">
+                                                                        Register
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-check form-check-flat mt-0" id="patient_insured_div" style="display: none;">
+                                                                    <label class="form-check-label">
+                                                                        <input type="checkbox" class="form-check-input" disabled  name="insured" id="patient_insured">
+                                                                        Insured
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-check form-check-flat mt-0" id="patient_insured_div" style="display: none;">
-                                                                <label class="form-check-label">
-                                                                    <input type="checkbox" class="form-check-input" disabled  name="insured" id="patient_insured">
-                                                                    Insured
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="form-row form-group">
-                                                        <div class="col-md-6" >
-                                                            <div id="patient_charge_div" style="display: none;">
-                                                                <label>Charge</label>
-                                                                <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
-                                                                    <option value="">~Charge~</option>
-                                                                    @foreach($charges as $charge)
-                                                                        <option value="{{$charge->id}}">{{$charge->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                <div class="invalid-feedback">
-                                                                    Charge is required.
+                                                        <div class="form-row form-group">
+                                                            <div class="col-md-6" >
+                                                                <div id="patient_charge_div" style="display: none;">
+                                                                    <label>Charge</label>
+                                                                    <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                        <option value="">~Charge~</option>
+                                                                        @foreach($charges as $charge)
+                                                                            <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Charge is required.
+                                                                    </div>
                                                                 </div>
+                                                                <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
                                                             </div>
-                                                            <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div  id="patient_insurance_number_div" style="display: none;">
-                                                                <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control mb-1" id="patient_insurance_number" placeholder="Insurance Number">
-                                                                <div class="invalid-feedback">
-                                                                    Insurance Number Required
-                                                                </div>
+                                                            <div class="col-md-6">
+                                                                <div  id="patient_insurance_number_div" style="display: none;">
+                                                                    <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control text-uppercase mb-1" id="patient_insurance_number" placeholder="Insurance Number">
+                                                                    <div class="invalid-feedback">
+                                                                        Insurance Number Required
+                                                                    </div>
 
-                                                                <label class="mt-2">Insurance Type</label>
-                                                                        <select title="Select Insurance Type"   name="insurance_type" id="patient_insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
-                                                                    <option value="">~Insurance Type~</option>
-                                                                    @foreach($insuranceType as $type)
-                                                                        <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                <div class="invalid-feedback">
-                                                                    Insurance Type is required.
+                                                                    <label class="mt-2">Insurance Type</label>
+                                                                    <select title="Select Insurance Type"   name="insurance_type" id="patient_insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                        <option value="">~Insurance Type~</option>
+                                                                        @foreach($insuranceType as $type)
+                                                                            <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Insurance Type is required.
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group row ">
-                                                       <div class="col-md-12 text-right">
-                                                           <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
-                                                       </div>
-                                                    </div>
-                                                </form>
-                                            </div>
+                                                        <div class="form-group row ">
+                                                            <div class="col-md-12 text-right">
+                                                                <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            @else
+                                                @foreach($registration as $key => $registered)
+                                                    @if($key == count( $registration ) -1 )
+                                                        @if(substr($registered->created_at,0,10) != date('Y-m-d'))
+                                                            <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
+                                                                <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
+                                                                    @csrf
+                                                                    <div class="form-row form-group">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-check form-check-flat mt-0">
+                                                                                <label class="form-check-label">
+                                                                                    <input type="checkbox" class="form-check-input" name="register_patient" id="register_patient">
+                                                                                    Register
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-check form-check-flat mt-0" id="patient_insured_div" style="display: none;">
+                                                                                <label class="form-check-label">
+                                                                                    <input type="checkbox" class="form-check-input" disabled  name="insured" id="patient_insured">
+                                                                                    Insured
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-row form-group">
+                                                                        <div class="col-md-6" >
+                                                                            <div id="patient_charge_div" style="display: none;">
+                                                                                <label>Charge</label>
+                                                                                <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                                    <option value="">~Charge~</option>
+                                                                                    @foreach($charges as $charge)
+                                                                                        <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                                <div class="invalid-feedback">
+                                                                                    Charge is required.
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div  id="patient_insurance_number_div" style="display: none;">
+                                                                                <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control text-uppercase mb-1" id="patient_insurance_number" placeholder="Insurance Number">
+                                                                                <div class="invalid-feedback">
+                                                                                    Insurance Number Required
+                                                                                </div>
+
+                                                                                <label class="mt-2">Insurance Type</label>
+                                                                                <select title="Select Insurance Type"   name="insurance_type" id="patient_insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                                    <option value="">~Insurance Type~</option>
+                                                                                    @foreach($insuranceType as $type)
+                                                                                        <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                                <div class="invalid-feedback">
+                                                                                    Insurance Type is required.
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row ">
+                                                                        <div class="col-md-12 text-right">
+                                                                            <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endif
+                                                @endforeach
+                                            @endif
+
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="patient-records" role="tabpanel" aria-labelledby="tab-2-2">
                                         <div class="row">
                                             <div class="col-md-5">
-                                                <img class="img-fluid rounded" src="../../images/samples/tab_preview/04.png" alt="tab Preview">
+                                                REcords
+                                                {{--                                                <img class="img-fluid rounded" src="../../images/samples/tab_preview/04.png" alt="tab Preview">--}}
                                             </div>
-                                            <div class="col-md-7 pl-md-5">
+                                            {{--<div class="col-md-7 pl-md-5">
                                                 <div class="wrapper mb-4">
                                                     <h4 class="mb-3"><i class="icon-present mr-3"></i>Anonymous Proxy</h4>
                                                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
@@ -231,7 +325,7 @@
                                                     <h4 class="mb-3"><i class="icon-tag mr-3"></i>Addiction When Gambling</h4>
                                                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
                                                 </div>
-                                            </div>
+                                            </div>--}}
                                         </div>
                                     </div>
                                 </div>
@@ -428,14 +522,14 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-flat mt-0">
-                                            <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" name="register_patient" id="register">
-                                                Register
-                                            </label>
-                                        </div>
-                                    </div>
+                                    {{--                                    <div class="col-md-4">--}}
+                                    {{--                                        <div class="form-check form-check-flat mt-0">--}}
+                                    {{--                                            <label class="form-check-label">--}}
+                                    {{--                                                <input type="checkbox" class="form-check-input" name="register_patient" id="register">--}}
+                                    {{--                                                Register--}}
+                                    {{--                                            </label>--}}
+                                    {{--                                        </div>--}}
+                                    {{--                                    </div>--}}
                                     <div class="col-md-4">
                                         <div class="form-check form-check-flat mt-0" id="insured_div" style="display: none;">
                                             <label class="form-check-label">

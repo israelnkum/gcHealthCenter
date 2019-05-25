@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Charge;
+use App\Diagnose;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ChargeController extends Controller
+class DiagnoseController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -39,14 +36,14 @@ class ChargeController extends Controller
      */
     public function store(Request $request)
     {
-        $ins = new Charge();
-        $ins->name = $request->input('name');
-        $ins->amount = $request->input('amount');
+        $diagnoses = new Diagnose();
+        $diagnoses->name = $request->input('diagnoses');
+        $diagnoses->description = $request->input('description');
+        $diagnoses->user_id = Auth::user()->id;
 
-        $ins->save();
+        $diagnoses->save();
 
-        return redirect('/preferences')
-            ->with('success','New Charge Added');
+        return redirect('/preferences')->with('success','New Diagnoses Added');
     }
 
     /**
@@ -72,25 +69,23 @@ class ChargeController extends Controller
     }
 
 
-    /*
+  /*
     * Bulk delete Insurance
     */
-    public function  bulk_deleteCharge(Request $request){
+    public function  bulk_deleteDiagnoses(Request $request){
 
-        $selected_id = $request->input('selected_charges');
+        $selected_id = $request->input('selected_diagnoses');
 
 
         foreach ($selected_id as $value){
-            $level = Charge::find($value);
+            $level = Diagnose::find($value);
             $level->delete();
         }
 
-        //  toastr()->success('success');
         return redirect('/preferences')
-            ->with('success','Charge(s) Deleted');
+            ->with('success','Diagnoses Deleted.');
 
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -100,14 +95,14 @@ class ChargeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $ins = Charge::find($id);
-        $ins->name = $request->input('name');
-        $ins->amount = $request->input('amount');
+        $diagnoses = Diagnose::find($id);
+        $diagnoses->name = $request->input('diagnoses');
+        $diagnoses->description = $request->input('description');
+        $diagnoses->user_id = Auth::user()->id;
 
-        $ins->save();
+        $diagnoses->save();
 
-        return redirect('/preferences')
-            ->with('success','Charge Updated');
+        return redirect('/preferences')->with('success','Diagnoses Updated');
     }
 
     /**

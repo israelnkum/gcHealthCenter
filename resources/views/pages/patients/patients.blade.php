@@ -42,10 +42,10 @@
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCharge" id="deleteSelectedCharge" disabled>
                                     <i class="icon icon-trash"></i> Delete Selected
                                 </button>
-                                <!-- Button trigger modal -->
+                               {{-- <!-- Button trigger modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newChargeModal">
                                     <i class="icon icon-plus"></i> New Charge
-                                </button>
+                                </button>--}}
                             </div>
                         </div>
 

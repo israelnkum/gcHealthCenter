@@ -16,6 +16,12 @@ $(document).ready(function () {
         dropdownParent: $('#newPatient .modal-content')
     });
 
+    // $('#phone_number').keyup(function () {
+    //     //
+    //     if ($('#phone_number').val().indexOf('_') > -1){
+    //         $('#phone_number').attr('required',true);
+    //     }
+    // });
 
     $('#register').click(function () {
         if (!$(this).is(':checked')){

@@ -27,7 +27,7 @@
                 <i class="icon icon-trash"></i> Delete Selected
             </button>--}}
             <!-- Button trigger modal -->
-                <a type="button" href="{{route('patients.show',$patient->id)}}" class="btn btn-danger">
+                <a role="button" href="{{route('patients.show',$patient->id)}}" class="btn btn-danger">
                     <i class="icon icon-close"></i> Cancel
                 </a>
             </div>

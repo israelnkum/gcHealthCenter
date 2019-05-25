@@ -8,6 +8,7 @@ use App\Patient;
 use App\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
@@ -63,10 +64,11 @@ class PatientController extends Controller
             'folder_number' => ['unique:patients'],
             'registration_number' => ['unique:patients'],
         ]);
+        $patient = new Patient();
 
         $countLogs = Patient::get()->count();
         if ($countLogs == 0){
-            $folderNumber=  $patient->registration_number = substr(date('Ym'),'2').'00001';
+            $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'01';
         }else{
             $record = Patient::latest()->first();
 
@@ -74,7 +76,7 @@ class PatientController extends Controller
             $expNum =$record->registration_number;
             //return $expNum;
             if ($expNum == '' ){
-                $folderNumber=  $patient->registration_number = substr(date('Ym'),'2').'0001';
+                $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'1';
             } else {
 
                 $folderNumber=  $patient->registration_number =  $expNum+1;
@@ -82,10 +84,10 @@ class PatientController extends Controller
                 // $folderNumber= "GC/".str_replace(date('m'),date('m')."/",$folderNumber);
             }
         }
-        $patient = new Patient();
-        //return $folderNumber
+
+//        return $folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
         $patient->registration_number= $folderNumber;
-        $patient->folder_number= "GC/".substr($folderNumber,0,4)."/".substr($folderNumber,4);
+        $patient->folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
         $patient->title= $request->input('title');
         $patient->first_name= $request->input('first_name');
         $patient->last_name= $request->input('last_name');
@@ -103,7 +105,7 @@ class PatientController extends Controller
         $patient->religion= $request->input('religion');
         $patient->name_of_nearest_relative= $request->input('name_of_relative');
         $patient->number_of_nearest_relative= $request->input('relative_phone_number');
-
+        $patient->user_id=Auth::user()->id;
         $patient->save();
 
         //  $data = Patient::where('id',$patient->id)->get();
@@ -167,8 +169,11 @@ class PatientController extends Controller
      */
     public function show($id)
     {
-        $data = Patient::with('registration')->where('id',$id)->where('status',0)->get();
-//       return $data;
+        $data = Patient::with('registration')
+            ->where('id',$id)
+            ->get();
+//      return $data;
+
         $insuranceType = Insurance::all();
         $charges = Charge::all();
         return view('pages.patients.index')
@@ -201,8 +206,10 @@ class PatientController extends Controller
     public function update(Request $request, $id)
     {
         $patient = Patient::find($id);
+        $patient->title= $request->input('title');
         $patient->first_name= $request->input('first_name');
         $patient->last_name= $request->input('last_name');
+        $patient->other_name= $request->input('other_name');
         $patient->date_of_birth= $request->input('date_of_birth');
         $patient->gender= $request->input('gender');
         $patient->age= Carbon::parse(str_replace('/','-',$request->input('date_of_birth')))->age;
@@ -216,7 +223,7 @@ class PatientController extends Controller
         $patient->religion= $request->input('religion');
         $patient->name_of_nearest_relative= $request->input('name_of_relative');
         $patient->number_of_nearest_relative= $request->input('relative_phone_number');
-
+        $patient->user_id=Auth::user()->id;
         $patient->save();
 
         return redirect()->route('patients.show',[$id])
