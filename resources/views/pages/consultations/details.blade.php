@@ -97,7 +97,7 @@
                                         </div>
                                         <div class="col-md-6 text-right">
                                             <p class="mb-0"><b>Insurance:</b> @if($registered->insurance_type){{$registered->insurance_type}} @else Non Insured @endif</p>
-                                            <p class="mb-0"><b>Insurance Number:</b> @if($registered->insurance){{$registered->insurance}} @else ----- @endif</p>
+                                            <p class="mb-0"><b>Insurance Number:</b> @if($registered->insurance_number){{$registered->insurance_number}} @else ----- @endif</p>
                                             <p class="mb-0"><b>Amount Charged:</b> {{$registered->registration_fee}}</p>
                                         </div>
                                     </div>

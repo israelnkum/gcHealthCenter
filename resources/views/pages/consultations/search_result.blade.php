@@ -4,7 +4,7 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-8 text-right grid-margin">
+            <div class="col-md-8 text-right @if(count($searchPatient) == 1 && count($registration)==0) offset-md-2 @endif grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
                     @csrf
                     <div class="form-group row mb-0">
@@ -60,7 +60,7 @@
                             <div class="card-body">
                                 <h6 class=" text-uppercase mb-0">{{$dat->last_name." ".$dat->first_name}}</h6>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <a href="{{route('patientRecord',$dat->id)}}" style="text-decoration: none" class="">
+                                    <a href="{{route('consultation.show',$dat->id)}}" style="text-decoration: none" class="">
 
                                         <div class="d-inline-block pt-3">
                                             <div class="d-md-flex">
@@ -373,7 +373,7 @@
                     @if($previousRegistration)
                         <form action="{{route('patientRecord')}}" method="post" class="mb-1">
                             @csrf
-                            <input type="text" name="fromSearchPage" value="fromSearchPage">
+                            <input type="hidden" name="fromSearchPage" value="fromSearchPage">
                             <div class="form-group row mb-0">
                                 <div class="col-md-2 offset-md-5">
                                     <select required name="data" class="form-control js-example-basic-single w-100">

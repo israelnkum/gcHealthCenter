@@ -165,7 +165,44 @@ class ConsultationController extends Controller
      */
     public function show($id)
     {
+        $diagnosis = Diagnose::all();
+        $drugs = Drug::all();
 
+        $searchPatient[] = Patient::find($id);
+
+        $registration = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',0)
+            ->where('patient_id',$searchPatient[0]->id)
+            ->whereDate('created_at', Carbon::today())
+            ->limit(1)
+//            ->orderBy('created_at','asc')
+            ->get();
+
+        //get previous registrations
+        $previousRegistration = Registration::where('patient_id',$searchPatient[0]->id)->get();
+
+        $allRegistrations=0;
+        if (count($registration) == 1){
+            $allRegistrations = Registration::where('patient_id',$registration[0]->patient->id)->get();
+
+
+            // return $allRegistrations;
+            $getVitals = Vital::where('patient_id',$registration[0]->patient_id)
+                ->whereDate('created_at', Carbon::today())->get();
+        }else{
+            $getVitals =[];
+        }
+
+
+        return view('pages.consultations.search_result')
+            ->with('registration',$registration)
+            ->with('getVitals',$getVitals)
+            ->with('diagnosis',$diagnosis)
+            ->with('drugs',$drugs)
+            ->with('allRegistrations',$allRegistrations)
+            ->with('searchPatient',$searchPatient)
+            ->with('previousRegistration',$previousRegistration);
     }
 
 

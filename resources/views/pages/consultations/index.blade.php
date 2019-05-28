@@ -4,7 +4,7 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-8 text-right grid-margin">
+            <div class="col-md-6 offset-md-2 grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
                     @csrf
                     <div class="form-group row mb-0">
@@ -22,7 +22,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3    ">
 
                 <form action="{{route('patientRecord')}}" method="post" class="mb-1">
                     @csrf
@@ -60,7 +60,7 @@
             </div>
         @elseif(count($registration)  == 1)
             <div class="row">
-                <div class="col-md-6 grid-margin stretch-card">
+                <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-7 offset-md-2 @endif grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
@@ -232,11 +232,10 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6 grid-margin stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            @if(\Request::is('patientRecord'))
+                @if(\Request::is('patientRecord'))
+                    <div class="col-md-6 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
                                 <h6 class="card-title text-info">{{substr($getRegistration[0]->created_at,0,10)}}</h6>
                                 <hr>
                                 {{--Display vitals--}}
@@ -331,10 +330,11 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            @endif
+
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         @else
             <div class="text-center">
