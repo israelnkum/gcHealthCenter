@@ -16,8 +16,12 @@
     <link rel="stylesheet" href="{{asset('public/vendors/css/vendor.bundle.addons.css')}}">
 
     <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
+    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{asset('public/css/buttons.dataTables.min.css')}}">
+
     <!-- endinject -->
     <link rel="shortcut icon" href="{{asset('public/public/images/favicon.png')}}" />
+
 </head>
 <body onload=display_ct();>
 <div class="container-scroller">
@@ -228,8 +232,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="pages/widgets.html" class="nav-link">
-                            <i class="link-icon icon-drop"></i><span class="menu-title">Pharmacy</span></a>
+                        <a href="#" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i></a>
+                        <div class="submenu">
+                            <ul class="submenu-item">
+                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}">All Drugs</a></li>
+                            </ul>
+                        </div>
                     </li>
 
                     <li class="nav-item">
@@ -276,6 +285,7 @@
 
 <script src="{{asset('public/vendors/js/vendor.bundle.base.js')}}"></script>
 <script src="{{asset('public/vendors/js/vendor.bundle.addons.js')}}"></script>
+{{--<script src="https://code.jquery.com/jquery-3.3.1.js"></script>--}}
 <!-- endinject -->
 <script src="{{asset('public/js/dashboard.js')}}"></script>
 <!-- inject:js -->
@@ -285,6 +295,7 @@
 
 <script src="{{asset('public/js/template.js')}}"></script>
 <script src="{{asset('public/js/todolist.js')}}"></script>
+<script src="{{asset('public/js/file-upload.js')}}"></script>
 <script src="{{asset('public/js/select2.js')}}"></script>
 
 <script src="{{asset('public/js/form-repeater.js')}}"></script>
@@ -293,9 +304,23 @@
 <script src="{{asset('public/js/preferences.js')}}"></script>
 <script src="{{asset('public/js/patients.js')}}"></script>
 <script src="{{asset('public/js/vitals.js')}}"></script>
+
+<script src="{{asset('public/js/drugs.js')}}"></script>
 <script src="{{asset('public/js/consultation.js')}}"></script>
 <script src="{{asset('public/js/form-validation.js')}}"></script>
 <script src="{{asset('public/js/bt-maxLength.js')}}"></script>
+
+
+
+
+
+    <script src="{{asset('public/js/dataTables/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('public/js/dataTables/buttons.flash.min.js')}}"></script>
+    <script src="{{asset('public/js/dataTables/jszip.min.js')}}"></script>
+    <script src="{{asset('public/js/dataTables/pdfmake.min.js')}}"></script>
+    <script src="{{asset('public/js/vfs_fonts.js')}}"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
 
 <!-- endinject -->
 

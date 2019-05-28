@@ -335,12 +335,12 @@
                 </div>
             </div>
         @elseif(count($data) > 1)
-
             <div class="row">
                 @foreach($data as $dat)
                     @if($dat->status != 1)
                         <div class="col-md-6 grid-margin">
                             <div class="card">
+                                <h4 class="card-title mt-0"></h4>
                                 <div class="card-body">
                                     <h6 class=" text-uppercase mb-0">{{$dat->last_name." ".$dat->first_name}}</h6>
                                     <div class="d-flex justify-content-between align-items-center">

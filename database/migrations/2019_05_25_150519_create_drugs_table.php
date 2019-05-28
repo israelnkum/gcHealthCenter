@@ -16,10 +16,10 @@ class CreateDrugsTable extends Migration
         Schema::create('drugs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('type_id');
-            $table->decimal('quantity_in_stock');
+            $table->integer('drug_type_id');
+            $table->decimal('quantity_in_stock')->default(0)->nullable();
             $table->decimal('cost_price');
-            $table->string('supplier');
+            $table->integer('supplier_id');
             $table->decimal('retail_price');
             $table->integer('user_id');
             $table->timestamps();

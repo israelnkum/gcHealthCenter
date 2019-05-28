@@ -15,14 +15,15 @@ class CreateVitalsTable extends Migration
     {
         Schema::create('vitals', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('registration_id');
             $table->integer('patient_id');
-            $table->string('blood_pressure');
-            $table->decimal('weight');
-            $table->decimal('temperature');
-            $table->decimal('pulse');
-            $table->decimal('RDT')->default(0);
-            $table->decimal('glucose')->default(0);
-            $table->integer('user_id');
+            $table->string('blood_pressure')->nullable()->default(0);
+            $table->decimal('weight')->nullable()->default(0);
+            $table->decimal('temperature')->nullable()->default(0);
+            $table->decimal('pulse')->nullable()->default(0);
+            $table->decimal('RDT')->nullable()->default(0);
+            $table->decimal('glucose')->nullable()->default(0);
+            $table->integer('user_id')->nullable();
             $table->timestamps();
         });
     }

@@ -1,18 +1,7 @@
 $(document).ready(function () {
 
-$('#checkAll').change(function () {
-   $('.checkItem').prop("checked",$(this).prop("checked"));
-    if ($('input[name="selected_id[]"]:checked').length >0){
-        $('#deleteSelected').removeAttr('disabled');
-    }  else{
-        $('#deleteSelected').attr('disabled','disabled');
-
-    }
-});
-
-
-$(function () {
-    $('.checkItem').click(function () {
+    $('#checkAll').change(function () {
+        $('.checkItem').prop("checked",$(this).prop("checked"));
         if ($('input[name="selected_id[]"]:checked').length >0){
             $('#deleteSelected').removeAttr('disabled');
         }  else{
@@ -20,24 +9,42 @@ $(function () {
 
         }
     });
-});
 
 
-$('#btn_submit_bulk_delete').click(function () {
-    $('#bulkDeleteForm').submit();
-});
+    $(function () {
+        $('.checkItem').click(function () {
+            if ($('input[name="selected_id[]"]:checked').length >0){
+                $('#deleteSelected').removeAttr('disabled');
+            }  else{
+                $('#deleteSelected').attr('disabled','disabled');
+
+            }
+        });
+    });
+
+
+    $('#btn_submit_bulk_delete').click(function () {
+        $('#bulkDeleteForm').submit();
+    });
 
 
     let table = $('#users_table').DataTable({
-            "aLengthMenu": [
-                [10, 30, 50, 100, -1],
-                [10, 30, 50, 100, "All"]
-            ],
-            "iDisplayLength": 10,
-            "language": {
-                search: ""
-            }
+        "aLengthMenu": [
+            [10, 30, 50, 100, -1],
+            [10, 30, 50, 100, "All"]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            // 'copy', 'csv', 'excel', 'pdf', 'print'
+            'excel','print'
+        ],
+        "iDisplayLength": 10,
+        "language": {
+            search: ""
+        },
+
     });
+
     // table.column(4).visible(false);
     table.on('click','.edit',function () {
         $tr = $(this).closest('tr');
@@ -52,14 +59,14 @@ $('#btn_submit_bulk_delete').click(function () {
 //     console.log(data);
 
 
-         $('#edit_username').val(data[4]);
+        $('#edit_username').val(data[4]);
         $('#edit_email').val(data[5]);
         $('#edit_phone_number').val(data[6]);
 
 
 
-         //let myArray = data[4].substring(0, data[4].length - 1).split(',');
-         $('#edit_role').val(data[7]).trigger('change');
+        //let myArray = data[4].substring(0, data[4].length - 1).split(',');
+        $('#edit_role').val(data[7]).trigger('change');
 
         $('#editStaffForm').attr('action', 'users/'+data[3]);
         $('#editStaff').modal('show');

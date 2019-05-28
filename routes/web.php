@@ -51,6 +51,37 @@ Route::post('/searchRegistrationForVitals','VitalsController@searchRegistrationF
 
 Route::resource('consultation','ConsultationController');
 Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
+Route::post('/patientRecord','ConsultationController@patientRecord')->name('patientRecord');
+
+
+/*
+ * Pharmacy -drugs Route
+ */
+
+Route::resource('drugs','DrugController');
+Route::post('/bulk_deleteDrug','DrugController@bulk_deleteDrug')->name('bulk_deleteDrug');
+Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
+
+
+/*
+ * Suppliers route
+ */
+Route::resource('suppliers','SupplierController');
+Route::post('/bulk_deleteSupplier','SupplierController@bulk_deleteSupplier')->name('bulk_deleteSupplier');
+
+
+
+
+
+
+/*
+ * Pharmacy -drugs types Route
+ */
+
+Route::resource('drugs-types','DrugTypeController');
+Route::post('/bulk_deleteDrugType','DrugTypeController@bulk_deleteDrugType')->name('bulk_deleteDrugType');
+
+
 
 
 

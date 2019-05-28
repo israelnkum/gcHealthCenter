@@ -15,15 +15,16 @@ class CreateConsultationsTable extends Migration
     {
         Schema::create('consultations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('complains');
-            $table->string('finding');
-            $table->string('physical_examination');
-            $table->string('diagnosis');
-            $table->string('treatment_medication');
-            $table->string('detain_admit');
+            $table->integer('patient_id');
+            $table->integer('registration_id');
+            $table->string('complains')->nullable();
+            $table->string('findings')->nullable();
+            $table->string('physical_examination')->nullable();
+            $table->string('other_diagnosis')->nullable();
+            $table->string('detain_admit')->nullable();
             $table->string('labs')->nullable();
             $table->string('ultra_sound_scan')->nullable();
-            $table->integer('user_id');
+            $table->integer('user_id')->nullable();
             $table->timestamps();
         });
     }

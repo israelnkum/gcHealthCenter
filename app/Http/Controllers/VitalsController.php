@@ -149,13 +149,13 @@ class VitalsController extends Controller
     public function update(Request $request, $id)
     {
         $vital = Vital::find($id);
-        $vital->patient_id = $request->input('patient_id');
         $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
         $vital->weight = $request->input('weight');
         $vital->temperature = $request->input('temperature');
         $vital->pulse = $request->input('pulse');
         $vital->RDT = $request->input('rdt');
         $vital->glucose = $request->input('glucose');
+        $vital->user_id=Auth::user()->id;
         $vital->save();
 
         $registration = Registration::find($request->input('registration_id'));

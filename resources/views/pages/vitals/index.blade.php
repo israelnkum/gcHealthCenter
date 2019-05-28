@@ -36,14 +36,18 @@
                         <h4 class="card-title">Recent Registration's</h4>
                         <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
                             @php($i =1)
+                            @if(count($registration) ==0)
+                                <div class="text-center">
+                                    <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
+                                </div>
+                            @endif
                             @foreach($registration as $registered)
                                 <div>
-
                                     <div class="card-header" role="tab" id="heading-4">
                                         <a style="text-decoration: none" data-toggle="collapse" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
                                             <div class="row">
                                                 <div class="col-md-6">
-{{--                                                    GC{{$registered->patient->registration_number}}--}}
+                                                    {{--                                                    GC{{$registered->patient->registration_number}}--}}
                                                     <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
                                                         <i class="icon-folder mr-1"></i> {{$registered->patient->folder_number}}
                                                     </h2>
@@ -67,8 +71,9 @@
                                     <div id="GC{{$registered->patient->registration_number}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                         <div class="card-body">
                                             <h4></h4>
-                                            <form class="needs-validation" novalidate method="post" action="{{route('vitals.store')}}">
+                                            <form class="needs-validation" novalidate method="post" action="{{route('vitals.update',$registered->id)}}">
                                                 @csrf
+                                                {!! method_field('put') !!}
                                                 <input type="hidden" name="registration_id" value="{{$registered->id}}">
                                                 <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
                                                 <div class="form-group row">

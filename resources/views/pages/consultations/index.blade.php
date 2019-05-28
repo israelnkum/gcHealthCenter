@@ -4,8 +4,8 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-8 offset-md-2 text-right grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchRegistrationForVitals')}}" method="post">
+            <div class="col-md-8 text-right grid-margin">
+                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
@@ -22,22 +22,50 @@
                     </div>
                 </form>
             </div>
+            <div class="col-md-4">
+
+                <form action="{{route('patientRecord')}}" method="post" class="mb-1">
+                    @csrf
+                    <div class="form-group row mb-0">
+                        <div class="col-md-6 offset-md-5">
+                            <select required name="data" class="js-example-basic-single w-100 form-control">
+                                <option value="">Select Record Date</option>
+                                @if(count($registration)  == 1)
+                                    @foreach($allRegistrations as $userRegistration)
+                                        <option @if(substr($userRegistration->created_at,0,10) == date('Y-m-d'))disabled @endif value="{{substr($userRegistration->created_at,0,10).",".$userRegistration->patient_id}}">{{substr($userRegistration->created_at,0,10)}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            <div class="invalid-feedback">
+                                Select a date
+                            </div>
+                        </div>
+                        <div class="col-md-1 ml-0">
+                            <button type="submit" class="btn-light btn btn-sm btn-rounded p-1 text-center"><i class="icon-magnifier"></i></button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
             {{--  <div class="col-md-4 text-right grid-margin ">
                   <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">
                       <i class="icon icon-plus"></i> New Patient
                   </button>
               </div>--}}
         </div>
-
-        <div class="row">
-            <div class="col-md-8 offset-md-2 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        @if(count($registration)  == 1)
+        @if(count($registration)  == 0)
+            <div class="text-center">
+                <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
+            </div>
+        @elseif(count($registration)  == 1)
+            <div class="row">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
                                 @php($i =1)
                                 @foreach($registration as $registered)
-
                                     <div class="card-header" role="tab" id="heading-4">
                                         <a data-toggle="collapse" style="text-decoration: none" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
                                             <div class="row">
@@ -51,7 +79,7 @@
                                                     </h5>
                                                     <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->patient->phone_number}}</small>
                                                 </div>
-                                                <div class="col-md-5 text-right mr-1">
+                                                <div class="col-md-6 text-right">
                                                     Date Of Birth: <span class="font-weight-bold">{{$registered->patient->date_of_birth}}</span><br>
                                                     Age: <span class="font-weight-bold">{{$registered->patient->age}}</span><br>
                                                     Gender: <span class="font-weight-bold">{{$registered->patient->gender}}</span><br>
@@ -59,52 +87,53 @@
                                                 </div>
                                             </div>
                                             <hr>
-                                            <h4 class="card-title">Vital Signs</h4>
+                                            <h6 class="card-title">Vital Signs</h6>
                                             <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
                                                         <h6>Blood Pressure(BP) - <span class="text-danger">{{$getVitals[0]->blood_pressure}} mmHg</span></h6>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                <div class="col-md-4 text-right">
+                                                    <div class="form-group">
                                                         <h6>Weight - <span class="text-danger">{{$getVitals[0]->weight}} kg</span></h6>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                    <div class="form-group">
                                                         <h6>Temperature - <span class="text-danger">{{$getVitals[0]->temperature}} °c</span></h6>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                <div class="col-md-6 text-right">
+                                                    <div class="form-group">
                                                         <h6>Pulse - <span class="text-danger">{{$getVitals[0]->pulse}} bpm</span></h6>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                    <div class="form-group">
                                                         <h6>Glucose - <span class="text-danger">{{$getVitals[0]->glucose}} mol</span></h6>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
-                                                    <div class="form-group row">
+                                                <div class="col-md-6 text-right">
+                                                    <div class="form-group">
                                                         <h6>RDT - <span class="text-danger">{{$getVitals[0]->RDT}} bpm</span></h6>
                                                     </div>
                                                 </div>
                                             </div>
                                         </a>
-
                                     </div>
-                                    <div id="GC{{$registered->patient->registration_number}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
+                                    <div id="GC{{$registered->patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                         <div class="card-body">
-                                            <form class="needs-validation" novalidate method="post" action="{{route('consultation.store')}}">
+                                            <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.update',$registered->id)}}">
                                                 @csrf
+                                                {!! method_field('put') !!}
                                                 <input type="hidden" name="registration_id" value="{{$registered->id}}">
                                                 <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
+                                                <input type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
                                                 <div class="form-group row">
-                                                    <div class="col-sm-10">
+                                                    <div class="col-sm-12">
                                                         <label for="blood_pressure" class="text-info">Complains</label>
                                                         <textarea required name="complains" class="form-control" id="complains{!! $i !!}" rows="10"></textarea>
                                                         <div class="invalid-feedback">
@@ -113,7 +142,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <div class="col-sm-10">
+                                                    <div class="col-sm-12">
                                                         <label for="blood_pressure" class="text-info">Physical Examination</label>
                                                         <textarea required name="physical_examination" class="form-control" id="physical_examination{!! $i !!}" rows="10"></textarea>
                                                         <div class="invalid-feedback">
@@ -122,7 +151,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <div class="col-sm-10">
+                                                    <div class="col-sm-12">
                                                         <label for="blood_pressure" class="text-info">Findings</label>
                                                         <textarea required name="findings" class="form-control" id="findings{!! $i !!}" rows="10"></textarea>
                                                         <div class="invalid-feedback">
@@ -131,9 +160,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <div class="col-sm-8">
+                                                    <div class="col-sm-12">
                                                         <label for="diagnosis" class="text-info">Diagnosis</label>
-                                                        <select required  class="form-control js-example-basic-single" style="width: 100%" name="diagnosis" id="select_diagnosis">
+                                                        <select required class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                             <option value="">Select Diagnosis</option>
                                                             @foreach($diagnosis as $diag)
                                                                 <option value="{{$diag->id}}">{{$diag->name}}</option>
@@ -143,36 +172,54 @@
                                                             Diagnosis is required
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-2 ml-5 ">
-                                                        <div class="form-check form-check-flat mt-0">
-                                                            <label class="form-check-label mt-4 ">
-                                                                <input type="checkbox" class="form-check-input" name="diagnosis" id="other_diagnosis_check">
-                                                                Other
-                                                            </label>
-                                                        </div>
-                                                    </div>
+                                                    {{-- <div class="col-sm-2 ml-5 ">
+                                                         <div class="form-check form-check-flat mt-0">
+                                                             <label class="form-check-label mt-4 ">
+                                                                 <input type="checkbox" class="form-check-input"  id="other_diagnosis_check">
+                                                                 Other
+                                                             </label>
+                                                         </div>
+                                                     </div>--}}
                                                 </div>
-                                                <div class="form-group row" style="display: none" id="other_diagnosis_div">
+                                                <div class="form-group row" id="other_diagnosis_div">
                                                     {{--                                                <label for="glucose" class="col-sm- col-form-label text-right">Glucose(Sugar Level)</label>--}}
-                                                    <div class="col-sm-10">
-                                                        <input type="text" placeholder="Enter diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis_text">
+                                                    <div class="col-sm-12">
+                                                        {{--                                                        <input type="text" placeholder="Enter diagnosis"  class="form-control" id="other_diagnosis_text" name="other_diagnosis">--}}
+                                                        <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                         <div class="invalid-feedback">
                                                             Diagnosis is required
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <div class="col-sm-10">
-                                                        <label for="blood_pressure" class="text-info">Treatment/Medication</label>
-                                                        <textarea required name="treatment_medication" class="form-control" id="physical_examination" rows="10"></textarea>
+                                                    <div class="col-sm-12">
+                                                        <label for="treatment_medication" class="text-info">Medication</label>
+                                                        <select required class="js-example-basic-multiple w-100" style="width: 100%" multiple="multiple" name="treatment_medication[]" id="treatment_medication">
+                                                            {{--                                                            <option value="">Select</option>--}}
+                                                            @foreach($drugs as $drug)
+                                                                <option value="{{$drug->id}}">{{$drug->name}}</option>
+                                                            @endforeach
+                                                        </select>
                                                         <div class="invalid-feedback">
-                                                            Physical Examination is required
+                                                            Medication is required
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <div class="col-sm-10 text-right">
+                                                    <div class="col-sm-6">
+                                                        <label>Upload <u><b>LAB</b></u> Result(s)</label>
+                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label>Upload <u><b>SCAN</b></u> Result(s)</label>
+                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="form-group row mt-5">
+                                                    <div class="col-sm-12 text-right">
                                                         <button class="btn btn-primary">Finalize</button>
                                                     </div>
                                                 </div>
@@ -182,16 +229,118 @@
                                     @php($i++)
                                 @endforeach
                             </div>
-                            @else
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="text-center">
-                                <h6 class="display-4">Good Job! No Patient in Cue</h6>
-                            </div>
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            @if(\Request::is('patientRecord'))
+                                <h6 class="card-title text-info">{{substr($getRegistration[0]->created_at,0,10)}}</h6>
+                                <hr>
+                                {{--Display vitals--}}
+                                @foreach($vitals as $vital)
+                                    <h6 class="card-title text-danger">Vital Signs</h6>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">Blood Pressure(BP) - <span class="text-danger">{{$vital->blood_pressure}} mmHg</span></h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">Weight - <span class="text-danger">{{$vital->weight}} kg</span></h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">Temperature - <span class="text-danger">{{$vital->temperature}} °c</span></h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 text-right">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">Pulse - <span class="text-danger">{{$vital->pulse}} bpm</span></h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">Glucose - <span class="text-danger">{{$vital->glucose}} mol</span></h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 text-right">
+                                            <div class="form-group">
+                                                <h6 style="font-size: 13px;">RDT - <span class="text-danger">{{$vital->RDT}} bpm</span></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                {{-- End Vitals --}}
+                                <hr>
+                                {{--Display consulation--}}
+                                @foreach($consultation as $consult)
+                                    <h6 class="card-title text-danger">Consultation</h6>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="text-info">Complains</label>
+                                            <blockquote class="blockquote" style="padding: 5px;">
+                                                <p class="mb-0">{{$consult->complains}}</p>
+                                            </blockquote>
+                                        </div>
+                                        <div class="col-md-12 p-1">
+                                            <label class="text-info">Findings</label>
+                                            <blockquote class="blockquote" style="padding: 5px;">
+                                                <p class="mb-0">{{$consult->findings}}</p>
+                                            </blockquote>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="text-info">Physical Examination</label>
+                                            <blockquote class="blockquote" style="padding: 5px;">
+                                                <p class="mb-0">{{$consult->physical_examination}}</p>
+                                            </blockquote>
+                                        </div>
+                                        <?php
+                                        $other_diagnosis =$consult->other_diagnosis;
+                                        ?>
+                                    </div>
+                                @endforeach
+                                {{--End consulation--}}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="text-info">Diagnosis</label>
+                                        <blockquote class="blockquote" style="padding: 5px;">
+                                            <ul>
+                                                @foreach($patientDiagnosis as $diagnosis)
+                                                    <li>{{$diagnosis->diagnoses->name}}</li>
+                                                @endforeach
+                                                <li>{{$other_diagnosis}}</li>
+                                            </ul>
+                                        </blockquote>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6 class="card-title">Medications</h6>
+                                @foreach($getPatientDrugs as $med)
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <p>{{$med->name}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
                             @endif
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @else
+            <div class="text-center">
+                <h6 class="display-4 text-info">Good Job! No Patient in Cue</h6>
+            </div>
+        @endif
     </div>
 
     <!-- content-wrapper ends -->

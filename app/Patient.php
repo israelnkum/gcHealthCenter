@@ -13,4 +13,16 @@ class Patient extends Model
     public function vitals(){
         return $this->hasMany('App\Vital');
     }
+
+    public function consultation(){
+        return $this->hasMany('App\Consultation');
+    }
+    public function diagnosis(){
+        return $this->hasMany('App\PatientDiagnosis');
+    }
+
+    public function medication(){
+        return $this->hasMany('App\Medication');
+    }
+
 }
