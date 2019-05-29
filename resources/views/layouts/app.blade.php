@@ -219,27 +219,30 @@
                         <a href="#" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
                         <div class="submenu">
                             <ul class="submenu-item">
-                                <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}">Patients</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}?{{Hash::make(time())}}">Patients</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}">All Patients</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}">Vitals</a></li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a href="{{route('consultation.index')}}" class="nav-link">
+                        <a href="{{route('consultation.index')}}?{{Hash::make(time())}}" class="nav-link">
                             <i class="link-icon icon-energy"></i>
                             <span class="menu-title">Consulting</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i></a>
+                        <a href="#" class="nav-link"><i class="link-icon icon-drop">
+                            </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
+                        </a>
                         <div class="submenu">
                             <ul class="submenu-item">
                                 <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}">All Drugs</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">All Drugs</a></li>
                             </ul>
                         </div>
                     </li>
+
 
                     <li class="nav-item">
                         <a href="#" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>

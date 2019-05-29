@@ -20,8 +20,8 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="d-flex justify-content-between border-right card-statistics-item">
                                     <div>
-                                        <h1>217</h1>
-                                        <p class="text-muted mb-0">New users</p>
+                                        <h1>{{$totalPatient}}</h1>
+                                        <p class="text-muted mb-0">Total Patient</p>
                                     </div>
                                     <i class="icon-people text-primary icon-lg"></i>
                                 </div>
@@ -29,10 +29,10 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="d-flex justify-content-between border-right card-statistics-item">
                                     <div>
-                                        <h1>6875</h1>
-                                        <p class="text-muted mb-0">Unique visits</p>
+                                        <h1>{{$totalStaff}}</h1>
+                                        <p class="text-muted mb-0">Total Staff</p>
                                     </div>
-                                    <i class="icon-pin text-primary icon-lg"></i>
+                                    <i class="icon-people text-primary icon-lg"></i>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-3">

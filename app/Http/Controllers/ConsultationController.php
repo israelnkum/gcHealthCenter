@@ -383,7 +383,7 @@ class ConsultationController extends Controller
         $medication = Medication::with('drugs')->where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
 
-//        return $vitals;
+//      return $consultation;
 //        return $patientDiagnosis;
         $getPatientDrugs=[];
         foreach ($medication as $item) {

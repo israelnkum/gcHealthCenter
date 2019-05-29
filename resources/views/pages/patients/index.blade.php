@@ -97,8 +97,9 @@
                                                         <div class="col-md-6">
                                                             <h6 class=" mb-0 text-uppercase text-primary">Personal Information</h6>
                                                             <div class="card-body mt-0 p-1">
-                                                                <p style="line-height: 13px" class="mt-2"><b>Surname</b> : <u>{{$data[0]->last_name}}</u></p>
+                                                                <p style="line-height: 13px" class="mt-2"><b>Last Name</b> : <u>{{$data[0]->last_name}}</u></p>
                                                                 <p style="line-height: 13px"><b>First Name :</b> <u>{{$data[0]->first_name}}</u> </p>
+                                                                <p style="line-height: 13px"><b>Other Name :</b> <u>{{$data[0]->other_name}}</u> </p>
                                                                 <p style="line-height: 13px"><b>Date Of Birth</b> : <u>{{$data[0]->date_of_birth}}</u></p>
                                                                 <p style="line-height: 13px"><b>Occupation</b> : <u>{{$data[0]->occupation}}</u></p>
                                                                 <p style="line-height: 13px"><b>Gender</b> : <u>{{$data[0]->gender}}</u></p>
@@ -342,7 +343,7 @@
                             <div class="card">
                                 <h4 class="card-title mt-0"></h4>
                                 <div class="card-body">
-                                    <h6 class=" text-uppercase mb-0">{{$dat->last_name." ".$dat->first_name}}</h6>
+                                    <h6 class=" text-uppercase mb-0">{{$dat->title." ".$dat->first_name." ".$dat->other_name." ".$dat->last_name}}</h6>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <a href="{{route('patients.show',$dat->id)}}" style="text-decoration: none" class="">
 

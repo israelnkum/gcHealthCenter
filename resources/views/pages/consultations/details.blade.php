@@ -44,15 +44,8 @@
                             <button type="submit" class="btn-light btn btn-sm btn-rounded p-1 text-center"><i class="icon-magnifier"></i></button>
                         </div>
                     </div>
-
                 </form>
-
             </div>
-            {{--  <div class="col-md-4 text-right grid-margin ">
-                  <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">
-                      <i class="icon icon-plus"></i> New Patient
-                  </button>
-              </div>--}}
         </div>
         @if(count($registration)  == 0)
             <div class="text-center">

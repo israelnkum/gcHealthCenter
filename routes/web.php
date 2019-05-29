@@ -25,6 +25,9 @@ Route::get('/home', 'HomeController@index')->name('home');
  */
 
 Route::resource('patients','PatientController');
+/*Route::resource('patients', 'PhotoController')->names([
+    'create' => 'photos.build'
+]);*/
 Route::post('/searchPatient','PatientController@searchPatient')->name('searchPatient');
 
 
@@ -59,8 +62,9 @@ Route::post('/patientRecord','ConsultationController@patientRecord')->name('pati
  */
 
 Route::resource('drugs','DrugController');
-Route::post('/bulk_deleteDrug','DrugController@bulk_deleteDrug')->name('bulk_deleteDrug');
-Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
+Route::post('/bulk-delete-drug','DrugController@bulk_deleteDrug')->name('bulk_deleteDrug');
+//Route::post('/search-consultation','ConsultationController@searchConsultation')->name('searchConsultation');
+Route::post('/bulk-upload','DrugController@upload_drug')->name('upload_drug');
 
 
 /*

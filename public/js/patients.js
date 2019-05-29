@@ -16,13 +16,26 @@ $(document).ready(function () {
         dropdownParent: $('#newPatient .modal-content')
     });
 
-    // $('#phone_number').keyup(function () {
-    //     //
-    //     if ($('#phone_number').val().indexOf('_') > -1){
-    //         $('#phone_number').attr('required',true);
-    //     }
-    // });
 
+
+    let table = $('#patients_table').DataTable({
+        "aLengthMenu": [
+            [10, 30, 50, 100, -1],
+            [10, 30, 50, 100, "All"]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            // 'copy', 'csv', 'excel', 'pdf', 'print'
+            'excel','pdf'
+        ],
+        "iDisplayLength": 10,
+        "language": {
+            search: ""
+        },
+
+    });
+
+    table.column(2).visible(false);
     $('#register').click(function () {
         if (!$(this).is(':checked')){
             //alert("unckecked")

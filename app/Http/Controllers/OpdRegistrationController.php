@@ -86,15 +86,15 @@ class OpdRegistrationController extends Controller
                         $consultation->registration_id =$register->id;
                         $consultation->save();
 
-                        $patientDiagnosis = new PatientDiagnosis();
-                        $patientDiagnosis->patient_id =$request->input('patient_id');
-                        $patientDiagnosis->registration_id =$register->id;
-                        $patientDiagnosis->save();
+//                        $patientDiagnosis = new PatientDiagnosis();
+//                        $patientDiagnosis->patient_id =$request->input('patient_id');
+//                        $patientDiagnosis->registration_id =$register->id;
+//                        $patientDiagnosis->save();
 
-                        $medication = new Medication();
-                        $medication->patient_id =$request->input('patient_id');
-                        $medication->registration_id =$register->id;
-                        $medication->save();
+//                        $medication = new Medication();
+//                        $medication->patient_id =$request->input('patient_id');
+//                        $medication->registration_id =$register->id;
+//                        $medication->save();
 
                     }
                 }

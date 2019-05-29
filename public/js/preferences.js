@@ -32,14 +32,19 @@ $('#btn_bulk_delete_insurance').click(function () {
 
 
     let table = $('#insurance_table').DataTable({
-            "aLengthMenu": [
-                [10, 30, 50, 100, -1],
-                [10, 30, 50, 100, "All"]
-            ],
-            "iDisplayLength": 10,
-            "language": {
-                search: ""
-            }
+        "aLengthMenu": [
+            [10, 30, 50, 100, -1],
+            [10, 30, 50, 100, "All"]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            // 'copy', 'csv', 'excel', 'pdf', 'print'
+            'excel','pdf'
+        ],
+        "iDisplayLength": 10,
+        "language": {
+            search: ""
+        },
     });
     // table.column(4).visible(false);
     table.on('click','.edit',function () {
@@ -102,10 +107,15 @@ $('#btn_bulk_delete_insurance').click(function () {
             [10, 30, 50, 100, -1],
             [10, 30, 50, 100, "All"]
         ],
+        dom: 'Bfrtip',
+        buttons: [
+            // 'copy', 'csv', 'excel', 'pdf', 'print'
+            'excel','pdf'
+        ],
         "iDisplayLength": 10,
         "language": {
             search: ""
-        }
+        },
     });
     // table.column(4).visible(false);
     charge_table.on('click','.edit_charge',function () {
@@ -169,10 +179,15 @@ $('#btn_bulk_delete_insurance').click(function () {
             [10, 30, 50, 100, -1],
             [10, 30, 50, 100, "All"]
         ],
+        dom: 'Bfrtip',
+        buttons: [
+            // 'copy', 'csv', 'excel', 'pdf', 'print'
+            'excel','pdf'
+        ],
         "iDisplayLength": 10,
         "language": {
             search: ""
-        }
+        },
     });
     // table.column(4).visible(false);
     diagnoses_table.on('click','.edit',function () {

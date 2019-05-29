@@ -109,6 +109,62 @@ class DrugController extends Controller
     }
 
 
+
+
+    public function upload_drug(Request $request)
+    {
+        set_time_limit(36000);
+        $valid_exts = array('csv','xls','xlsx'); // valid extensions
+        $file = $request->file('file');
+        //$name = time() . '-' . $file->getClientOriginalName();
+        if (!empty($file)) {
+             $ext = strtolower($file->getClientOriginalExtension());
+            if (in_array($ext, $valid_exts)) {
+                $path = $request->file('file')->getRealPath();
+                $data = Excel::load($path, function($reader) {})->get();
+                $total=count($data);
+                if(!empty($data) && $data->count()){
+                    // $user = \Auth::user()->id;
+                    foreach($data as $value=>$row)
+                    {
+                        $name = $row->name;
+                        $cost_price = $row->cost_price;
+                        $retail_price = $row->retail_price;
+
+                        $testQuery = Drug::where('name', $name)->first();
+                        if(empty($testQuery)){
+                            $drug = new Drug();
+                            $drug->name = $name;
+                            $drug->drug_type_id = $request->input('drug_type_id');
+                            $drug->cost_price = $cost_price;
+                            $drug->supplier_id = $request->input('supplier_id');
+                            $drug->retail_price = $retail_price;
+                            $drug->user_id = Auth::user()->id;
+                            $drug->save();
+                        }
+                        else{
+                            //update student information if student indexNumber already exist
+                            $drug = Drug::where('name', $name)->first();
+                            $drug->name = $name;
+                            $drug->drug_type_id = $request->input('drug_type_id');
+                            $drug->cost_price = $cost_price;
+                            $drug->supplier_id = $request->input('supplier_id');
+                            $drug->retail_price = $retail_price;
+                            $drug->user_id = Auth::user()->id;
+                            $drug->save();
+                        }
+                    }
+                }
+            } else {
+                // return redirect('/upload/courses')->with("error", " <span style='font-weight:bold;font-size:13px;'></span> ");
+                return redirect('/drugs')->with("error", "Only excel file is accepted!");
+            }
+        } else {
+            // return redirect('/upload/courses')->with("error", " <span style='font-weight:bold;font-size:13px;'></span> ");
+            return redirect('drugs')->with("error", "Please upload an excel file!");
+        }
+        return redirect('/drugs')->with("success", " $total Student uploaded successfully");
+    }
     /**
      * Show the form for editing the specified resource.
      *

@@ -22,12 +22,12 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-2">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">
-                    <i class="icon icon-plus"></i> New Patient
-                </button>
-            </div>
+{{--            <div class="col-md-2">--}}
+{{--                <!-- Button trigger modal -->--}}
+{{--                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">--}}
+{{--                    <i class="icon icon-plus"></i> New Patient--}}
+{{--                </button>--}}
+{{--            </div>--}}
         </div>
         <div class="col-md-12 grid-margin">
             <div class="card">
@@ -36,7 +36,7 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-6 text-left">
-                                <h4 class="card-title">All Charges</h4>
+                                <h4 class="card-title">All Patients</h4>
                             </div>
                             <div class="col-md-6 text-right mb-3">
                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCharge" id="deleteSelectedCharge" disabled>
@@ -49,7 +49,7 @@
                             </div>
                         </div>
 
-                        <table class="table" id="charge_table">
+                        <table class="table" id="patients_table">
                             <thead>
                             <tr>
                                 <th>

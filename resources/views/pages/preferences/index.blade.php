@@ -7,11 +7,11 @@
                     <div class="card-body">
                         <div class="profile-body">
                             <ul class="nav tab-switch mt-0" role="tablist">
+{{--                                <li class="nav-item">--}}
+{{--                                    <a class="nav-link active" id="general-tab" data-toggle="pill" href="#general" role="tab" aria-controls="general" aria-selected="true">General</a>--}}
+{{--                                </li>--}}
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="general-tab" data-toggle="pill" href="#general" role="tab" aria-controls="general" aria-selected="true">General</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="insurance-tab" data-toggle="pill" href="#insurance" role="tab" aria-controls="insurance" aria-selected="false">Insurance</a>
+                                    <a class="nav-link active" id="insurance-tab" data-toggle="pill" href="#insurance" role="tab" aria-controls="insurance" aria-selected="false">Insurance</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="charges-tab" data-toggle="pill" href="#charges" role="tab" aria-controls="charges" aria-selected="false">Charges</a>
@@ -24,7 +24,7 @@
                                 <div class="col-md-9">
                                     <div class="tab-content tab-body" id="profile-log-switch">
                                         {{--Start General Tab--}}
-                                        <div class="tab-pane fade show active pr-3" id="general" role="tabpanel" aria-labelledby="general-tab">
+                                        <div class="tab-pane fade  pr-3" id="general" role="tabpanel" aria-labelledby="general-tab">
                                             <div class="row">
                                                 <div class="col-12 mt-5">
                                                     <h5 class="mb-5">Stages</h5>
@@ -75,7 +75,7 @@
 
                                         {{--Start Insurance TAb--}}
 
-                                        <div class="tab-pane fade" id="insurance" role="tabpanel" aria-labelledby="insurance-tab">
+                                        <div class="tab-pane fade show active" id="insurance" role="tabpanel" aria-labelledby="insurance-tab">
                                             <div class="card-body">
                                                 <form action="{{route('bulk_deleteInsurance')}}" id="bulkDeleteInsuranceForm" method="POST">
                                                     @csrf

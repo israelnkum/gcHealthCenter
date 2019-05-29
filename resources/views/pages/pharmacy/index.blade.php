@@ -35,6 +35,9 @@
                                                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDrug" id="deleteSelectedDrugs" disabled>
                                                                 <i class="icon icon-trash"></i> Delete Selected
                                                             </button>
+                                                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#upload_drugs">
+                                                                <i class="icon icon-cloud-upload"></i> Bulk Upload
+                                                            </button>
                                                             <!-- Button trigger modal -->
                                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newDrugModal">
                                                                 <i class="icon icon-plus"></i> New Drug
@@ -260,6 +263,41 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="upload_drugs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="post" action="{{route('upload_drug')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Bulk Drug Upload</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body pt-0">
+                        <div class="form-row">
+                            <div class="col-md-12 mb-3">
+                                <label for="name">Select File</label>
+                                <input style="border: dashed 1px;background: transparent" title="Select File" type="file" name="file" class="form-control-file" id="file" required>
+                                <div class="invalid-feedback">
+                                    File is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="icon icon-close"></i> Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="icon icon-cloud-upload"></i> Upload
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
     <!-- new DrugType modal -->

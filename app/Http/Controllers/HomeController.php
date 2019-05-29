@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 
+use App\Patient;
+use App\User;
+
 class HomeController extends Controller
 {
     /**
@@ -22,12 +25,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-/*        $user = User::find(Auth::user()->id);
-        $user->updated_at =date('Y-m-d H:i:s');
-        $user->save();*/
-        $lastVisit=\Carbon\Carbon::createFromTimeStamp(strtotime(@\Auth::user()->updated_at))->diffForHumans();
 
+        $lastVisit=\Carbon\Carbon::createFromTimeStamp(strtotime(@\Auth::user()->updated_at))->diffForHumans();
+        $totalPatient = Patient::all()->where('status',0)->count();
+        $totalStaff = User::where('role','Doctor')
+            ->orWhere('role','Nurse')
+            ->orWhere('role','Admin')
+            ->orWhere('role','Pharmacist')->count();
+
+        //return $totalStaff;
         return view('home')
-            ->with('lastVisit',$lastVisit);
+            ->with('totalPatient',$totalPatient)
+            ->with('lastVisit',$lastVisit)
+            ->with('totalStaff',$totalStaff);
     }
 }
