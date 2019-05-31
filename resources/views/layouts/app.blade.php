@@ -15,8 +15,9 @@
     <link rel="stylesheet" href="{{asset('public/vendors/css/vendor.bundle.base.css')}}">
     <link rel="stylesheet" href="{{asset('public/vendors/css/vendor.bundle.addons.css')}}">
 
+    <link rel="stylesheet" href="{{asset('public/vendors/lightgallery/css/lightgallery.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
-    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">
+{{--    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">--}}
     <link rel="stylesheet" href="{{asset('public/css/buttons.dataTables.min.css')}}">
 
     <!-- endinject -->
@@ -238,7 +239,7 @@
                         <div class="submenu">
                             <ul class="submenu-item">
                                 <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">All Drugs</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Drugs</a></li>
                             </ul>
                         </div>
                     </li>
@@ -312,18 +313,19 @@
 <script src="{{asset('public/js/consultation.js')}}"></script>
 <script src="{{asset('public/js/form-validation.js')}}"></script>
 <script src="{{asset('public/js/bt-maxLength.js')}}"></script>
+<script src="{{asset('public/vendors/lightgallery/js/lightgallery-all.min.js')}}"></script>
+<script src="{{asset('public/js/light-gallery.js')}}"></script>
 
 
 
 
-
-    <script src="{{asset('public/js/dataTables/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('public/js/dataTables/buttons.flash.min.js')}}"></script>
-    <script src="{{asset('public/js/dataTables/jszip.min.js')}}"></script>
-    <script src="{{asset('public/js/dataTables/pdfmake.min.js')}}"></script>
-    <script src="{{asset('public/js/vfs_fonts.js')}}"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
+<script src="{{asset('public/js/dataTables/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('public/js/dataTables/buttons.flash.min.js')}}"></script>
+<script src="{{asset('public/js/dataTables/jszip.min.js')}}"></script>
+<script src="{{asset('public/js/dataTables/pdfmake.min.js')}}"></script>
+<script src="{{asset('public/js/dataTables/vfs_fonts.js')}}"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
 
 <!-- endinject -->
 
@@ -370,19 +372,25 @@
         },3000);
     });
 </script>
+@if(\Request::is('searchConsultation') || \Request::is('consultation/*'))
+    <script type="text/javascript">
 
-{{--<script>
-    $(document).ready(function () {
-        if ($('#blood_pressure'+i).val()>37){
-            $('.sugar').fadeIn(1000).slideDown(1000);
-            $('#rdt').attr('required',true);
-            $('#glucose').attr('required',true);
-        } else{
-            $('.sugar').fadeOut(1000).slideUp(1000);
-            $('#rdt').removeAttr('required');
-            $('#glucose').removeAttr('required');
-        }
-    })
-</script>--}}
+        let drugs = '<?php echo $getImplodedMedicine ?>';
+
+        let myArray = drugs.substring(0, drugs.length).split(',');
+        //alert(drugs);
+
+        $("#patient_medication").val(myArray).trigger('change');
+
+        let diagnosis ='<?php echo $getImplodedDiagnosis ?>';
+        let diagnosisArray = diagnosis.substring(0, diagnosis.length).split(',');
+        //alert(drugs);
+
+        $("#patient_diagnosis").val(diagnosisArray).trigger('change');
+
+
+
+    </script>
+@endif
 </body>
 </html>

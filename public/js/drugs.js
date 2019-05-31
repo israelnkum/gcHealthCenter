@@ -38,8 +38,23 @@ $(document).ready(function () {
         ],
         dom: 'Bfrtip',
         buttons: [
+            {
+                extend: 'pageLength',
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: [1,3,4,5]
+                }
+            },
+            {
+                extend: 'pdf',
+                exportOptions: {
+                    columns: [1,3,4,5]
+                }
+            }
             // 'copy', 'csv', 'excel', 'pdf', 'print'
-            'excel','pdf'
+           // 'pageLength','excel','pdf'
         ],
         "iDisplayLength": 10,
         "language": {
@@ -109,8 +124,21 @@ $(document).ready(function () {
         ],
         dom: 'Bfrtip',
         buttons: [
-            // 'copy', 'csv', 'excel', 'pdf', 'print'
-            'excel','pdf'
+            {
+                extend: 'pageLength',
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: [1,3]
+                }
+            },
+            {
+                extend: 'pdf',
+                exportOptions: {
+                    columns: [1,3]
+                }
+            }
         ],
         "iDisplayLength": 10,
         "language": {
@@ -183,8 +211,21 @@ $(document).ready(function () {
         ],
         dom: 'Bfrtip',
         buttons: [
-            // 'copy', 'csv', 'excel', 'pdf', 'print'
-            'excel','pdf'
+            {
+                extend: 'pageLength',
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: [1,3,4,5,6,7,8]
+                }
+            },
+            {
+                extend: 'pdf',
+                exportOptions: {
+                    columns: [1,3,4,5,6,7,8]
+                }
+            }
         ],
         "iDisplayLength": 10,
         "language": {

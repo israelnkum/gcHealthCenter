@@ -21,6 +21,8 @@ class CreateDrugsTable extends Migration
             $table->decimal('cost_price');
             $table->integer('supplier_id');
             $table->decimal('retail_price');
+            $table->decimal('nhis_amount');
+            $table->date('expiry_date');
             $table->integer('user_id');
             $table->timestamps();
         });

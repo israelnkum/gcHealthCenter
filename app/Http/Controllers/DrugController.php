@@ -9,6 +9,7 @@ use App\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DrugController extends Controller
 {
@@ -43,13 +44,17 @@ class DrugController extends Controller
     {
         $registration = Registration::with('patient')
             ->where('vitals',1)
+            ->where('consult',1)
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
             ->orderBy('created_at','asc')
             ->get();
 
+        $drugs = Drug::all();
+
         return view('pages.pharmacy.dispense')
-            ->with('registration',$registration);
+            ->with('registration',$registration)
+            ->with('drugs',$drugs);
     }
 
     /**
@@ -72,6 +77,8 @@ class DrugController extends Controller
             $drug->cost_price = $request->input('cost_price');
             $drug->retail_price = $request->input('retail_price');
             $drug->quantity_in_stock = $request->input('receiving_stock');
+            $drug->nhis_amount = $request->input('nhis_amount');
+            $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
             $drug->user_id = Auth::user()->id;
             $drug->supplier_id = $request->input('supplier_id');
 
@@ -118,7 +125,7 @@ class DrugController extends Controller
         $file = $request->file('file');
         //$name = time() . '-' . $file->getClientOriginalName();
         if (!empty($file)) {
-             $ext = strtolower($file->getClientOriginalExtension());
+            $ext = strtolower($file->getClientOriginalExtension());
             if (in_array($ext, $valid_exts)) {
                 $path = $request->file('file')->getRealPath();
                 $data = Excel::load($path, function($reader) {})->get();
@@ -130,6 +137,9 @@ class DrugController extends Controller
                         $name = $row->name;
                         $cost_price = $row->cost_price;
                         $retail_price = $row->retail_price;
+                        $receiving_stock=$row->receiving_stock;
+                        $nhis_amount=$row->nhis_amount;
+                        $expiry_date=$row->expiry_date;
 
                         $testQuery = Drug::where('name', $name)->first();
                         if(empty($testQuery)){
@@ -137,6 +147,9 @@ class DrugController extends Controller
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->cost_price = $cost_price;
+                            $drug->nhis_amount = $nhis_amount;
+                            $drug->expiry_date = str_replace('/','-',$expiry_date);
+                            $drug->quantity_in_stock = $receiving_stock;
                             $drug->supplier_id = $request->input('supplier_id');
                             $drug->retail_price = $retail_price;
                             $drug->user_id = Auth::user()->id;
@@ -148,6 +161,9 @@ class DrugController extends Controller
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->cost_price = $cost_price;
+                            $drug->nhis_amount = $nhis_amount;
+                            $drug->expiry_date = str_replace('/','-',$expiry_date);
+                            $drug->quantity_in_stock = $receiving_stock+$testQuery->quantity_in_stock;
                             $drug->supplier_id = $request->input('supplier_id');
                             $drug->retail_price = $retail_price;
                             $drug->user_id = Auth::user()->id;
@@ -163,7 +179,7 @@ class DrugController extends Controller
             // return redirect('/upload/courses')->with("error", " <span style='font-weight:bold;font-size:13px;'></span> ");
             return redirect('drugs')->with("error", "Please upload an excel file!");
         }
-        return redirect('/drugs')->with("success", " $total Student uploaded successfully");
+        return redirect('/drugs')->with("success", " $total Drugs uploaded successfully");
     }
     /**
      * Show the form for editing the specified resource.

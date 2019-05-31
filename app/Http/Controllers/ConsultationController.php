@@ -40,7 +40,7 @@ class ConsultationController extends Controller
             $allRegistrations = Registration::where('patient_id',$registration[0]->patient->id)->get();
 
 
-           // return $allRegistrations;
+            // return $allRegistrations;
             $getVitals = Vital::where('patient_id',$registration[0]->patient_id)
                 ->whereDate('created_at', Carbon::today())->get();
         }else{
@@ -77,7 +77,10 @@ class ConsultationController extends Controller
     public function store(Request $request)
     {
 
+        $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))->latest()->first();
 
+
+        //Upload labs
         $labFileNames = [];
         $scanFileNames =[];
         if (\Request::has('labs')) {
@@ -95,33 +98,29 @@ class ConsultationController extends Controller
         }
 
 
-
+//Upload Scans
         if (\Request::has('scan')){
             for ($i = 0; $i < count($request->file('scan')); $i++) {
-                $file = $request->file('scan')[$i];
-                $extension = $file->getClientOriginalExtension();
-                $files = substr($file->getClientOriginalName(), 0, strpos($file->getClientOriginalName(), '.'));
-                $fileName = $files . '_' . time() . '.' . $extension;
+                $scannedFile = $request->file('scan')[$i];
+                $scannedExtension = $scannedFile->getClientOriginalExtension();
+                $scannedFiles = substr($scannedFile->getClientOriginalName(), 0, strpos($scannedFile->getClientOriginalName(), '.'));
+                $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
-                $file->move('public/scan', $fileName);
-                array_push($scanFileNames,$fileName);
-
+                $file->move('public/scan', $scannedFileName);
+                array_push($scanFileNames,$scannedFileName);
             }
-
-
         }
 
 
-
-        $consultation = new Consultation();
+        $consultation = Consultation::find($getRegistration->id);
         $consultation ->patient_id =$request->input('patient_id');
         $consultation ->complains=$request->input('complains');
         $consultation ->findings=$request->input('findings');
         $consultation ->physical_examination=$request->input('physical_examination');
         $consultation ->other_diagnosis=$request->input('other_diagnosis');
         $consultation ->detain_admit=$request->input('detain_admit');
-        $consultation ->labs=implode($scanFileNames,',');
-        $consultation ->ultra_sound_scan=implode($labFileNames,',');
+        $consultation ->labs=implode($labFileNames,',');
+        $consultation ->ultra_sound_scan=implode($scanFileNames,',');
         $consultation ->user_id=Auth::user()->id;
 
         $consultation->save();
@@ -132,6 +131,7 @@ class ConsultationController extends Controller
         foreach ($request->input('treatment_medication') as $key){
             $med = new Medication();
             $med->patient_id =$request->input('patient_id');
+            $med->registration_id = $request->input('registration_id');
             $med->drug_id = $key;
             $med->save();
         }
@@ -143,11 +143,15 @@ class ConsultationController extends Controller
             foreach ($request->input('diagnosis') as $key) {
                 $diagnosis = new PatientDiagnosis();
                 $diagnosis->patient_id = $request->input('patient_id');
+                $diagnosis->registration_id = $request->input('registration_id');
                 $diagnosis->diagnoses_id = $key;
                 $diagnosis->user_id = Auth::user()->id;
                 $diagnosis->save();
             }
         }
+
+
+
 
         $registration = Registration::find($request->input('registration_id'));
         $registration->consult = 1;
@@ -169,7 +173,44 @@ class ConsultationController extends Controller
         $drugs = Drug::all();
 
         $searchPatient[] = Patient::find($id);
+        $recentConsultation="";
+        $recentVitals ="";
+        $recentRegistration="";
+        $getImplodedMedicine ="";
+        $getImplodedDiagnosis="";
 
+
+        if (!empty($searchPatient)) {
+
+            $recentRegistration = Registration::with('consultation')
+                ->where('patient_id', $id)->latest()->first();
+
+        }
+        if (!empty($recentRegistration)){
+            $recentConsultation = Consultation::where('patient_id', $id)
+                ->where('registration_id', $recentRegistration->id)->latest()->first();
+            $recentVitals = Vital::where('patient_id', $id)
+                ->where('registration_id', $recentRegistration->id)->latest()->first();
+            $recentMedication = Medication::where('patient_id', $id)
+                ->where('registration_id', $recentRegistration->id)->latest()->get();
+            $recentPatientDiagnosis = PatientDiagnosis::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)->latest()->get();
+
+//        return $recentMedication;
+
+            $getDiagIds =[];
+            $getMedIds  =[];
+
+            foreach ($recentMedication as $med){
+                array_push($getMedIds,$med->drug_id);
+            }
+            foreach ($recentPatientDiagnosis as $diag){
+                array_push($getDiagIds,$diag->diagnoses_id);
+            }
+
+            $getImplodedMedicine = implode(',',$getMedIds);
+            $getImplodedDiagnosis = implode(',',$getDiagIds);
+        }
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',0)
@@ -202,7 +243,12 @@ class ConsultationController extends Controller
             ->with('drugs',$drugs)
             ->with('allRegistrations',$allRegistrations)
             ->with('searchPatient',$searchPatient)
-            ->with('previousRegistration',$previousRegistration);
+            ->with('previousRegistration',$previousRegistration)
+            ->with('recentRegistration',$recentRegistration)
+            ->with('recentConsultation',$recentConsultation)
+            ->with('recentVitals',$recentVitals)
+            ->with('getImplodedMedicine',$getImplodedMedicine)
+            ->with('getImplodedDiagnosis',$getImplodedDiagnosis);
     }
 
 
@@ -212,19 +258,58 @@ class ConsultationController extends Controller
         $drugs = Drug::all();
 
         $searchPatient= Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
-            ->get();
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
+
+//        return count($searchPatient);
+        $recentConsultation="";
+        $recentVitals ="";
+        $recentRegistration="";
+        $getImplodedMedicine ="";
+        $getImplodedDiagnosis="";
+        if (count($searchPatient) !=0) {
+
+            $recentRegistration = Registration::with('patient')
+                ->where('patient_id', $searchPatient[0]->id)
+                ->latest()->first();
+        }
+
+        if (!empty($recentRegistration)){
+            $recentConsultation = Consultation::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)->latest()->first();
+            $recentVitals = Vital::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)->latest()->first();
+            $recentMedication = Medication::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)->latest()->get();
+
+            $recentPatientDiagnosis = PatientDiagnosis::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)->latest()->get();
+
+            $getDiagIds =[];
+            $getMedIds  =[];
+
+            foreach ($recentMedication as $med){
+                array_push($getMedIds,$med->drug_id);
+            }
+            foreach ($recentPatientDiagnosis as $diag){
+                array_push($getDiagIds,$diag->diagnoses_id);
+            }
+
+            $getImplodedMedicine = implode(',',$getMedIds);
+            $getImplodedDiagnosis = implode(',',$getDiagIds);
+
+        }
 
 
-       // return count($searchPatient);
         if (count($searchPatient) == 1){
-            //return 'me';
+
+
             $registration = Registration::with('patient')
                 ->where('vitals',1)
                 ->where('consult',0)
                 ->where('patient_id',$searchPatient[0]->id)
                 ->whereDate('created_at', Carbon::today())
                 ->limit(1)
-//            ->orderBy('created_at','asc')
                 ->get();
 
             //get previous registrations
@@ -234,11 +319,11 @@ class ConsultationController extends Controller
             if (count($registration) == 1){
                 $allRegistrations = Registration::where('patient_id',$registration[0]->patient->id)->get();
 
-
-                // return $allRegistrations;
+                // return Vitals;
                 $getVitals = Vital::where('patient_id',$registration[0]->patient_id)
                     ->whereDate('created_at', Carbon::today())->get();
             }else{
+
                 $getVitals =[];
             }
 
@@ -250,10 +335,22 @@ class ConsultationController extends Controller
                 ->with('drugs',$drugs)
                 ->with('allRegistrations',$allRegistrations)
                 ->with('searchPatient',$searchPatient)
-                ->with('previousRegistration',$previousRegistration);
+                ->with('previousRegistration',$previousRegistration)
+                ->with('recentRegistration',$recentRegistration)
+                ->with('recentConsultation',$recentConsultation)
+                ->with('recentVitals',$recentVitals)
+                ->with('getImplodedMedicine',$getImplodedMedicine)
+                ->with('getImplodedDiagnosis',$getImplodedDiagnosis);
         }else{
             return view('pages.consultations.search_result')
-                ->with('searchPatient',$searchPatient);
+                ->with('searchPatient',$searchPatient)
+                ->with('recentRegistration',$recentRegistration)
+                ->with('recentConsultation',$recentConsultation)
+                ->with('recentVitals',$recentVitals)
+                ->with('diagnosis',$diagnosis)
+                ->with('drugs',$drugs)
+                ->with('getImplodedMedicine',$getImplodedMedicine)
+                ->with('getImplodedDiagnosis',$getImplodedDiagnosis);
         }
 
 
@@ -329,8 +426,8 @@ class ConsultationController extends Controller
         $consultation ->physical_examination=$request->input('physical_examination');
         $consultation ->other_diagnosis=$request->input('other_diagnosis');
         $consultation ->detain_admit=$request->input('detain_admit');
-        $consultation ->labs=implode($scanFileNames,',');
-        $consultation ->ultra_sound_scan=implode($labFileNames,',');
+        $consultation ->labs=implode($labFileNames,',');
+        $consultation ->ultra_sound_scan=implode($scanFileNames,',');
         $consultation ->user_id=Auth::user()->id;
 
         $consultation->save();
@@ -392,8 +489,12 @@ class ConsultationController extends Controller
 
         if (\Request::has('fromSearchPage')) {
             $registration = Registration::with('patient','user')
+                ->where('patient_id',$data[1])
                 ->whereDate('created_at', $data[0])
                 ->get();
+
+
+//            return $registration;
         }else{
             $registration = Registration::with('patient')
                 ->where('vitals', 1)

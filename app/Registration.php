@@ -13,4 +13,8 @@ class Registration extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+
+    public function consultation(){
+        return $this->hasMany('App\Consultation');
+    }
 }

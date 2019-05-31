@@ -9,4 +9,7 @@ class Consultation extends Model
     public function patient(){
         return $this->belongsTo('App\Patient');
     }
+    public function registration(){
+        return $this->belongsTo('App\Registration');
+    }
 }

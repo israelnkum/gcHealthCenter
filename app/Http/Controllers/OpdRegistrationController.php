@@ -110,23 +110,23 @@ class OpdRegistrationController extends Controller
                 $register->isInsured = 0;
                 $register->registration_fee = $charges->amount;
                 $register->user_id=Auth::user()->id;
-                if ($register->save()){
+                if ($register->save()) {
                     /*
                     *if registration is saved  then create vitals, consultation, patient_diagnosis
                     *and medication options
                     */
 
                     $vital = new Vital();
-                    $vital->patient_id =$request->input('patient_id');
-                    $vital->registration_id =$register->id;
+                    $vital->patient_id = $request->input('patient_id');
+                    $vital->registration_id = $register->id;
                     $vital->save();
 
                     $consultation = new Consultation();
-                    $consultation->patient_id =$request->input('patient_id');
-                    $consultation->registration_id =$register->id;
+                    $consultation->patient_id = $request->input('patient_id');
+                    $consultation->registration_id = $register->id;
                     $consultation->save();
 
-                    $patientDiagnosis = new PatientDiagnosis();
+                    /*$patientDiagnosis = new PatientDiagnosis();
                     $patientDiagnosis->patient_id =$request->input('patient_id');
                     $patientDiagnosis->registration_id =$register->id;
                     $patientDiagnosis->save();
@@ -134,9 +134,10 @@ class OpdRegistrationController extends Controller
                     $medication = new Medication();
                     $medication->patient_id =$request->input('patient_id');
                     $medication->registration_id =$register->id;
-                    $medication->save();
+                    $medication->save();*/
 
                 }
+
             }
         }
 

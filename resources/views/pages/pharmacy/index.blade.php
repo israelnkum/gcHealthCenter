@@ -1,6 +1,115 @@
 @extends('layouts.app')
 @section('content')
     <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-4 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-inline-block pt-3">
+                                <div class="d-md-flex">
+                                    <h2 class="mb-0">$10,200</h2>
+                                </div>
+                            </div>
+                            <div class="d-inline-block">
+                                <h4 class="card-title mb-0">Total Sales (Cash)</h4>
+                                <small class="text-gray">Today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-inline-block pt-3">
+                                <div class="d-md-flex">
+                                    <h2 class="mb-0">$10,200</h2>
+                                </div>
+                            </div>
+                            <div class="d-inline-block">
+                                <h4 class="card-title mb-0">Total Sales (NHIS)</h4>
+                                <small class="text-gray">Today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-inline-block pt-3">
+                                <div class="d-md-flex">
+                                    <h2 class="mb-0">$10,200</h2>
+                                </div>
+                                {{--                                <small class="text-gray">Raised from 89 orders.</small>--}}
+                            </div>
+                            <div class="d-inline-block">
+                                <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
+                                <small class="text-gray">Today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row align-items-top">
+                            <i class="icon-social-facebook text-facebook icon-md"></i>
+                            <div class="ml-3">
+                                <h3 class="text-facebook">526</h3>
+                                <p class="mt-1 text-muted card-text">Total Drugs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row align-items-top">
+                            <i class="icon-social-linkedin text-linkedin icon-md"></i>
+                            <div class="ml-3">
+                                <h3 class="text-linkedin">500</h3>
+                                <p class="mt-1 text-muted card-text">Tablet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row align-items-top">
+                            <i class="icon-social-twitter text-twitter icon-md"></i>
+                            <div class="ml-3">
+                                <h3 class="text-twitter">26</h3>
+                                <p class="mt-1 text-muted card-text">Syrup</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 grid-margin">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-row align-items-top">
+                            <i class="icon-social-twitter text-twitter icon-md"></i>
+                            <div class="ml-3">
+                                <h6 class="text-twitter">3k followers</h6>
+                                <p class="mt-2 text-muted card-text">You main list growing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row profile-page">
             <div class="col-12">
                 <div class="card">
@@ -45,66 +154,70 @@
                                                         </div>
                                                     </div>
 
-                                                    <table class="table table-responsive" id="drug_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <div class="form-check form-check-flat">
-                                                                    <label class="form-check-label">
-                                                                        <input type="checkbox"  class="form-check-input"  id="checkAllDrugs">
-                                                                    </label>
-                                                                </div>
-                                                            </th>
-                                                            <th>N<u>o</u></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Supplier</th>
-                                                            <th>Type</th>
-                                                            <th>Qty In Stock</th>
-                                                            <th>Cost Price</th>
-                                                            <th>Retail Price</th>
-                                                            <th>Supplier ID</th>
-                                                            <th>Drug type ID</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php
-                                                            $i=1;
-                                                        @endphp
-                                                        @foreach($drugs as $drug)
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="drug_table">
+                                                            <thead>
                                                             <tr>
-                                                                <td>
+                                                                <th>
                                                                     <div class="form-check form-check-flat">
                                                                         <label class="form-check-label">
-                                                                            <input type="checkbox" value="{{$drug->id}}" class="form-check-input checkDrugItem" name="selected_drugs[]" id="remember">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllDrugs">
                                                                         </label>
                                                                     </div>
-                                                                </td>
-                                                                <td>{!! $i !!}</td>
-                                                                <td>{{$drug->id}}</td>
-                                                                <td>{{$drug->name}}</td>
-                                                                <td>{{$drug->supplier->name}}</td>
-                                                                <td>{{$drug->drug_type->name}}</td>
-                                                                <td>{{$drug->quantity_in_stock}}</td>
-                                                                <td>{{$drug->cost_price}}</td>
-                                                                <td>{{$drug->retail_price}}</td>
-                                                                <td>{{$drug->supplier_id}}</td>
-                                                                <td>{{$drug->drug_type_id}}</td>
-                                                                {{--<td>{{substr($drug->created_at,0,10)}}</td>--}}
-                                                                {{--<td>{{substr($drug->created_at,10)}}</td>--}}
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-secondary edit">
-                                                                        <i class="icon icon-pencil"></i>
-                                                                    </button>
-                                                                </td>
+                                                                </th>
+                                                                <th>N<u>o</u></th>
+                                                                <th>ID</th>
+                                                                <th>Name</th>
+                                                                <th>Supplier</th>
+                                                                <th>Type</th>
+                                                                <th>Qty In Stock</th>
+                                                                <th>Cost Price</th>
+                                                                <th>Retail Price</th>
+                                                                <th>Supplier ID</th>
+                                                                <th>Drug type ID</th>
+                                                                <th>Insurance Amount</th>
+                                                                <th>Expiry Date</th>
+                                                                <th>Action</th>
                                                             </tr>
+                                                            </thead>
+                                                            <tbody>
                                                             @php
-                                                                $i = $i+1;
+                                                                $i=1;
                                                             @endphp
-                                                        @endforeach
-                                                        </tbody>
-                                                    </table>
+                                                            @foreach($drugs as $drug)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$drug->id}}" class="form-check-input checkDrugItem" name="selected_drugs[]" id="remember">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{!! $i !!}</td>
+                                                                    <td>{{$drug->id}}</td>
+                                                                    <td>{{$drug->name}}</td>
+                                                                    <td>{{$drug->supplier->name}}</td>
+                                                                    <td>{{$drug->drug_type->name}}</td>
+                                                                    <td>{{$drug->quantity_in_stock}}</td>
+                                                                    <td>{{$drug->cost_price}}</td>
+                                                                    <td>{{$drug->retail_price}}</td>
+                                                                    <td>{{$drug->supplier_id}}</td>
+                                                                    <td>{{$drug->drug_type_id}}</td>
+                                                                    <td>{{$drug->nhis_amount}}</td>
+                                                                    <td>{{$drug->expiry_date}}</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-secondary edit">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
@@ -199,55 +312,56 @@
                                                             </button>
                                                         </div>
                                                     </div>
-
-                                                    <table class="table" id="supplier_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <div class="form-check form-check-flat">
-                                                                    <label class="form-check-label">
-                                                                        <input type="checkbox"  class="form-check-input"  id="checkAllSuppliers">
-                                                                    </label>
-                                                                </div>
-                                                            </th>
-                                                            <th>N<u>o</u></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Phone Number</th>
-                                                            <th>Email</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php
-                                                            $i=1;
-                                                        @endphp
-                                                        @foreach($suppliers as $supplier)
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="supplier_table">
+                                                            <thead>
                                                             <tr>
-                                                                <td>
+                                                                <th>
                                                                     <div class="form-check form-check-flat">
                                                                         <label class="form-check-label">
-                                                                            <input type="checkbox" value="{{$supplier->id}}" class="form-check-input checkItemSupplier" name="selected_suppliers[]">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllSuppliers">
                                                                         </label>
                                                                     </div>
-                                                                </td>
-                                                                <td>{!! $i !!}</td>
-                                                                <td>{{$supplier->id}}</td>
-                                                                <td>{{$supplier->name}}</td>
-                                                                <td>{{$supplier->phone_number}}</td>
-                                                                <td>{{$supplier->email}}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-secondary edit">
-                                                                        <i class="icon icon-pencil"></i>
-                                                                    </button>
-                                                                </td>
+                                                                </th>
+                                                                <th>N<u>o</u></th>
+                                                                <th>ID</th>
+                                                                <th>Name</th>
+                                                                <th>Phone Number</th>
+                                                                <th>Email</th>
+                                                                <th>Action</th>
                                                             </tr>
+                                                            </thead>
+                                                            <tbody>
                                                             @php
-                                                                $i = $i+1;
+                                                                $i=1;
                                                             @endphp
-                                                        @endforeach
-                                                        </tbody>
-                                                    </table>
+                                                            @foreach($suppliers as $supplier)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$supplier->id}}" class="form-check-input checkItemSupplier" name="selected_suppliers[]">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{!! $i !!}</td>
+                                                                    <td>{{$supplier->id}}</td>
+                                                                    <td>{{$supplier->name}}</td>
+                                                                    <td>{{$supplier->phone_number}}</td>
+                                                                    <td>{{$supplier->email}}</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-secondary edit">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
@@ -263,7 +377,7 @@
         </div>
     </div>
 
-
+    {{--Upload drugs modal--}}
     <div class="modal fade" id="upload_drugs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <form method="post" action="{{route('upload_drug')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -282,6 +396,32 @@
                                 <input style="border: dashed 1px;background: transparent" title="Select File" type="file" name="file" class="form-control-file" id="file" required>
                                 <div class="invalid-feedback">
                                     File is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-md-6">
+                                <label for="">Drug Type</label>
+                                <select title="Select Drug Type" name="drug_type_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                                    <option value="">~Select Type~</option>
+                                    @foreach($drug_types as $type)
+                                        <option value="{{$type->id}}">{{$type->name}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Drug Type is required.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Supplier</label>
+                                <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                                    <option value="">~Select Supplier~</option>
+                                    @foreach($suppliers as $type)
+                                        <option value="{{$type->id}}">{{$type->name}}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Supplier is required.
                                 </div>
                             </div>
                         </div>
@@ -404,14 +544,14 @@
 
 
     {{--    Drugs--}}
-    <!-- new Drug modal -->
+    <!-- new Drug   modal -->
     <div class="modal fade" id="newDrugModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <form method="post" action="{{route('drugs.store')}}" class="needs-validation" novalidate>
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">New Drug Type</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">New Drug</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -427,7 +567,7 @@
                             </div>
                         </div>
                         <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="">Drug Type</label>
                                 <select title="Select Drug Type" name="type_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Type~</option>
@@ -439,10 +579,8 @@
                                     Drug Type is required.
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="">Supplier</label>
                                 <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Supplier~</option>
@@ -456,11 +594,18 @@
                             </div>
                         </div>
                         <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="">Receiving Stock</label>
                                 <input required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" name="receiving_stock">
                                 <div class="invalid-feedback">
                                     Receiving Stock is required
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">NHIS Amount</label>
+                                <input value="0" required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" name="nhis_amount">
+                                <div class="invalid-feedback">
+                                    NHIS amount is required
                                 </div>
                             </div>
                         </div>
@@ -481,6 +626,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-row form-group">
+                            <div class="col-md-6">
+                                <label for="">Expiry Date</label>
+                                <input required type="date" class="form-control" data-inputmask="'alias': 'date'" style="text-align: right;" name="expiry_date">
+                                <div class="invalid-feedback">
+                                    Expiry date is required
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -495,7 +649,7 @@
         </div>
     </div>
 
-    <!-- edit Drug Type modal -->
+    <!-- edit Drug  modal -->
     <div class="modal fade" id="editDrugModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <form method="post" action="/drugs" id="editDrugForm" class="needs-validation" novalidate>

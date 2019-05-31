@@ -54,6 +54,7 @@
                   </button>
               </div>--}}
         </div>
+
         @if(count($registration)  == 0)
             <div class="text-center">
                 <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
@@ -126,9 +127,9 @@
                                     </div>
                                     <div id="GC{{$registered->patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                         <div class="card-body">
-                                            <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.update',$registered->id)}}">
+                                            {{--  New Consultaion Form --}}
+                                            <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.store')}}">
                                                 @csrf
-                                                {!! method_field('put') !!}
                                                 <input type="hidden" name="registration_id" value="{{$registered->id}}">
                                                 <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
                                                 <input type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
@@ -224,6 +225,7 @@
                                                     </div>
                                                 </div>
                                             </form>
+                                            {{--End New Consultaion Form--}}
                                         </div>
                                     </div>
                                     @php($i++)
@@ -284,19 +286,19 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label class="text-info">Complains</label>
-                                            <blockquote class="blockquote" style="padding: 5px;">
+                                            <blockquote class="blockquote">
                                                 <p class="mb-0">{{$consult->complains}}</p>
                                             </blockquote>
                                         </div>
                                         <div class="col-md-12 p-1">
                                             <label class="text-info">Findings</label>
-                                            <blockquote class="blockquote" style="padding: 5px;">
+                                            <blockquote class="blockquote" >
                                                 <p class="mb-0">{{$consult->findings}}</p>
                                             </blockquote>
                                         </div>
                                         <div class="col-md-12">
                                             <label class="text-info">Physical Examination</label>
-                                            <blockquote class="blockquote" style="padding: 5px;">
+                                            <blockquote class="blockquote" >
                                                 <p class="mb-0">{{$consult->physical_examination}}</p>
                                             </blockquote>
                                         </div>
@@ -309,28 +311,59 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <label class="text-info">Diagnosis</label>
-                                        <blockquote class="blockquote" style="padding: 5px;">
+                                        <blockquote class="blockquote" >
                                             <ul>
                                                 @foreach($patientDiagnosis as $diagnosis)
                                                     <li>{{$diagnosis->diagnoses->name}}</li>
                                                 @endforeach
-                                                <li>{{$other_diagnosis}}</li>
+                                                @if($other_diagnosis != "")
+                                                    <li>{{$other_diagnosis}}</li>
+                                                @endif
                                             </ul>
                                         </blockquote>
                                     </div>
                                 </div>
                                 <hr>
-                                <h6 class="card-title">Medications</h6>
-                                @foreach($getPatientDrugs as $med)
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <p>{{$med->name}}</p>
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="text-info">Medications</label>
+                                        <blockquote class="blockquote" >
+                                            <ul>
+                                                @foreach($getPatientDrugs as $med)
+                                                    <li>{{$med->name}}</li>
+                                                @endforeach
+                                            </ul>
+                                        </blockquote>
                                     </div>
-                                @endforeach
+                                </div>
+                                <h4>Scan Result(s)</h4>
+                                <div class="col-sm-12">
+                                    <?php
+                                    $scans=explode(',',$consultation[0]->ultra_sound_scan)
+                                    ?>
+                                    <div id="lightgallery" class="row lightGallery">
+                                        @foreach($scans as $scan)
 
+                                            <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                        @endforeach
+                                    </div>
+
+                                </div>
+
+                                <h4>Lab Result(s)</h4>
+                                <div class="col-sm-12">
+
+                                    <?php
+                                    $labs=explode(',',$consultation[0]->labs)
+                                    ?>
+                                    <div id="lightgallery-without-thumb" class="row lightGallery">
+                                        @foreach($labs as $lab)
+                                            {{--                                                    {{$lab}}--}}
+                                            <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                        @endforeach
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>

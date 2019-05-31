@@ -234,8 +234,7 @@ class PatientController extends Controller
 
 
     public function searchPatient(Request $request){
-        $data=Patient::where('folder_number', $request->input("search"))
-            ->orWhere('folder_number', 'like', '%' . $request->input("search") . '%')
+        $data=Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
             ->get();
