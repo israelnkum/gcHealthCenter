@@ -6,6 +6,7 @@ use App\Drug;
 use App\DrugType;
 use App\Registration;
 use App\Supplier;
+use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -50,11 +51,16 @@ class DrugController extends Controller
             ->orderBy('created_at','asc')
             ->get();
 
+        $vitals = Vital::where('registration_id',$registration[0]->id)
+            ->where('patient_id',$registration[0]->patient_id)
+            ->latest()->first();
+
         $drugs = Drug::all();
 
         return view('pages.pharmacy.dispense')
             ->with('registration',$registration)
-            ->with('drugs',$drugs);
+            ->with('drugs',$drugs)
+            ->with('vitals',$vitals);
     }
 
     /**

@@ -303,6 +303,7 @@
 <script src="{{asset('public/js/select2.js')}}"></script>
 
 <script src="{{asset('public/js/form-repeater.js')}}"></script>
+<script src="{{asset('public/js/repeater.js')}}"></script>
 <script src="{{asset('public/js/mask.init.js')}}"></script>
 <script src="{{asset('public/js/users.js')}}"></script>
 <script src="{{asset('public/js/preferences.js')}}"></script>
@@ -317,7 +318,12 @@
 <script src="{{asset('public/js/light-gallery.js')}}"></script>
 
 
-
+<script>
+    /* Create Repeater */
+    $("#repeater").createRepeater({
+        showFirstItemToDefault: true,
+    });
+</script>
 
 <script src="{{asset('public/js/dataTables/dataTables.buttons.min.js')}}"></script>
 <script src="{{asset('public/js/dataTables/buttons.flash.min.js')}}"></script>

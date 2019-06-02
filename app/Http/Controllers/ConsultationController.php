@@ -76,7 +76,7 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-
+        return $request;
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))->latest()->first();
 
 
@@ -106,7 +106,7 @@ class ConsultationController extends Controller
                 $scannedFiles = substr($scannedFile->getClientOriginalName(), 0, strpos($scannedFile->getClientOriginalName(), '.'));
                 $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
-                $file->move('public/scan', $scannedFileName);
+                $scannedFile->move('public/scan', $scannedFileName);
                 array_push($scanFileNames,$scannedFileName);
             }
         }
@@ -128,14 +128,15 @@ class ConsultationController extends Controller
 
 
         //Add medications
-        foreach ($request->input('treatment_medication') as $key){
-            $med = new Medication();
-            $med->patient_id =$request->input('patient_id');
-            $med->registration_id = $request->input('registration_id');
-            $med->drug_id = $key;
-            $med->save();
+        foreach ($request->input('group-a') as $med) {
+            $medication = new Medication();
+            $medication->patient_id = $request->input('patient_id');
+            $medication->registration_id = $request->input('registration_id');
+            $medication->drug_id = $med['drug_id'];
+            $medication->dosage = $med['dosage'];
+            $medication->user_id =Auth::user()->id;
+            $medication->save();
         }
-
 
         //add diagnosis
         if (\Request::has('diagnosis')) {

@@ -17,9 +17,10 @@ class CreateMedicationsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('registration_id');
             $table->integer('patient_id');
-            $table->string('drug_id')->nullable();
+            $table->string('drug_id');
+            $table->string('dosage');
             $table->boolean('dispensed')->default(0);
-            $table->integer('user_id')->nullable();
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

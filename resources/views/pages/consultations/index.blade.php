@@ -10,7 +10,7 @@
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
-                                <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
+                                <input type="text"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
                                     <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
                                 </div>
@@ -28,7 +28,7 @@
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-6 offset-md-5">
-                            <select required name="data" class="js-example-basic-single w-100 form-control">
+                            <select  name="data" class="js-example-basic-single w-100 form-control">
                                 <option value="">Select Record Date</option>
                                 @if(count($registration)  == 1)
                                     @foreach($allRegistrations as $userRegistration)
@@ -61,11 +61,11 @@
             </div>
         @elseif(count($registration)  == 1)
             <div class="row">
-                <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-7 offset-md-2 @endif grid-margin stretch-card">
+                <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-8 offset-md-2 @endif grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
-                                @php($i =1)
+
                                 @foreach($registration as $registered)
                                     <div class="card-header" role="tab" id="heading-4">
                                         <a data-toggle="collapse" style="text-decoration: none" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
@@ -130,33 +130,33 @@
                                             {{--  New Consultaion Form --}}
                                             <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.store')}}">
                                                 @csrf
-                                                <input type="hidden" name="registration_id" value="{{$registered->id}}">
-                                                <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
-                                                <input type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
+                                                <input required type="hidden" name="registration_id" value="{{$registered->id}}">
+                                                <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
+                                                <input required type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
                                                 <div class="form-group row">
+                                                    <label for="complains" class="text-info">Complains</label>
                                                     <div class="col-sm-12">
-                                                        <label for="blood_pressure" class="text-info">Complains</label>
-                                                        <textarea required name="complains" class="form-control" id="complains{!! $i !!}" rows="10"></textarea>
+                                                        <textarea required name="complains" class="form-control" id="complains" rows="10"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Complains is required
+                                                            Complains is
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="physical_examination" class="text-info">Physical Examination</label>
+                                                    <div class="col-sm-12">
+                                                        <textarea  required name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
+                                                        <div class="invalid-feedback">
+                                                            Physical Examination is
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <div class="col-sm-12">
-                                                        <label for="blood_pressure" class="text-info">Physical Examination</label>
-                                                        <textarea required name="physical_examination" class="form-control" id="physical_examination{!! $i !!}" rows="10"></textarea>
+                                                        <label for="findings" class="text-info">Findings</label>
+                                                        <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Physical Examination is required
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-sm-12">
-                                                        <label for="blood_pressure" class="text-info">Findings</label>
-                                                        <textarea required name="findings" class="form-control" id="findings{!! $i !!}" rows="10"></textarea>
-                                                        <div class="invalid-feedback">
-                                                            Finding is required
+                                                            Finding is
                                                         </div>
                                                     </div>
                                                 </div>
@@ -170,7 +170,7 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is required
+                                                            Diagnosis is
                                                         </div>
                                                     </div>
                                                     {{-- <div class="col-sm-2 ml-5 ">
@@ -188,22 +188,82 @@
                                                         {{--                                                        <input type="text" placeholder="Enter diagnosis"  class="form-control" id="other_diagnosis_text" name="other_diagnosis">--}}
                                                         <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is required
+                                                            Diagnosis is
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row">
-                                                    <div class="col-sm-12">
-                                                        <label for="treatment_medication" class="text-info">Medication</label>
-                                                        <select required class="js-example-basic-multiple w-100" style="width: 100%" multiple="multiple" name="treatment_medication[]" id="treatment_medication">
-                                                            {{--                                                            <option value="">Select</option>--}}
-                                                            @foreach($drugs as $drug)
-                                                                <option value="{{$drug->id}}">{{$drug->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="invalid-feedback">
-                                                            Medication is required
+                                                <div class="row">
+                                                    <div class="col-md-6" >
+                                                        <label for="" class="text-info">Drugs</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="" class="text-info">Dosage</label>
+                                                    </div>
+                                                </div>
+                                                <div class="repeater">
+                                                    <div data-repeater-list="group-a">
+                                                        <div data-repeater-item class="mb-2">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <select  class="selectMedicine col-12 form-control mr-1" required   name="drug_id" id="drug_id">
+                                                                        @foreach($drugs as $drug)
+                                                                            <option value="{{$drug->id}}">{{$drug->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Drug is required
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <input type="text" name="dosage" id="dosage" required class="form-control col-12 ml-1">
+                                                                    <div class="invalid-feedback">
+                                                                        Dosage is required
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
+                                                                        <i class="icon-close"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <button data-repeater-create type="button" class="btn btn-info icon-btn p-2 mb-2">
+                                                            <i class="icon-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="row">
+                                                    <div class="col-md-6" >
+                                                        <label for="" class="text-info">Other Medication(s)</label>
+                                                    </div>
+                                                </div>
+                                                <div class="other-repeater">
+                                                    <div data-repeater-list="group-b">
+                                                        <div data-repeater-item class="mb-2">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">
+                                                                </div>
+                                                                <div class="col-md-1">
+                                                                    <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
+                                                                        <i class="icon-close"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <button data-repeater-create title="New Medication" type="button" class="btn btn-info p-2 icon-btn mb-2">
+                                                            <i class="icon-plus"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -218,17 +278,18 @@
                                                     </div>
                                                 </div>
 
-
                                                 <div class="form-group row mt-5">
                                                     <div class="col-sm-12 text-right">
                                                         <button class="btn btn-primary">Finalize</button>
                                                     </div>
                                                 </div>
                                             </form>
+
+
                                             {{--End New Consultaion Form--}}
                                         </div>
                                     </div>
-                                    @php($i++)
+
                                 @endforeach
                             </div>
                         </div>

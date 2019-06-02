@@ -82,12 +82,14 @@
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <input required type="number" name="systolic" class="form-control" id="systolic{!! $i !!}">
+                                                                <small class="text-danger">Systolic</small>
                                                                 <div class="invalid-feedback">
                                                                     Systolic is required
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <input required type="number" name="diastolic" class="form-control" id="diastolic{!! $i !!}">
+                                                                <small class="text-danger">Diastolic</small>
                                                                 <div class="invalid-feedback">
                                                                     Diastolic is required
                                                                 </div>
@@ -121,20 +123,28 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="form-group row sugar{!! $i !!}" style="display: none">
-                                                    <label for="rdt" class="col-sm-2 col-form-label">RDT (Malaria)</label>
-                                                    <div class="col-sm-3">
-                                                        <input type="number" class="form-control" id="rdt" name="rdt">
-                                                        <div class="invalid-feedback">
-                                                            RDT (Malaria) is required
+                                                <div class="form-group row ">
+
+                                                    <div class="malaria{!! $i !!} col-md-6" style="display: none;">
+                                                        <div class="row">
+                                                            <label for="rdt" class="col-sm-4 col-form-label" >RDT (Malaria)</label>
+                                                            <div class="col-sm-6">
+                                                                <input type="number" class="form-control" id="rdt" name="rdt">
+                                                                <div class="invalid-feedback">
+                                                                    RDT (Malaria) is required
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-                                                    <label for="glucose" class="col-sm-2 col-form-label text-right">Glucose(Sugar Level)</label>
-                                                    <div class="col-sm-3">
-                                                        <input type="number" class="form-control" id="glucose" name="glucose">
-                                                        <div class="invalid-feedback">
-                                                            Glucose (Sugar Level) is required
+                                                    <div class="sugar{!! $i !!} col-md-6" style="display: none;">
+                                                        <div class="row">
+                                                            <label for="glucose" class="col-sm-4 col-form-label ">Glucose(Sugar Level)</label>
+                                                            <div class="col-sm-4" >
+                                                                <input type="number" class="form-control" id="glucose" name="glucose">
+                                                                <div class="invalid-feedback">
+                                                                    Glucose (Sugar Level) is required
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
