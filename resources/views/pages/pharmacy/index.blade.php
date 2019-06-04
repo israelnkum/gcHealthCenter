@@ -56,21 +56,20 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3 grid-margin">
+        {{--<div class="row">
+            <div class="col-md-1 grid-margin">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-row align-items-top">
-                            <i class="icon-social-facebook text-facebook icon-md"></i>
-                            <div class="ml-3">
-                                <h3 class="text-facebook">526</h3>
-                                <p class="mt-1 text-muted card-text">Total Drugs</p>
+                            <div class="">
+                                <h6 class="text-facebook">526</h6>
+                                <small class="mt-1 text-muted card-text">Total Drugs</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 grid-margin">
+            <div class="col-md-1 grid-margin">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-row align-items-top">
@@ -83,7 +82,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 grid-margin">
+            <div class="col-md-1 grid-margin">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-row align-items-top">
@@ -96,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 grid-margin">
+            <div class="col-md-1 grid-margin">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-row align-items-top">
@@ -109,7 +108,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--}}
         <div class="row profile-page">
             <div class="col-12">
                 <div class="card">
@@ -402,7 +401,7 @@
                         <div class="form-row form-group">
                             <div class="col-md-6">
                                 <label for="">Drug Type</label>
-                                <select title="Select Drug Type" name="drug_type_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                                <select title="Select Drug Type" name="drug_type_id" id="select_drug_type" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Type~</option>
                                     @foreach($drug_types as $type)
                                         <option value="{{$type->id}}">{{$type->name}}</option>
@@ -414,7 +413,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="">Supplier</label>
-                                <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                                <select title="Select Supplier" name="supplier_id" id="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Supplier~</option>
                                     @foreach($suppliers as $type)
                                         <option value="{{$type->id}}">{{$type->name}}</option>

@@ -17,9 +17,10 @@ class CreatePaymentsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('registration_id');
             $table->integer('patient_id');
-            $table->integer('drug_id');
             $table->decimal('amount_paid')->default(0);
+            $table->decimal('drugs_amount')->default(0);
             $table->decimal('nhis_amount')->default(0);
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Drug;
 use App\DrugType;
+use App\Medication;
+use App\OtherMedication;
 use App\Registration;
 use App\Supplier;
 use App\Vital;
@@ -43,24 +45,44 @@ class DrugController extends Controller
      */
     public function create()
     {
+        $vitals="";
+        $other_medication="";
+        $medication="";
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
+            ->where('medication',0)
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
             ->orderBy('created_at','asc')
             ->get();
 
-        $vitals = Vital::where('registration_id',$registration[0]->id)
-            ->where('patient_id',$registration[0]->patient_id)
-            ->latest()->first();
+        if (count($registration)>0){
+            $vitals = Vital::where('registration_id',$registration[0]->id)
+                ->where('patient_id',$registration[0]->patient_id)
+                ->latest()->first();
 
-        $drugs = Drug::all();
+            $medication= Medication::with('drugs')->where('registration_id',$registration[0]->id)
+                ->where('patient_id',$registration[0]->patient_id)
+                ->whereDate('created_at', Carbon::today())
+                ->get();
+
+
+            $other_medication= OtherMedication::where('registration_id',$registration[0]->id)
+                ->where('patient_id',$registration[0]->patient_id)
+                ->whereDate('created_at', Carbon::today())
+                ->latest()->first();
+        }
+
+//        return $medication;
+
+        $drugs = Drug::all()->count();
 
         return view('pages.pharmacy.dispense')
             ->with('registration',$registration)
             ->with('drugs',$drugs)
-            ->with('vitals',$vitals);
+            ->with('vitals',$vitals)
+            ->with('medication',$medication);
     }
 
     /**
@@ -145,14 +167,22 @@ class DrugController extends Controller
                         $retail_price = $row->retail_price;
                         $receiving_stock=$row->receiving_stock;
                         $nhis_amount=$row->nhis_amount;
+                        if ($row->unit_of_pricing == ""){
+                            $unit_of_pricing ="-";
+                        }else{
+                            $unit_of_pricing=$row->unit_of_pricing;
+                        }
+
                         $expiry_date=$row->expiry_date;
 
-                        $testQuery = Drug::where('name', $name)->first();
+                        $testQuery = Drug::where('name', $name)
+                            ->where('drug_type_id',$request->input('drug_type_id'))->first();
                         if(empty($testQuery)){
                             $drug = new Drug();
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->cost_price = $cost_price;
+                            $drug->unit_of_pricing = $unit_of_pricing;
                             $drug->nhis_amount = $nhis_amount;
                             $drug->expiry_date = str_replace('/','-',$expiry_date);
                             $drug->quantity_in_stock = $receiving_stock;
@@ -167,6 +197,7 @@ class DrugController extends Controller
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->cost_price = $cost_price;
+                            $drug->unit_of_pricing = $unit_of_pricing;
                             $drug->nhis_amount = $nhis_amount;
                             $drug->expiry_date = str_replace('/','-',$expiry_date);
                             $drug->quantity_in_stock = $receiving_stock+$testQuery->quantity_in_stock;

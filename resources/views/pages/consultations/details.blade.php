@@ -32,6 +32,8 @@
                                 <option value="">Select Record Date</option>
                                 @if(count($registration)  == 1)
                                     @foreach($allRegistrations as $userRegistration)
+                                        {{--@if($count_registration == 0 && date('Y-m-d') == substr($userRegistration->created_at,0,10))
+                                         @endif--}}
                                         <option  value="{{substr($userRegistration->created_at,0,10).",".$userRegistration->patient_id}}">{{substr($userRegistration->created_at,0,10)}}</option>
                                     @endforeach
                                 @endif
@@ -158,7 +160,7 @@
                                             @foreach($patientDiagnosis as $diagnosis)
                                                 <li>{{$diagnosis->diagnoses->name}}</li>
                                             @endforeach
-                                            @if($other_diagnosis)
+                                            @if($other_diagnosis != "")
                                                 <li>{{$other_diagnosis}}</li>
                                             @endif
                                         </ul>
@@ -171,8 +173,8 @@
                                     <label class="text-info">Medications</label>
                                     <blockquote class="blockquote">
                                         <ul>
-                                            @foreach($getPatientDrugs as $med)
-                                                <li>{{$med->name}}</li>
+                                            @foreach($medication as $med)
+                                                <li>{{$med->drugs->name}}</li>
                                             @endforeach
                                         </ul>
                                     </blockquote>

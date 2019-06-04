@@ -6,6 +6,7 @@ use App\Consultation;
 use App\Diagnose;
 use App\Drug;
 use App\Medication;
+use App\OtherMedication;
 use App\Patient;
 use App\PatientDiagnosis;
 use App\Registration;
@@ -48,7 +49,9 @@ class ConsultationController extends Controller
         }
 
         $diagnosis = Diagnose::all();
-        $drugs = Drug::all();
+        $drugs = Drug::where('quantity_in_stock','>',0)->get();
+
+//        return $drugs;
 
         return view('pages.consultations.index')
             ->with('registration',$registration)
@@ -76,7 +79,7 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+//        return $request;
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))->latest()->first();
 
 
@@ -132,11 +135,29 @@ class ConsultationController extends Controller
             $medication = new Medication();
             $medication->patient_id = $request->input('patient_id');
             $medication->registration_id = $request->input('registration_id');
-            $medication->drug_id = $med['drug_id'];
+            $medication->drugs_id = $med['drug_id'];
             $medication->dosage = $med['dosage'];
             $medication->user_id =Auth::user()->id;
             $medication->save();
         }
+
+
+//        return $request->input('group-b');
+        //Add other  medications
+        if (\Request::has('group-b')) {
+            foreach ($request->input('group-b') as $other) {
+                if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
+                    $medication = new OtherMedication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drug = $other['other_medication'];
+                    $medication->dosage = $other['other_dosage'];
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+                }
+            }
+        }
+
 
         //add diagnosis
         if (\Request::has('diagnosis')) {
@@ -481,12 +502,15 @@ class ConsultationController extends Controller
         $medication = Medication::with('drugs')->where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
 
-//      return $consultation;
-//        return $patientDiagnosis;
-        $getPatientDrugs=[];
-        foreach ($medication as $item) {
-            array_push($getPatientDrugs,Drug::find($item->drug_id));
-        }
+
+//        return $medication;
+        $count_registration = Registration::with('patient')
+            ->where('patient_id',$data[1])
+            ->whereDate('created_at', Carbon::today())
+            ->get()->count();
+
+
+
 
         if (\Request::has('fromSearchPage')) {
             $registration = Registration::with('patient','user')
@@ -523,7 +547,9 @@ class ConsultationController extends Controller
         $drugs = Drug::all();
 
         if (\Request::has('fromSearchPage')){
-            return view('pages.consultations.details')
+
+
+            ;return view('pages.consultations.details')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
                 ->with('diagnosis',$diagnosis)
@@ -532,8 +558,9 @@ class ConsultationController extends Controller
                 ->with('vitals',$vitals)
                 ->with('consultation',$consultation)
                 ->with('patientDiagnosis',$patientDiagnosis)
-                ->with('getPatientDrugs',$getPatientDrugs)
-                ->with('allRegistrations',$allRegistrations);
+                ->with('medication',$medication)
+                ->with('allRegistrations',$allRegistrations)
+                ->with('count_registration',$count_registration);
         }else{
             return view('pages.consultations.index')
                 ->with('registration',$registration)
@@ -544,8 +571,9 @@ class ConsultationController extends Controller
                 ->with('vitals',$vitals)
                 ->with('consultation',$consultation)
                 ->with('patientDiagnosis',$patientDiagnosis)
-                ->with('getPatientDrugs',$getPatientDrugs)
-                ->with('allRegistrations',$allRegistrations);
+                ->with('medication',$medication)
+                ->with('allRegistrations',$allRegistrations)
+                ->with('count_registration',$count_registration);
         }
 
     }

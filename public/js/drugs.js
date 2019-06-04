@@ -14,6 +14,15 @@ $(document).ready(function () {
     });
 
 
+    $("#select_drug_type").select2({
+        dropdownParent: $('#upload_drugs .modal-content')
+    });
+
+    $("#supplier_id").select2({
+        dropdownParent: $('#upload_drugs .modal-content')
+    });
+
+
     $(function () {
         $('.checkItemSupplier').click(function () {
             if ($('input[name="selected_suppliers[]"]:checked').length >0){

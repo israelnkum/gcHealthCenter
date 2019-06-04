@@ -129,3 +129,5 @@ Route::resource('charges','ChargeController');
 Route::post('/bulk_deleteCharge','ChargeController@bulk_deleteCharge')->name('bulk_deleteCharge');
 
 
+
+Route::resource('payment','PaymentController');
