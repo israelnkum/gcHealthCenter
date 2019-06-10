@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
+use App\Charge;
 use App\Consultation;
 use App\Diagnose;
 use App\Drug;
@@ -10,6 +12,7 @@ use App\OtherMedication;
 use App\Patient;
 use App\PatientDiagnosis;
 use App\Registration;
+use App\Service;
 use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -50,15 +53,15 @@ class ConsultationController extends Controller
 
         $diagnosis = Diagnose::all();
         $drugs = Drug::where('quantity_in_stock','>',0)->get();
-
-//        return $drugs;
+        $charges = Charge::all();
 
         return view('pages.consultations.index')
             ->with('registration',$registration)
             ->with('getVitals',$getVitals)
             ->with('diagnosis',$diagnosis)
             ->with('drugs',$drugs)
-            ->with('allRegistrations',$allRegistrations);
+            ->with('allRegistrations',$allRegistrations)
+            ->with('charges',$charges);
     }
 
     /**
@@ -79,8 +82,10 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-//        return $request;
-        $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))->latest()->first();
+
+        $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
+            ->latest()
+            ->first();
 
 
         //Upload labs
@@ -142,7 +147,6 @@ class ConsultationController extends Controller
         }
 
 
-//        return $request->input('group-b');
         //Add other  medications
         if (\Request::has('group-b')) {
             foreach ($request->input('group-b') as $other) {
@@ -172,6 +176,29 @@ class ConsultationController extends Controller
             }
         }
 
+        if (\Request::has('service')) {
+            foreach ($request->input('service') as $key) {
+                $data = explode(',',$key);
+                $service = new Service();
+                $service->patient_id = $request->input('patient_id');
+                $service->registration_id = $request->input('registration_id');
+                $service->charge_id = $data[0];
+                $service->user_id = Auth::user()->id;
+                $service->save();
+
+
+                $bill = new Bill();
+                $bill->registration_id = $request->input('registration_id');
+                $bill->patient_id =$registration->$request->input('patient_id');
+                $bill->item = $data[1];
+                $bill->amount =30;
+                $bill->insurance_amount =0;
+                $bill->total_amount_to_pay=30;
+                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+                $bill->save();
+            }
+        }
 
 
 
@@ -400,12 +427,16 @@ class ConsultationController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        //get current registration from the consultation table to update
         $data = Consultation::where('registration_id',$id)
-            ->where('patient_id',$request->input('patient_id'))->get();
+            ->where('patient_id',$request->input('patient_id'))->first();
 
 
         $labFileNames = [];
         $scanFileNames =[];
+
+        //check if request has lab result before uploading
         if (\Request::has('labs')) {
 
             for ($i = 0; $i < count($request->file('labs')); $i++) {
@@ -420,8 +451,7 @@ class ConsultationController extends Controller
             }
         }
 
-
-
+        //check if request has scan result before uploading
         if (\Request::has('scan')){
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $file = $request->file('scan')[$i];
@@ -438,11 +468,8 @@ class ConsultationController extends Controller
         }
 
 
-
-        $consultation = Consultation::find($data[0]->id);
-
-
-//        return $consultation;
+        //update consultation table where patient_id and registration equals the current
+        $consultation = Consultation::find($data->id);
         $consultation ->complains=$request->input('complains');
         $consultation ->findings=$request->input('findings');
         $consultation ->physical_examination=$request->input('physical_examination');
@@ -451,10 +478,7 @@ class ConsultationController extends Controller
         $consultation ->labs=implode($labFileNames,',');
         $consultation ->ultra_sound_scan=implode($scanFileNames,',');
         $consultation ->user_id=Auth::user()->id;
-
         $consultation->save();
-
-
 
         //Add medications
         foreach ($request->input('treatment_medication') as $key){
@@ -464,7 +488,6 @@ class ConsultationController extends Controller
             $med->drug_id = $key;
             $med->save();
         }
-
 
         //add diagnosis
         if (\Request::has('diagnosis')) {
@@ -479,6 +502,11 @@ class ConsultationController extends Controller
             }
         }
 
+
+
+
+
+        //update registration table, set consultation = 1 to avoid multiple consultations
         $registration = Registration::find($request->input('registration_id'));
         $registration->consult = 1;
         $registration->save();
@@ -486,6 +514,10 @@ class ConsultationController extends Controller
         return redirect()->route('consultation.index')
             ->with('success','Consulting Success');
     }
+
+
+
+
 
     public function patientRecord(Request $request){
 

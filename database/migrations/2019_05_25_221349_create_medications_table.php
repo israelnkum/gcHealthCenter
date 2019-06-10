@@ -18,7 +18,7 @@ class CreateMedicationsTable extends Migration
             $table->integer('registration_id');
             $table->integer('patient_id');
             $table->integer('drugs_id');
-            $table->string('dosage');
+            $table->string('dosage',100);
             $table->boolean('dispensed')->default(0);
             $table->integer('user_id');
             $table->timestamps();

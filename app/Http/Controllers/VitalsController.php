@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
 use App\Patient;
 use App\Registration;
 use App\Vital;
@@ -27,7 +28,6 @@ class VitalsController extends Controller
             ->where('vitals',0)->limit(5)
             ->orderBy('created_at','asc')->get();
 
-//        return $registration;
         return view('pages.vitals.index')
             ->with('registration',$registration);
     }
@@ -50,6 +50,7 @@ class VitalsController extends Controller
      */
     public function store(Request $request)
     {
+
 
         $vital = new Vital();
         $vital->patient_id = $request->input('patient_id');
@@ -108,20 +109,23 @@ class VitalsController extends Controller
         if (count($registration) >1){
             return view('pages.vitals.edit')
                 ->with('registration',$registration);
+        }elseif(count($registration) == 0){
+            $registration = "Nothing Found";
+
+//            return $registration;
+            return view('pages.vitals.index')
+                ->with('registration',$registration);
         }else{
             foreach ($registration as $registered){
 
             }
 
-//            return $registered;
-//
-//            ->whereDate('created_at', Carbon::today())
+
             if (count($registered->registration) == 0){
                 return  redirect()->route('patients.show',$registered->id)
                     ->with('error','Please register patient before checking vitals');
             }else{
 
-//                return $registered->created_at;
                 return view('pages.vitals.edit')
                     ->with('registration',$registration);
             }
@@ -148,21 +152,53 @@ class VitalsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $vital = Vital::find($id);
-        $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
-        $vital->weight = $request->input('weight');
-        $vital->temperature = $request->input('temperature');
-        $vital->pulse = $request->input('pulse');
-        $vital->RDT = $request->input('rdt');
-        $vital->glucose = $request->input('glucose');
-        $vital->user_id=Auth::user()->id;
-        $vital->save();
+        if (empty($request->input('rdt'))){
+            $vital = Vital::find($id);
+            $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
+            $vital->weight = $request->input('weight');
+            $vital->temperature = $request->input('temperature');
+            $vital->pulse = $request->input('pulse');
+            $vital->RDT = $request->input('rdt');
+            $vital->glucose = $request->input('glucose');
+            $vital->user_id=Auth::user()->id;
+            $vital->save();
 
-        $registration = Registration::find($request->input('registration_id'));
-        $registration->vitals = 1;
-        $registration->save();
+            $registration = Registration::find($request->input('registration_id'));
+            $registration->vitals = 1;
+            $registration->save();
+            return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
+        }else{
+            $vital = Vital::find($id);
+            $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
+            $vital->weight = $request->input('weight');
+            $vital->temperature = $request->input('temperature');
+            $vital->pulse = $request->input('pulse');
+            $vital->RDT = $request->input('rdt');
+            $vital->glucose = $request->input('glucose');
+            $vital->user_id=Auth::user()->id;
+            $vital->save();
 
-        return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
+            $registration = Registration::find($request->input('registration_id'));
+            $registration->vitals = 1;
+            $registration->save();
+
+
+            $bill = new Bill();
+            $bill->registration_id = $request->input('registration_id');
+            $bill->patient_id =$registration->patient_id;
+            $bill->item = "Sugar Level Test";
+            $bill->amount =3;
+            $bill->insurance_amount =0;
+            $bill->total_amount_to_pay=3;
+            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+            $bill->save();
+            return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
+        }
+
+
+
+
     }
 
     /**

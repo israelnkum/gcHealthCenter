@@ -39,7 +39,7 @@
                     <h4 class="card-title"></h4>
                     <img class="img-fluid mt-0" src="{{asset('public/images/no_result.png')}}" alt="">
                     <br>
-                    <label for="" class="badge badge-danger p-3">Search Again</label>
+{{--                    <h4 class="display-4">Try again</h4>--}}
                 </div>
             </div>
         @elseif(count($data) == 1)
@@ -70,6 +70,7 @@
                                     </li>
                                 </ul>
                                 <div class="tab-content col-md-10">
+                                    {{--Profile Table --}}
                                     <div class="tab-pane fade show active" id="patient-profile" role="tabpanel" aria-labelledby="tab-2-1">
                                         <div class="row">
                                             <div class="col-md-12 text-right">
@@ -135,6 +136,8 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    {{--Registration Tab--}}
                                     <div class="tab-pane fade" id="patient-registration" role="tabpanel" aria-labelledby="tab-2-2">
                                         <div class="row">
                                             <div class="col-md-7 pl-md-5">
@@ -143,7 +146,6 @@
                                                     <?php
                                                     $registration = $data[0]->registration;
                                                     ?>
-                                                    {{--                                                    {!! $registration !!}--}}
                                                     @foreach($registration as $key => $registered)
                                                         @if($key == count( $registration ) -1 )
                                                             <div class="d-flex align-items-center py-3 border-bottom">
@@ -268,7 +270,9 @@
                                                                                 <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
                                                                                     <option value="">~Charge~</option>
                                                                                     @foreach($charges as $charge)
-                                                                                        <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                                        @if($charge->name == "Insured" || $charge->name=="Non-Insured")
+                                                                                            <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                                        @endif
                                                                                     @endforeach
                                                                                 </select>
                                                                                 <div class="invalid-feedback">
@@ -424,7 +428,7 @@
                                     <label for="dateOfBirth" class="col-md-4 col-form-label">Date of Birth</label>
 
                                     <div class="col-md-8">
-                                        <input placeholder="Date of Birth" type="date" name="date_of_birth" class="form-control date datepicker"  required>
+                                        <input placeholder="Date of Birth" type="date" name="date_of_birth" class="form-control"  required>
                                         <div class="invalid-feedback">
                                             Date of Birth is required.
                                         </div>
@@ -523,21 +527,26 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="row">
-                                    {{--                                    <div class="col-md-4">--}}
-                                    {{--                                        <div class="form-check form-check-flat mt-0">--}}
-                                    {{--                                            <label class="form-check-label">--}}
-                                    {{--                                                <input type="checkbox" class="form-check-input" name="register_patient" id="register">--}}
-                                    {{--                                                Register--}}
-                                    {{--                                            </label>--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
-                                    <div class="col-md-4">
-                                        <div class="form-check form-check-flat mt-0" id="insured_div" style="display: none;">
+                                    {{--<div class="col-md-4">
+                                        <div class="form-check form-check-flat mt-0">
                                             <label class="form-check-label">
-                                                <input type="checkbox" class="form-check-input" disabled  name="insured" id="insured">
-                                                {{--                                                <input type="checkbox" class="form-check-input" disabled name="insured" id="insured">--}}
-                                                Insured
+                                                <input type="checkbox" class="form-check-input" name="register_patient" id="register">
+                                                Register
                                             </label>
+                                        </div>
+                                    </div>--}}
+                                    <input type="hidden" name="register_patient" value="register_patient">
+                                    <div class="col-md-6">
+                                        <select required title="Select Charge"  name="charges" id="charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                            <option value="">~Insurance~</option>
+                                            @foreach($charges as $charge)
+                                                @if($charge->name == "Insured" || $charge->name=="Non-Insured")
+                                                    <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Field is required.
                                         </div>
                                     </div>
                                 </div>
@@ -551,27 +560,21 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6" >
-                                        <div id="charge_div" style="display: none;">
-                                            <select title="Select Marital Status"  name="charges" id="charges" class="js-example-basic-single form-control" style="width: 100%" >
-                                                <option value="">~Charge~</option>
-                                                @foreach($charges as $charge)
-                                                    <option value="{{$charge->id}}">{{$charge->name}}</option>
-                                                @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Charge is required.
-                                            </div>
+                                        <div class="form-check form-check-flat mt-0">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input"  name="insured" id="insurance">
+                                                Insured
+                                            </label>
                                         </div>
-
                                     </div>
                                     <div class="col-md-6">
                                         <div  id="insurance_number_div" style="display: none;">
-                                            <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control mb-1" id="insurance_number" placeholder="Insurance Number">
+                                            <input title="Enter Insurance Number" type="text" name="insurance_number" class="form-control text-uppercase mb-1" id="insurance_number" placeholder="Insurance Number">
                                             <div class="invalid-feedback">
                                                 Insurance Number Required
                                             </div>
 
-                                            <select title="Select Marital Status"  name="insurance_type" id="insurance_type" class="js-example-basic-single form-control" style="width: 100%" >
+                                            <select title="Select Insurance Type"  name="insurance_type" id="insurance_type" class="js-example-basic-single form-control form-control" style="width: 100%" >
                                                 <option value="">~Insurance Type~</option>
                                                 @foreach($insuranceType as $type)
                                                     <option value="{{$type->name.",".$type->amount}}">{{$type->name}}</option>

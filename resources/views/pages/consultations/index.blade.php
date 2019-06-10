@@ -128,7 +128,7 @@
                                     <div id="GC{{$registered->patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                         <div class="card-body">
                                             {{--  New Consultaion Form --}}
-                                            <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.store')}}">
+                                            <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.store')}}">
                                                 @csrf
                                                 <input required type="hidden" name="registration_id" value="{{$registered->id}}">
                                                 <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
@@ -163,32 +163,22 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-12">
                                                         <label for="diagnosis" class="text-info">Diagnosis</label>
-                                                        <select required class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
+                                                        <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                             <option value="">Select Diagnosis</option>
                                                             @foreach($diagnosis as $diag)
                                                                 <option value="{{$diag->id}}">{{$diag->name}}</option>
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is
+                                                            Diagnosis is required
                                                         </div>
                                                     </div>
-                                                    {{-- <div class="col-sm-2 ml-5 ">
-                                                         <div class="form-check form-check-flat mt-0">
-                                                             <label class="form-check-label mt-4 ">
-                                                                 <input type="checkbox" class="form-check-input"  id="other_diagnosis_check">
-                                                                 Other
-                                                             </label>
-                                                         </div>
-                                                     </div>--}}
                                                 </div>
-                                                <div class="form-group row" id="other_diagnosis_div">
-                                                    {{--                                                <label for="glucose" class="col-sm- col-form-label text-right">Glucose(Sugar Level)</label>--}}
+                                                <div class="form-group row">
                                                     <div class="col-sm-12">
-                                                        {{--                                                        <input type="text" placeholder="Enter diagnosis"  class="form-control" id="other_diagnosis_text" name="other_diagnosis">--}}
                                                         <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is
+                                                            Diagnosis is required
                                                         </div>
                                                     </div>
                                                 </div>
@@ -269,18 +259,33 @@
 
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
-                                                        <label>Upload <u><b>LAB</b></u> Result(s)</label>
-                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                        <div class="row">
+                                                            <div class="col-md-12 mb-3">
+                                                                <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
+                                                                <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <label class="text-info">Upload <u><b>SCAN</b></u> Result(s)</label>
+                                                                <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <label>Upload <u><b>SCAN</b></u> Result(s)</label>
-                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+                                                        <label class="text-info">Select <u><b>Service</b></u></label>
+                                                        <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
+                                                            @foreach($charges as $charge)
+                                                                @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
+                                                                    <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row mt-5">
                                                     <div class="col-sm-12 text-right">
-                                                        <button class="btn btn-primary">Finalize</button>
+                                                        <button class="btn btn-primary" type="submit" id="btn_finalize">Finalize</button>
                                                     </div>
                                                 </div>
                                             </form>

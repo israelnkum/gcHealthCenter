@@ -14,7 +14,7 @@
                                     <a class="nav-link active" id="insurance-tab" data-toggle="pill" href="#insurance" role="tab" aria-controls="insurance" aria-selected="false">Insurance</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="charges-tab" data-toggle="pill" href="#charges" role="tab" aria-controls="charges" aria-selected="false">Charges</a>
+                                    <a class="nav-link" id="charges-tab" data-toggle="pill" href="#charges" role="tab" aria-controls="charges" aria-selected="false">Service Charges</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="charges-tab" data-toggle="pill" href="#diagnose" role="tab" aria-controls="diagnose" aria-selected="false">Diagnoses</a>
@@ -94,53 +94,54 @@
                                                             </button>
                                                         </div>
                                                     </div>
-
-                                                    <table class="table" id="insurance_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <div class="form-check form-check-flat">
-                                                                    <label class="form-check-label">
-                                                                        <input type="checkbox"  class="form-check-input"  id="checkAll">
-                                                                    </label>
-                                                                </div>
-                                                            </th>
-                                                            <th>N<u>o</u></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Amount</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php
-                                                            $i=1;
-                                                        @endphp
-                                                        @foreach($insurance as $insure)
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="insurance_table">
+                                                            <thead>
                                                             <tr>
-                                                                <td>
+                                                                <th>
                                                                     <div class="form-check form-check-flat">
                                                                         <label class="form-check-label">
-                                                                            <input type="checkbox" value="{{$insure->id}}" class="form-check-input checkItem" name="selected_id[]" id="remember">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAll">
                                                                         </label>
                                                                     </div>
-                                                                </td>
-                                                                <td>{!! $i !!}</td>
-                                                                <td>{{$insure->id}}</td>
-                                                                <td>{{$insure->name}}</td>
-                                                                <td>{{$insure->amount}}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-secondary edit">
-                                                                        <i class="icon icon-pencil"></i>
-                                                                    </button>
-                                                                </td>
+                                                                </th>
+                                                                <th>N<u>o</u></th>
+                                                                <th>ID</th>
+                                                                <th>Name</th>
+                                                                <th>Amount</th>
+                                                                <th>Action</th>
                                                             </tr>
+                                                            </thead>
+                                                            <tbody>
                                                             @php
-                                                                $i = $i+1;
+                                                                $i=1;
                                                             @endphp
-                                                        @endforeach
-                                                        </tbody>
-                                                    </table>
+                                                            @foreach($insurance as $insure)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$insure->id}}" class="form-check-input checkItem" name="selected_id[]" id="remember">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{!! $i !!}</td>
+                                                                    <td>{{$insure->id}}</td>
+                                                                    <td>{{$insure->name}}</td>
+                                                                    <td>{{$insure->amount}}</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-secondary edit">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
@@ -166,53 +167,54 @@
                                                             </button>
                                                         </div>
                                                     </div>
-
-                                                    <table class="table" id="charge_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <div class="form-check form-check-flat">
-                                                                    <label class="form-check-label">
-                                                                        <input type="checkbox"  class="form-check-input"  id="checkAllCharges">
-                                                                    </label>
-                                                                </div>
-                                                            </th>
-                                                            <th>N<u>o</u></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Amount</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php
-                                                            $i=1;
-                                                        @endphp
-                                                        @foreach($charges as $charge)
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="charge_table">
+                                                            <thead>
                                                             <tr>
-                                                                <td>
+                                                                <th>
                                                                     <div class="form-check form-check-flat">
                                                                         <label class="form-check-label">
-                                                                            <input type="checkbox" value="{{$charge->id}}" class="form-check-input checkItemCharge" name="selected_charges[]" id="remember">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllCharges">
                                                                         </label>
                                                                     </div>
-                                                                </td>
-                                                                <td>{!! $i !!}</td>
-                                                                <td>{{$charge->id}}</td>
-                                                                <td>{{$charge->name}}</td>
-                                                                <td>{{$charge->amount}}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-secondary edit_charge">
-                                                                        <i class="icon icon-pencil"></i>
-                                                                    </button>
-                                                                </td>
+                                                                </th>
+                                                                <th>N<u>o</u></th>
+                                                                <th>ID</th>
+                                                                <th>Name</th>
+                                                                <th>Amount</th>
+                                                                <th>Action</th>
                                                             </tr>
+                                                            </thead>
+                                                            <tbody>
                                                             @php
-                                                                $i = $i+1;
+                                                                $i=1;
                                                             @endphp
-                                                        @endforeach
-                                                        </tbody>
-                                                    </table>
+                                                            @foreach($charges as $charge)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$charge->id}}" class="form-check-input checkItemCharge" name="selected_charges[]" id="remember">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{!! $i !!}</td>
+                                                                    <td>{{$charge->id}}</td>
+                                                                    <td>{{$charge->name}}</td>
+                                                                    <td>{{$charge->amount}}</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-secondary edit_charge">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>
@@ -238,55 +240,56 @@
                                                             </button>
                                                         </div>
                                                     </div>
-
-                                                    <table class="table" id="diagnoses_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <div class="form-check form-check-flat">
-                                                                    <label class="form-check-label">
-                                                                        <input type="checkbox"  class="form-check-input"  id="checkAllDiagnoses">
-                                                                    </label>
-                                                                </div>
-                                                            </th>
-                                                            <th>N<u>o</u></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Description</th>
-                                                            <th>Added By</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php
-                                                            $i=1;
-                                                        @endphp
-                                                        @foreach($diagnoses as $diag)
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="diagnoses_table">
+                                                            <thead>
                                                             <tr>
-                                                                <td>
+                                                                <th>
                                                                     <div class="form-check form-check-flat">
                                                                         <label class="form-check-label">
-                                                                            <input type="checkbox" value="{{$diag->id}}" class="form-check-input checkItemDiagnoses" name="selected_diagnoses[]">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllDiagnoses">
                                                                         </label>
                                                                     </div>
-                                                                </td>
-                                                                <td>{!! $i !!}</td>
-                                                                <td>{{$diag->id}}</td>
-                                                                <td>{{$diag->name}}</td>
-                                                                <td>{{$diag->description}}</td>
-                                                                <td>{{$diag->user->first_name." ".$diag->user->last_name}}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-inverse-light edit">
-                                                                        <i class="icon icon-pencil"></i>
-                                                                    </button>
-                                                                </td>
+                                                                </th>
+                                                                <th>N<u>o</u></th>
+                                                                <th>ID</th>
+                                                                <th>Name</th>
+                                                                <th>Description</th>
+                                                                <th>Added By</th>
+                                                                <th>Action</th>
                                                             </tr>
+                                                            </thead>
+                                                            <tbody>
                                                             @php
-                                                                $i = $i+1;
+                                                                $i=1;
                                                             @endphp
-                                                        @endforeach
-                                                        </tbody>
-                                                    </table>
+                                                            @foreach($diagnoses as $diag)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$diag->id}}" class="form-check-input checkItemDiagnoses" name="selected_diagnoses[]">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{!! $i !!}</td>
+                                                                    <td>{{$diag->id}}</td>
+                                                                    <td>{{$diag->name}}</td>
+                                                                    <td>{{$diag->description}}</td>
+                                                                    <td>{{$diag->user->first_name." ".$diag->user->last_name}}</td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-inverse-light edit">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div>

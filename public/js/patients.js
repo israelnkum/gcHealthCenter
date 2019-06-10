@@ -36,28 +36,10 @@ $(document).ready(function () {
     });
 
     table.column(2).visible(false);
-    $('#register').click(function () {
+
+
+    $('#insurance').click(function () {
         if (!$(this).is(':checked')){
-            //alert("unckecked")
-            $('#insured').prop('checked',false);
-            $('#insured').attr('disabled',true);
-            document.getElementById('insurance_number_div').style.display ='none';
-            document.getElementById('insured_div').style.display ='none';
-            document.getElementById('charge_div').style.display ='none';
-
-        }  else{
-            //alert("ch")
-            $('#insured').removeAttr('disabled');
-
-            $('#charges').attr('required',true);
-            document.getElementById('charge_div').style.display ='block';
-            document.getElementById('insured_div').style.display ='block';
-
-        }
-    });
-    $('#insured').click(function () {
-        if (!$(this).is(':checked')){
-            //alert("unckecked")
             document.getElementById('insurance_number_div').style.display ='none';
             $('#insurance_number').removeAttr('required');
             $('#insurance_type').removeAttr('required');
@@ -68,7 +50,6 @@ $(document).ready(function () {
             $('#insurance_type').attr('required',true);
         }
     });
-
 
 
 

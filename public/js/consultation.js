@@ -16,4 +16,11 @@ $(document).ready(function () {
 
         }
     });*/
+   $("#btn_finalize").click(function () {
+       if ($("#other_diagnosis_text").val() === ""){
+           $("#select_diagnosis").attr('required',true);
+       }else{
+           $("#select_diagnosis").removeAttr('required');
+       }
+   });
 });

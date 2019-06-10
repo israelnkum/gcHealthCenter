@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
 use App\Charge;
+use App\Consultation;
 use App\Insurance;
 use App\Patient;
 use App\Registration;
+use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +63,7 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
+//        return $request;
         $this->validate($request, [
             'folder_number' => ['unique:patients'],
             'registration_number' => ['unique:patients'],
@@ -85,7 +89,6 @@ class PatientController extends Controller
             }
         }
 
-//        return $folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
         $patient->registration_number= $folderNumber;
         $patient->folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
         $patient->title= $request->input('title');
@@ -106,59 +109,114 @@ class PatientController extends Controller
         $patient->name_of_nearest_relative= $request->input('name_of_relative');
         $patient->number_of_nearest_relative= $request->input('relative_phone_number');
         $patient->user_id=Auth::user()->id;
-        $patient->save();
+
 
         //  $data = Patient::where('id',$patient->id)->get();
-
-
-
-
+        //check if the incoming request has register patient
         if (\Request::has('register_patient')){
+
+            //get the charge information selected
             $charges = Charge::find($request->input('charges'));
+
+            //check if incoming request has insured
             if (\Request::has('insured')){
 
-                $register = new Registration();
-                $register->patient_id = $patient->id;
-                $register->isInsured = 1;
-                $register->insurance_type = substr($request->input('insurance_type'),0,strpos($request->input('insurance_type'),','));
-                $register->insurance_number = $request->input('insurance_number');
-                $register->insurance_amount = str_replace(',','',substr($request->input('insurance_type'),strpos($request->input('insurance_type'),',')));
-                $register->registration_fee = $charges->amount;
 
-                $register->save();
-                return redirect()->route('patients.show',[$patient->id])
-                    ->with('success','New Patient Added');
+//                return $charges;
+                //check if insured is selected as charge option in the charge select box
+                if ($charges->name != "Insured") {
+                    return back()->with('error','Please Select Insured as charge option');
+                }else{
+
+                    $patient->save();
+                    //create new registration
+                    $register = new Registration();
+                    $register->patient_id = $patient->id;
+                    $register->isInsured = 1;
+                    $register->insurance_type = substr($request->input('insurance_type'), 0, strpos($request->input('insurance_type'), ','));
+                    $register->insurance_number = strtoupper($request->input('insurance_number'));
+                    $register->insurance_amount = str_replace(',', '', substr($request->input('insurance_type'), strpos($request->input('insurance_type'), ',')));
+                    $register->registration_fee = $charges->amount;
+                    $register->user_id = Auth::user()->id;
+                    if ($register->save()){
+                        /*
+                        *if registration is saved  then create vitals, consultation, patient_diagnosis
+                        *and medication options
+                        */
+
+                        $vital = new Vital();
+                        $vital->patient_id =$patient->id;
+                        $vital->registration_id =$register->id;
+                        $vital->save();
+
+                        $consultation = new Consultation();
+                        $consultation->patient_id =$patient->id;
+                        $consultation->registration_id =$register->id;
+                        $consultation->save();
+
+                        $bill = new Bill();
+                        $bill->registration_id = $register->id;
+                        $bill->patient_id =$patient->id;
+                        $bill->item = "Registration (Insured)";
+                        $bill->amount =5;
+                        $bill->insurance_amount =$charges->amount;
+                        $bill->total_amount_to_pay=$charges->amount;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+                        $bill->save();
+
+
+                    }
+                }
             }else{
                 if ($charges->name == "Insured"){
                     $this->validate($request, [
                         'insurance_type' => 'required',
                         'insurance_number' => 'required',
                     ]);
+                }
+//                return $charges;
+                $patient->save();
+                $register = new Registration();
+                $register->patient_id = $patient->id;
+                $register->isInsured = 0;
+                $register->registration_fee = $charges->amount;
+                $register->user_id=Auth::user()->id;
+                if ($register->save()) {
+                    /*
+                    *if registration is saved  then create vitals, consultation, patient_diagnosis
+                    *and medication options
+                    */
 
-                    $register = new Registration();
-                    $register->patient_id = $patient->id;
-                    $register->isInsured = 0;
-                    $register->registration_fee = $charges->amount;
-                    $register->save();
-                }else{
-                    $register = new Registration();
-                    $register->patient_id = $patient->id;
-                    $register->isInsured = 0;
-                    $register->registration_fee = $charges->amount;
-                    $register->save();
+                    $vital = new Vital();
+                    $vital->patient_id = $patient->id;
+                    $vital->registration_id = $register->id;
+                    $vital->save();
+
+                    $consultation = new Consultation();
+                    $consultation->patient_id = $patient->id;
+                    $consultation->registration_id = $register->id;
+                    $consultation->save();
+
+                    $bill = new Bill();
+                    $bill->registration_id = $register->id;
+                    $bill->patient_id =$patient->id;
+                    $bill->item = "Registration (Non-Insured)";
+                    $bill->amount =$charges->amount;
+                    $bill->insurance_amount =0;
+                    $bill->total_amount_to_pay=$charges->amount;
+                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+                    $bill->save();
+
                 }
 
             }
         }
 
+
         return redirect()->route('patients.show',[$patient->id])
             ->with('success','New Patient Added');
-        /*  $insuranceType = Insurance::all();
-          return back()
-              ->with('data',$data)
-              ->with('insuranceType',$insuranceType);*/
-
-
     }
 
     /**

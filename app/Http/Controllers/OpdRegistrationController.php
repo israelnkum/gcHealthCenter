@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
 use App\Charge;
 use App\Consultation;
 use App\Medication;
@@ -47,6 +48,7 @@ class OpdRegistrationController extends Controller
     public function store(Request $request)
     {
 
+
         //check if the incoming request has register patient
         if (\Request::has('register_patient')){
 
@@ -72,29 +74,45 @@ class OpdRegistrationController extends Controller
                     $register->user_id = Auth::user()->id;
                     if ($register->save()){
                         /*
-                        *if registration is saved  then create vitals, consultation, patient_diagnosis
-                        *and medication options
+                        *if registration is saved  then create vitals, consultation
                         */
+
+
+                        /*
+                         * Create a new vitals for insured
+                         */
 
                         $vital = new Vital();
                         $vital->patient_id =$request->input('patient_id');
                         $vital->registration_id =$register->id;
                         $vital->save();
 
+
+                        /*
+                         * Create a new consultation for insured
+                         */
+
                         $consultation = new Consultation();
                         $consultation->patient_id =$request->input('patient_id');
                         $consultation->registration_id =$register->id;
                         $consultation->save();
 
-//                        $patientDiagnosis = new PatientDiagnosis();
-//                        $patientDiagnosis->patient_id =$request->input('patient_id');
-//                        $patientDiagnosis->registration_id =$register->id;
-//                        $patientDiagnosis->save();
 
-//                        $medication = new Medication();
-//                        $medication->patient_id =$request->input('patient_id');
-//                        $medication->registration_id =$register->id;
-//                        $medication->save();
+
+                        /*
+                         * Create a new bill for insured
+                         */
+
+                        $bill = new Bill();
+                        $bill->registration_id = $register->id;
+                        $bill->patient_id =$request->input('patient_id');
+                        $bill->item = "Registration (Insured)";
+                        $bill->amount =0;
+                        $bill->insurance_amount =$charges->amount;
+                        $bill->total_amount_to_pay=0;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+                        $bill->save();
 
                     }
                 }
@@ -105,6 +123,11 @@ class OpdRegistrationController extends Controller
                         'insurance_number' => 'required',
                     ]);
                 }
+
+
+                /*
+                 * Create a new registration for non-insured
+                 */
                 $register = new Registration();
                 $register->patient_id = $request->input('patient_id');
                 $register->isInsured = 0;
@@ -112,29 +135,40 @@ class OpdRegistrationController extends Controller
                 $register->user_id=Auth::user()->id;
                 if ($register->save()) {
                     /*
-                    *if registration is saved  then create vitals, consultation, patient_diagnosis
-                    *and medication options
+                    *if registration is saved  then create vitals, consultation
                     */
 
+
+                    /*
+                     * Create a new vitals for non-insured
+                     */
                     $vital = new Vital();
                     $vital->patient_id = $request->input('patient_id');
                     $vital->registration_id = $register->id;
                     $vital->save();
 
+
+                    /*
+                     * Create a new consultation for non-insured
+                     */
                     $consultation = new Consultation();
                     $consultation->patient_id = $request->input('patient_id');
                     $consultation->registration_id = $register->id;
                     $consultation->save();
 
-                    /*$patientDiagnosis = new PatientDiagnosis();
-                    $patientDiagnosis->patient_id =$request->input('patient_id');
-                    $patientDiagnosis->registration_id =$register->id;
-                    $patientDiagnosis->save();
+                    /*
+                     * Create a new bill for non-insured
+                     */
+                    $bill = new Bill();
+                    $bill->registration_id = $register->id;
+                    $bill->patient_id =$request->input('patient_id');
+                    $bill->item = "Registration (Non-Insured)";
+                    $bill->amount =5;
+                    $bill->insurance_amount =0;
+                    $bill->total_amount_to_pay=5;
+                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
-                    $medication = new Medication();
-                    $medication->patient_id =$request->input('patient_id');
-                    $medication->registration_id =$register->id;
-                    $medication->save();*/
+                    $bill->save();
 
                 }
 
