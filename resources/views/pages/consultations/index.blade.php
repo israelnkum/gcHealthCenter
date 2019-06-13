@@ -22,7 +22,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-3    ">
+            <div class="col-md-3">
 
                 <form action="{{route('patientRecord')}}" method="post" class="mb-1">
                     @csrf

@@ -55,6 +55,7 @@ Route::post('/searchRegistrationForVitals','VitalsController@searchRegistrationF
 Route::resource('consultation','ConsultationController');
 Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
 Route::post('/patientRecord','ConsultationController@patientRecord')->name('patientRecord');
+Route::get('/edit-medication/{drug_id}/{med_id}','ConsultationController@editMedication')->name('editMedication');
 
 
 /*

@@ -152,6 +152,8 @@ class VitalsController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        //check if patient doesn't need rdt(malaria) test
         if (empty($request->input('rdt'))){
             $vital = Vital::find($id);
             $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
@@ -168,6 +170,9 @@ class VitalsController extends Controller
             $registration->save();
             return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
         }else{
+
+            $registration = Registration::find($request->input('registration_id'));
+
             $vital = Vital::find($id);
             $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
             $vital->weight = $request->input('weight');
@@ -178,22 +183,22 @@ class VitalsController extends Controller
             $vital->user_id=Auth::user()->id;
             $vital->save();
 
-            $registration = Registration::find($request->input('registration_id'));
             $registration->vitals = 1;
             $registration->save();
 
+            if ($registration->isInsured != 1){
+                $bill = new Bill();
+                $bill->registration_id = $request->input('registration_id');
+                $bill->patient_id =$registration->patient_id;
+                $bill->item = "Malaria Test";
+                $bill->amount =10;
+                $bill->insurance_amount =0;
+                $bill->total_amount_to_pay=10;
+                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
-            $bill = new Bill();
-            $bill->registration_id = $request->input('registration_id');
-            $bill->patient_id =$registration->patient_id;
-            $bill->item = "Sugar Level Test";
-            $bill->amount =3;
-            $bill->insurance_amount =0;
-            $bill->total_amount_to_pay=3;
-            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-
-            $bill->save();
-            return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
+                $bill->save();
+            }
+            return redirect()->route('vitals.index')->with('success','Vitals Updated');
         }
 
 

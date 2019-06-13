@@ -117,6 +117,40 @@
                                 </div>
                             </blockquote>
                         @endforeach
+
+                        <label class="text-info">Bill</label>
+                        <blockquote class="blockquote">
+                            <div class="row">
+                                <table class="table table-borderless">
+                                    <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @php($total = 0)
+                                    @foreach($getBills as $bill)
+                                        <tr>
+                                            <td>{{$bill->item}}</td>
+                                            <td>{{$bill->total_amount_to_pay}}</td>
+                                        </tr>
+                                        @php($total +=$bill->total_amount_to_pay)
+                                    @endforeach
+                                    <tr class="bg-primary text-white">
+                                        <td class="p-2 text-right">
+                                            Total
+                                        </td>
+                                        <td class="p-2">GH₵ {!! $total !!}.00</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                               {{-- <div class="col-md-12 text-right mt-3">
+                                    <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
+                                </div>--}}
+                            </div>
+                        </blockquote>
                     </div>
                 </div>
             </div>

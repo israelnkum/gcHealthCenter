@@ -87,7 +87,6 @@ class OpdRegistrationController extends Controller
                         $vital->registration_id =$register->id;
                         $vital->save();
 
-
                         /*
                          * Create a new consultation for insured
                          */
@@ -97,13 +96,11 @@ class OpdRegistrationController extends Controller
                         $consultation->registration_id =$register->id;
                         $consultation->save();
 
-
-
                         /*
                          * Create a new bill for insured
                          */
 
-                        $bill = new Bill();
+                        /*$bill = new Bill();
                         $bill->registration_id = $register->id;
                         $bill->patient_id =$request->input('patient_id');
                         $bill->item = "Registration (Insured)";
@@ -112,7 +109,7 @@ class OpdRegistrationController extends Controller
                         $bill->total_amount_to_pay=0;
                         $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
-                        $bill->save();
+                        $bill->save();*/
 
                     }
                 }

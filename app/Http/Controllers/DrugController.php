@@ -226,7 +226,9 @@ class DrugController extends Controller
      */
     public function edit($id)
     {
-        //
+        $drugs = Drug::find($id);
+
+        return $drugs;
     }
 
     /**

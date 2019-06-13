@@ -3,7 +3,11 @@ $(document).ready(function () {
 
     for (let i = 1; i <=5 ; i++) {
         $('#systolic'+i).keyup(function () {
-            if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+            if ($('#temperature'+i).val() >= 37 ){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
+            }
+            else if($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
                 $('.sugar'+i).fadeIn(1000).slideDown(1000);
                 $('.malaria'+i).fadeIn(1000).slideDown(1000);
                 $('#rdt').attr('required',true);
@@ -17,7 +21,10 @@ $(document).ready(function () {
         });
 
         $('#diastolic'+i).keyup(function () {
-            if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+            if ($('#temperature'+i).val() >= 37 ){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
+            }else if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
                 $('.sugar'+i).fadeIn(1000).slideDown(1000);
                 $('.malaria'+i).fadeIn(1000).slideDown(1000);
                 $('#rdt').attr('required',true);
@@ -31,21 +38,26 @@ $(document).ready(function () {
         });
 
         $('#temperature'+i).keyup(function () {
-            if ($('#temperature'+i).val() >= 37){
-                $('.sugar'+i).fadeIn(1000).slideDown(1000);
-                $('#glucose').attr('required',true);
+             if ($('#temperature'+i).val() >= 37 || $('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
             }else{
-                $('.sugar'+i).fadeOut(1000).slideUp(1000);
-                $('#glucose').removeAttr('required');
+                $('.malaria'+i).fadeOut(1000).slideUp(1000);
+                $('#rdt').removeAttr('required');
             }
         });
+
+
     }
 
 
 
     for (let i=1; i<=5; i++){
         $('#systolic'+i).click(function () {
-            if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+            if ($('#temperature'+i).val() >= 37 ){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
+            }else if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
                 $('.sugar'+i).fadeIn(1000).slideDown(1000);
                 $('.malaria'+i).fadeIn(1000).slideDown(1000);
                 $('#rdt').attr('required',true);
@@ -59,7 +71,10 @@ $(document).ready(function () {
         });
 
         $('#diastolic'+i).click(function () {
-            if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+            if ($('#temperature'+i).val() >= 37 ){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
+            }else if ($('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
                 $('.sugar'+i).fadeIn(1000).slideDown(1000);
                 $('.malaria'+i).fadeIn(1000).slideDown(1000);
                 $('#rdt').attr('required',true);
@@ -75,12 +90,12 @@ $(document).ready(function () {
 
 
         $('#temperature'+i).click(function () {
-            if ($('#temperature'+i).val() >= 37){
-                $('.sugar'+i).fadeIn(1000).slideDown(1000);
-                $('#glucose').attr('required',true);
+            if ($('#temperature'+i).val() >= 37 || $('#systolic'+i).val()>130 || $('#diastolic'+i).val()>90){
+                $('.malaria'+i).fadeIn(1000).slideDown(1000);
+                $('#rdt').attr('required',true);
             }else{
-                $('.sugar'+i).fadeOut(1000).slideUp(1000);
-                $('#glucose').removeAttr('required');
+                $('.malaria'+i).fadeOut(1000).slideUp(1000);
+                $('#rdt').removeAttr('required');
             }
         });
     }

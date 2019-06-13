@@ -46,7 +46,7 @@ $('#btn_bulk_delete_insurance').click(function () {
             search: ""
         },
     });
-    // table.column(4).visible(false);
+    table.column(2).visible(false);
     table.on('click','.edit',function () {
         $tr = $(this).closest('tr');
 
@@ -109,15 +109,28 @@ $('#btn_bulk_delete_insurance').click(function () {
         ],
         dom: 'Bfrtip',
         buttons: [
-            // 'copy', 'csv', 'excel', 'pdf', 'print'
-            'excel','pdf'
+            {
+                extend: 'pageLength',
+            },
+            {
+                extend: 'excel',
+                exportOptions: {
+                    columns: [1,3,4,5]
+                }
+            },
+            {
+                extend: 'pdf',
+                exportOptions: {
+                    columns: [1,3,4,5]
+                }
+            }
         ],
-        "iDisplayLength": 10,
+        "iDisplayLength": 20,
         "language": {
             search: ""
         },
     });
-    // table.column(4).visible(false);
+    charge_table.column(2).visible(false);
     charge_table.on('click','.edit_charge',function () {
         $tr = $(this).closest('tr');
 

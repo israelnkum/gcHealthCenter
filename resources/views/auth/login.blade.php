@@ -76,13 +76,13 @@
         <div class="content-wrapper  align-items-center auth auth-bg-1 theme-one">
             <div class="row mt-5 w-100 mx-auto">
                 <div class="col-lg-4  mt-5 mx-auto text-center">
-                    <p class="text-white" style="font-size: 1.5rem; font-weight: 100">Patient's Resource Management System</p>
+                    <p class="text-white text-uppercase" style="font-size: 1rem; font-weight: lighter">Patients Resource Management System</p>
 
                 </div>
             </div>
             <div class="row w-100 mx-auto">
                 <div class="col-lg-3 mx-auto text-center">
-                    <div class="auto-form-wrapper">
+                    <div class="auto-form-wrapper" style="background:ghostwhite;">
                         <div class="text-center mb-2">
                             <img height="auto" width="200" src="{{asset('public/images/logo.jpeg')}}" class="img-fluid" alt="">
                         </div>

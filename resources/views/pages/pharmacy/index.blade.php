@@ -175,7 +175,7 @@
                                                                 <th>Supplier ID</th>
                                                                 <th>Drug type ID</th>
                                                                 <th>Insurance Amount</th>
-                                                                <th>Expiry Date</th>
+                                                                {{--<th>Expiry Date</th>--}}
                                                                 <th>Action</th>
                                                             </tr>
                                                             </thead>
@@ -203,7 +203,7 @@
                                                                     <td>{{$drug->supplier_id}}</td>
                                                                     <td>{{$drug->drug_type_id}}</td>
                                                                     <td>{{$drug->nhis_amount}}</td>
-                                                                    <td>{{$drug->expiry_date}}</td>
+                                                                    {{--                                                                    <td>{{$drug->expiry_date}}</td>--}}
                                                                     <td>
                                                                         <button type="button" class="btn btn-sm btn-secondary edit">
                                                                             <i class="icon icon-pencil"></i>

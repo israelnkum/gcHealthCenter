@@ -522,7 +522,6 @@
         </div>
     </div>
 
-
     <!-- Delete Insurance modal -->
     <div class="modal fade" id="deleteInsurance" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -547,11 +546,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
 
 
     <!-- new Charge modal -->
@@ -647,7 +641,6 @@
         </div>
     </div>
 
-
     <!-- Delete Charge modal -->
     <div class="modal fade" id="deleteCharge" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -672,8 +665,4 @@
             </div>
         </div>
     </div>
-
-
-
-
 @endsection

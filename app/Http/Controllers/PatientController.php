@@ -127,7 +127,6 @@ class PatientController extends Controller
                 if ($charges->name != "Insured") {
                     return back()->with('error','Please Select Insured as charge option');
                 }else{
-
                     $patient->save();
                     //create new registration
                     $register = new Registration();
@@ -158,7 +157,7 @@ class PatientController extends Controller
                         $bill->registration_id = $register->id;
                         $bill->patient_id =$patient->id;
                         $bill->item = "Registration (Insured)";
-                        $bill->amount =5;
+                        $bill->amount =$charges->amount;
                         $bill->insurance_amount =$charges->amount;
                         $bill->total_amount_to_pay=$charges->amount;
                         $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
