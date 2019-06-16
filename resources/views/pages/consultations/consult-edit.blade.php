@@ -370,24 +370,25 @@
                                 </thead>
                                 <tbody>
                                 @php($scans=explode(',',$consultation->ultra_sound_scan))
-
-                                @foreach($scans as $scan)
-                                    <tr>
-                                        <td>
-                                            <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}">
-                                        </td>
-                                        <td>
-                                            <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
-                                        </td>
-                                        <td>
-                                            <form action="">
-                                                <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
-                                                    <i class="icon icon-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                @if(count($scans)>1)
+                                    @foreach($scans as $scan)
+                                        <tr>
+                                            <td>
+                                                <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}">
+                                            </td>
+                                            <td>
+                                                <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
+                                            </td>
+                                            <td>
+                                                <form action="">
+                                                    <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
+                                                        <i class="icon icon-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                                 </tbody>
                             </table>
                         </blockquote>
@@ -404,24 +405,25 @@
                                 </thead>
                                 <tbody>
                                 @php($scans=explode(',',$consultation->labs))
-
-                                @foreach($scans as $scan)
-                                    <tr>
-                                        <td>
-                                            <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/labs/'.$scan)}}" alt="{{$scan}}">
-                                        </td>
-                                        <td>
-                                            <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
-                                        </td>
-                                        <td>
-                                            <form action="">
-                                                <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
-                                                    <i class="icon icon-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                @if(count($scans)>1)
+                                    @foreach($scans as $scan)
+                                        <tr>
+                                            <td>
+                                                <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/labs/'.$scan)}}" alt="{{$scan}}">
+                                            </td>
+                                            <td>
+                                                <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
+                                            </td>
+                                            <td>
+                                                <form action="">
+                                                    <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
+                                                        <i class="icon icon-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                                 </tbody>
                             </table>
                         </blockquote>

@@ -87,7 +87,6 @@ class ConsultationController extends Controller
             ->first();
 
         $registration = Registration::find($request->input('registration_id'));
-//        return $getRegistration;
 
         //Upload labs
         $labFileNames = [];
@@ -148,8 +147,7 @@ class ConsultationController extends Controller
 
                 $drugs = Drug::find($med['drug_id']);
 
-//            return $drugs;
-                //if patient is NOT Insured then insert
+                //if patient is NOT Insured then insert the drug selling price
                 if ($registration->isInsured != 1) {
                     $bill = new Bill();
                     $bill->registration_id = $request->input('registration_id');
@@ -163,7 +161,7 @@ class ConsultationController extends Controller
                     $bill->save();
                 }
                 else {
-                    //if patient is Insured
+                    //if patient is Insured the total amount to pay is sellingPrice - NHIS Price
                     $bill = new Bill();
                     $bill->registration_id = $request->input('registration_id');
                     $bill->patient_id = $request->input('patient_id');
@@ -209,24 +207,25 @@ class ConsultationController extends Controller
         }
 
         //add detention bill if patient is detained or admitted
-        if (\Request::has('detain_admit')){
-            $service_charge = Charge::where('name','Detain/Admit')->first();
-            $bill = new Bill();
-            $bill->registration_id = $request->input('registration_id');
-            $bill->patient_id =$request->input('patient_id');
-            $bill->item = $service_charge->name;
-            $bill->item_id = $service_charge->id;
-            $bill->amount =$service_charge->amount;
-            $bill->insurance_amount =0;
-            $bill->total_amount_to_pay=$service_charge->amount;
-            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-            $bill->save();
-        }
+//        if (\Request::has('detain_admit')){
+//            $service_charge = Charge::where('name','Detain/Admit')->first();
+//            $bill = new Bill();
+//            $bill->registration_id = $request->input('registration_id');
+//            $bill->patient_id =$request->input('patient_id');
+//            $bill->item = $service_charge->name;
+//            $bill->item_id = $service_charge->id;
+//            $bill->amount =$service_charge->amount;
+//            $bill->insurance_amount =0;
+//            $bill->total_amount_to_pay=$service_charge->amount;
+//            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+//            $bill->save();
+//        }
 
 
         if (\Request::has('service')) {
-
             $service_charge = Charge::where('name','Consultation')->first();
+
+            //charge for consultation if only the person is not insured
             if ($registration->isInsured != 1){
                 $bill = new Bill();
                 $bill->registration_id = $request->input('registration_id');
@@ -240,6 +239,7 @@ class ConsultationController extends Controller
                 $bill->save();
             }
 
+            //insert selected service charge
             foreach ($request->input('service') as $key) {
                 $data = explode(',', $key);
                 $service = new Service();
@@ -251,25 +251,23 @@ class ConsultationController extends Controller
 
 
                 $service_charge = Charge::where('name',$data[1])->first();
-                if ($registration->isInsured != 1){
-                    $bill = new Bill();
-                    $bill->registration_id = $request->input('registration_id');
-                    $bill->patient_id =$request->input('patient_id');
-                    $bill->item = $service_charge->name;
-                    $bill->item_id = $service_charge->id;
-                    $bill->amount =$service_charge->amount;
-                    $bill->insurance_amount =0;
-                    $bill->total_amount_to_pay=$service_charge->amount;
-                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-                    $bill->save();
-                }
+
+                //create a bill for selected service charges
+                $bill = new Bill();
+                $bill->registration_id = $request->input('registration_id');
+                $bill->patient_id =$request->input('patient_id');
+                $bill->item = $service_charge->name;
+                $bill->item_id = $service_charge->id;
+                $bill->amount =$service_charge->amount;
+                $bill->insurance_amount =0;
+                $bill->total_amount_to_pay=$service_charge->amount;
+                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                $bill->save();
             }
 
         }
 
-
-
-
+        //update registration set consult = 1 and detain_admit if request has detain_admit
         $registration->consult = 1;
         if (\Request::has('detain_admit')){
             $registration->detain= 1;
@@ -325,7 +323,45 @@ class ConsultationController extends Controller
             $getBills = Bill::where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id',$recentRegistration->id)->get();
 
-//        return $recentMedication;
+
+
+            //check if patient is detained Or Admitted
+            if ($recentRegistration->detain ==0){
+                $detentionBill =0;
+            }
+            elseif ( $recentRegistration->detain == 1){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            //if patient is discharged, then use discharged_date instead of today
+            elseif ($recentRegistration->detain == 2){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->discharged_date);
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3 && $detentionDays >0){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
 
             $getDiagIds =[];
             $getMedIds  =[];
@@ -382,10 +418,10 @@ class ConsultationController extends Controller
             ->with('recentVitals',$recentVitals)
             ->with('getImplodedMedicine',$getImplodedMedicine)
             ->with('getImplodedDiagnosis',$getImplodedDiagnosis)
-
             ->with('patientDiagnosis',$patientDiagnosis)
             ->with('medication',$medication)
             ->with('getBills',$getBills)
+            ->with('detentionBill',$detentionBill)
             ->with('charges',$charges);
     }
 
@@ -450,7 +486,9 @@ class ConsultationController extends Controller
 
         }
 
+        //if searchPatient result is only one
         if (count($searchPatient) == 1){
+
             $registration = Registration::with('patient')
                 ->where('vitals',1)
                 ->where('consult',0)
@@ -459,10 +497,55 @@ class ConsultationController extends Controller
                 ->limit(1)
                 ->get();
 
-//            return $registration;
-
-            //get previous registrations
             $previousRegistration = Registration::where('patient_id',$searchPatient[0]->id)->get();
+
+            /*
+             * Calculate detention bill
+             */
+            //check if patient is detained Or Admitted
+            if ( $recentRegistration->detain == 0){
+                $detentionBill = 0;
+            }
+            elseif ( $recentRegistration->detain == 1){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            //if patient is discharged, then use discharged_date instead of today
+            elseif ($recentRegistration->detain == 2){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->discharged_date);
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            /*
+             * End detention bill calculation
+             */
+
+//            return $detentionBill;
+
+
 
             $allRegistrations=0;
             if (count($registration) == 1){
@@ -476,7 +559,7 @@ class ConsultationController extends Controller
                 $getVitals =[];
             }
 
-
+//            return $recentRegistration;
 
             return view('pages.consultations.search_result')
                 ->with('registration',$registration)
@@ -494,7 +577,8 @@ class ConsultationController extends Controller
                 ->with('charges',$charges)
                 ->with('patientDiagnosis',$patientDiagnosis)
                 ->with('medication',$medication)
-                ->with('getBills',$getBills);
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
         }else{
             return view('pages.consultations.search_result')
                 ->with('searchPatient',$searchPatient)
@@ -615,8 +699,17 @@ class ConsultationController extends Controller
         $consultation->physical_examination=$request->input('physical_examination');
         $consultation->other_diagnosis=$request->input('other_diagnosis');
         $consultation->detain_admit=$request->input('detain_admit');
-        $consultation->labs=$consultation->labs.",".implode($labFileNames,',');
-        $consultation->ultra_sound_scan=$consultation->ultra_sound_scan.",".implode($scanFileNames,',');
+        if (count($labFileNames) == 0){
+            $consultation->labs=$consultation->labs;
+        }else{
+            $consultation->labs=$consultation->labs.",".implode($labFileNames,',');
+        }
+
+        if (count($labFileNames) == 0){
+            $consultation->ultra_sound_scan=$consultation->ultra_sound_scan;
+        }else{
+            $consultation->ultra_sound_scan=$consultation->ultra_sound_scan.",".implode($scanFileNames,',');
+        }
         $consultation->user_id=Auth::user()->id;
 
         $consultation->save();
@@ -837,6 +930,52 @@ class ConsultationController extends Controller
         $diagnosis = Diagnose::all();
         $drugs = Drug::all();
 
+
+//        return $registration;
+        /*
+             * Calculate detention bill
+             */
+        //check if patient is detained Or Admitted
+        if ( $registration[0]->detain == 0){
+            $detentionBill = 0;
+        }
+        elseif ( $registration[0]->detain == 1){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration[0]->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        //if patient is discharged, then use discharged_date instead of today
+        elseif ($registration[0]->detain == 2){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration[0]->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration[0]->discharged_date);
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        /*
+         * End detention bill calculation
+         */
+
         if (\Request::has('fromSearchPage')){
             return view('pages.consultations.details')
                 ->with('registration',$registration)
@@ -850,7 +989,8 @@ class ConsultationController extends Controller
                 ->with('medication',$medication)
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
-                ->with('getBills',$getBills);
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
         }else{
             return view('pages.consultations.index')
                 ->with('registration',$registration)
@@ -864,7 +1004,8 @@ class ConsultationController extends Controller
                 ->with('medication',$medication)
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
-                ->with('getBills',$getBills);
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
         }
 
     }

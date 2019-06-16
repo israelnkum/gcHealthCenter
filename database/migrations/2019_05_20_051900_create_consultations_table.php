@@ -21,7 +21,6 @@ class CreateConsultationsTable extends Migration
             $table->string('findings')->nullable();
             $table->string('physical_examination')->nullable();
             $table->string('other_diagnosis')->nullable();
-            $table->string('detain_admit')->nullable();
             $table->string('labs',1000)->nullable();
             $table->string('ultra_sound_scan',1000)->nullable();
             $table->integer('user_id')->nullable();

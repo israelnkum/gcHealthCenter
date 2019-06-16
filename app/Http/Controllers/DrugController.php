@@ -49,6 +49,9 @@ class DrugController extends Controller
         $vitals="";
         $other_medication="";
         $medication="";
+        $totalCashSales = Bill::sum('total_amount_to_pay');
+        $totalSales = Bill::sum('amount');
+        $totalNhisSale = Bill::sum('insurance_amount');
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
@@ -56,23 +59,24 @@ class DrugController extends Controller
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
             ->orderBy('created_at','asc')
-            ->get();
+            ->first();
+        
 
-        if (count($registration)>0){
-            $vitals = Vital::where('registration_id',$registration[0]->id)
-                ->where('patient_id',$registration[0]->patient_id)
+        if (!empty($registration)){
+            $vitals = Vital::where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
                 ->latest()->first();
 
-            $medication= Medication::with('drugs')->where('registration_id',$registration[0]->id)
-                ->where('patient_id',$registration[0]->patient_id)
-                ->whereDate('created_at', Carbon::today())
+            $medication= Medication::with('drugs')
+                ->where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
                 ->get();
 
 
-            $other_medication= OtherMedication::where('registration_id',$registration[0]->id)
-                ->where('patient_id',$registration[0]->patient_id)
+            $other_medication= OtherMedication::where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
                 ->whereDate('created_at', Carbon::today())
-                ->latest()->first();
+                ->latest()->get();
         }
 
 //        return $medication;
@@ -83,7 +87,10 @@ class DrugController extends Controller
             ->with('registration',$registration)
             ->with('drugs',$drugs)
             ->with('vitals',$vitals)
-            ->with('medication',$medication);
+            ->with('medication',$medication)
+            ->with('totalCashSales',$totalCashSales)
+            ->with('totalNhisSale',$totalNhisSale)
+            ->with('totalSales',$totalSales);
     }
 
     /**

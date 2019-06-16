@@ -69,11 +69,11 @@
                                             <small class="text-gray">{{$dat->phone_number}}</small>
                                         </div>
                                     </a>
-                                    {{--<div class="d-inline-block">
+                                    <div class="d-inline-block">
                                         <div class=" px-4 py-2 rounded">
                                             <a href="{{route('patients.edit',$dat->id)}}" class="text-dark" style="text-decoration: none;"><i class="icon-note icon-lg"></i></a>
                                         </div>
-                                    </div>--}}
+                                    </div>
                                 </div>
 
                             </div>
@@ -502,40 +502,14 @@
 
                                 @if(!empty($recentVitals))
                                     <div class="row">
-                                        @if($recentRegistration->detain == 1)
-                                            <div class="col-md-10 offset-md-2 text-right mb-3">
-                                                <div class="row">
-                                                    <div class="col-md-6 offset-md-4">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary pt-1 pb-1 pr-1 pl-1">
-                                                                    <i class="icon icon-plus"></i> Add Record
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-md-12 mt-1">
-                                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-info pt-1 pb-1 pr-1 pl-1">
-                                                                    <i class="icon icon-notebook"></i>View Record
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <form action="">
-                                                            <button class="btn btn-success">
-                                                                <i class="icon icon-arrow-right-circle"></i>
-                                                                Discharge
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @elseif($recentRegistration->detain == 2)
-                                            <div class="col-md-10 offset-md-2 text-right mb-3">
-                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary">
-                                                    <i class="icon icon-notebook"></i> View Record
-                                                </a>
-                                            </div>
-                                        @endif
+                                        <div class="col-md-6 offset-md-4 text-right mb-3">
+                                            @if($recentRegistration->detain == 1)
+                                                {{--                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-info">Add Record</a>--}}
+                                                <form action="">
+                                                    <button class="btn btn-success">Discharge</button>
+                                                </form>
+                                            @endif
+                                        </div>
 
                                         <div class="col-md-6">
                                             <h5 class=" text-uppercase mb-0"><i class="icon icon-user"></i> {{$recentRegistration->patient->first_name." ".$recentRegistration->patient->other_name." ".$recentRegistration->patient->last_name}}</h5>
@@ -698,17 +672,11 @@
                                                             </tr>
                                                             @php($total +=$bill->total_amount_to_pay)
                                                         @endforeach
-                                                        @if($detentionBill)
-                                                            <tr>
-                                                                <td>Detention</td>
-                                                                <td>{{$detentionBill}}.00</td>
-                                                            </tr>
-                                                        @endif
                                                         <tr class="bg-primary text-white">
                                                             <td class="p-2 text-right">
                                                                 Total
                                                             </td>
-                                                            <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
+                                                            <td class="p-2">GH₵ {!! $total !!}.00</td>
                                                         </tr>
                                                         </tbody>
                                                     </table>

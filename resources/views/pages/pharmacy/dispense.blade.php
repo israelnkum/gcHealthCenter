@@ -35,7 +35,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-inline-block pt-3">
                                 <div class="d-md-flex">
-                                    <h2 class="mb-0">₵10,200</h2>
+                                    <h2 class="mb-0">₵{{$totalCashSales}}</h2>
                                 </div>
                             </div>
                             <div class="d-inline-block">
@@ -52,7 +52,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-inline-block pt-3">
                                 <div class="d-md-flex">
-                                    <h2 class="mb-0">₵10,200</h2>
+                                    <h2 class="mb-0">₵{{$totalNhisSale}}</h2>
                                 </div>
                             </div>
                             <div class="d-inline-block">
@@ -70,7 +70,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-inline-block pt-3">
                                 <div class="d-md-flex">
-                                    <h2 class="mb-0">₵10,200</h2>
+                                    <h2 class="mb-0">₵{{$totalSales}}</h2>
                                 </div>
                                 {{--                                <small class="text-gray">Raised from 89 orders.</small>--}}
                             </div>
@@ -84,79 +84,65 @@
             </div>
         </div>
 
-        @if(count($registration)>0)
+        @if(!empty($registration))
 
             <form action="{{route('payment.store')}}" method="post" class="needs-validation" novalidate>
                 @csrf
                 <div class="row">
-                    <div class="col-md-5 grid-margin stretch-card">
+                    <div class="col-md-4 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Patient's Information</h4>
-                                @foreach($registration as $registered)
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            {{--                                                    GC{{$registered->patient->registration_number}}--}}
-                                            <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
-                                                <i class="icon-folder mr-1"></i> {{$registered->patient->folder_number}}
-                                            </h2>
-                                            <h5 class="mb-1 text-danger">
-                                                <i class="icon-user mr-1"></i>
-                                                {{$registered->patient->title." ".$registered->patient->first_name." ".$registered->patient->other_name." ".$registered->patient->last_name}}
-                                            </h5>
-                                            <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->patient->phone_number}}</small>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {{--                                                    GC{{$registration->patient->registration_number}}--}}
+                                        <h5 class="mb-1 text-primary" >
+                                            <i class="icon-folder mr-1"></i> {{$registration->patient->folder_number}}
+                                        </h5>
+                                        <h6 class="mb-1 text-danger">
+                                            <i class="icon-user mr-1"></i>
+                                            {{$registration->patient->title." ".$registration->patient->first_name." ".$registration->patient->other_name." ".$registration->patient->last_name}}
+                                        </h6>
+                                        <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registration->patient->phone_number}}</small>
 
-                                        </div>
-                                        <div class="col-md-6 text-right">
-                                            Date Of Birth: <span class="font-weight-bold">{{$registered->patient->date_of_birth}}</span><br>
-                                            Age: <span class="font-weight-bold">{{$registered->patient->age}}</span><br>
-                                            Gender: <span class="font-weight-bold">{{$registered->patient->gender}}</span><br>
-                                            Marital Status: <span class="font-weight-bold">{{$registered->patient->marital_status}}</span><br>
-                                        </div>
                                     </div>
-                                    <hr>
-                                    <h6 class="card-title">Vital Signs</h6>
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <h6>Blood Pressure(BP) - <span class="text-danger">{{$vitals->blood_pressure}} mmHg</span></h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 text-right">
-                                            <div class="form-group">
-                                                <h6>Weight - <span class="text-danger">{{$vitals->weight}} kg</span></h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <h6>Temperature - <span class="text-danger">{{$vitals->temperature}} °c</span></h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6 text-right">
-                                            <div class="form-group">
-                                                <h6>Pulse - <span class="text-danger">{{$vitals->pulse}} bpm</span></h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <h6>Glucose - <span class="text-danger">{{$vitals->glucose}} mol</span></h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6 text-right">
-                                            <div class="form-group">
-                                                <h6>RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></h6>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-6 text-right">
+                                        <small style="font-size: 14px"> Date Of Birth: <span class="font-weight-bold">{{$registration->patient->date_of_birth}}</span></small><br>
+                                        <small style="font-size: 14px">Age: <span class="font-weight-bold">{{$registration->patient->age}}</span></small><br>
+                                        <small style="font-size: 14px">Gender: <span class="font-weight-bold">{{$registration->patient->gender}}</span></small><br>
+                                        <small style="font-size: 14px">Marital Status: <span class="font-weight-bold">{{$registration->patient->marital_status}}</span></small>
                                     </div>
-                                    <input type="hidden" value="{{$registered->patient->id}}" name="patient_id">
-                                    <input type="hidden" value="{{$registered->id}}" name="registration_id">
-                                @endforeach
+                                </div>
+                                <hr>
+                                <h6 class="card-title">Vital Signs</h6>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <small style="font-size: 13px">Blood Pressure(BP) - <span class="text-danger">{{$vitals->blood_pressure}} mmHg</span></small>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <small style="font-size: 13px">Weight - <span class="text-danger">{{$vitals->weight}} kg</span></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small style="font-size: 13px">Temperature - <span class="text-danger">{{$vitals->temperature}} °c</span></small>
+                                    </div>
+
+                                    <div class="col-md-6 text-right">
+                                        <small style="font-size: 13px">Pulse - <span class="text-danger">{{$vitals->pulse}} bpm</span></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small style="font-size: 13px">Glucose - <span class="text-danger">{{$vitals->glucose}} mol</span></small>
+                                    </div>
+
+                                    <div class="col-md-6 text-right">
+                                        <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></small>
+                                    </div>
+                                </div>
+                                <input type="hidden" value="{{$registration->patient->id}}" name="patient_id">
+                                <input type="hidden" value="{{$registration->id}}" name="registration_id">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-7 grid-margin stretch-card">
+                    <div class="col-md-8 grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Dispense Drugs</h4>
@@ -167,38 +153,49 @@
                                         <tr>
                                             <th>Drug</th>
                                             <th>Dose</th>
-{{--                                            <th>Quantity In Stock</th>--}}
                                             <th>Selling Price</th>
-                                            <th>NHIS Amount</th>
                                             <th>Dispense</th>
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        @php($total = 0)
                                         @foreach($medication as $med)
                                             <tr>
                                                 <td>{{$med->drugs->name}}</td>
                                                 <td>{{$med->dosage}}</td>
-{{--                                                <td>{{$med->drugs->quantity_in_stock}}</td>--}}
-                                                <td>{{$med->drugs->retail_price}}</td>
-                                                <td>{{$med->drugs->nhis_amount}}</td>
                                                 <td>
-
-                                                    <input name="drug_id[]" required type="number" max="{{$med->drugs->quantity_in_stock}}" min="1"  class="form-control" style="width: 70px;">
+                                                    @if($registration->isInsured == 1)
+                                                        {{$amount =$med->drugs->retail_price - $med->drugs->nhis_amount}}
+                                                    @else
+                                                        {{$amount =$med->drugs->retail_price}}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <input name="drug_id[]" required type="number" max="{{$med->drugs->quantity_in_stock}}" min="0" value="0"   class="form-control" style="width: 70px;">
                                                 </td>
                                             </tr>
+                                            @php($total = $total+$amount)
                                         @endforeach
+                                        <tr class="bg-success ">
+                                            <td class="p-2 text-white text-right" colspan="2">Total</td>
+                                            <td class="p-2 text-white">GH₵ {!! $total !!}</td>
+                                            <td class="p-2 text-white"></td>
+                                        </tr>
                                         </tbody>
                                     </table>
-                                    <div class="form-group row mt-5">
-                                        <div class="col-md-4 offset-md-4">
-                                            <input required placeholder="Amount Paying" type="text" class="form-control" id="amount_paid">
-                                            <div class="invalid-feedback">
-                                                Amount Paying required
+                                    <div class="form-group row mb-2 mt-5">
+                                        <div class="col-md-4 offset-md-8">
+                                            <div class="input-group">
+                                                <input type="text" required class="form-control" data-inputmask="'alias': 'currency'" name="search" placeholder="Amount Paid">
+                                                <div class="input-group-prepend bg-info text-white">
+                                                    <button type="submit" class="input-group-text btn text-white">
+                                                        Dispense
+                                                    </button>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Amount required
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div class="col-md-4">
-                                            <button type="submit" class="btn btn-info">Dispense</button>
                                         </div>
                                     </div>
 
@@ -216,7 +213,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <h6 class="display-4">
-                        Relax! No patient in Cue
+                        Relax! No patient in Queue
                     </h6>
                 </div>
             </div>

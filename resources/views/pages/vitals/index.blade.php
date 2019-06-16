@@ -43,7 +43,7 @@
                             @else
                                 @if(count($registration) ==0)
                                     <div class="text-center">
-                                        <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
+                                        <h6 class="display-4 text-info">Relax! No Patient in Queue</h6>
                                     </div>
                                 @else
                                     @php($i =1)

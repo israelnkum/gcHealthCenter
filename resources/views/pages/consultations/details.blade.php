@@ -79,7 +79,6 @@
                                     </div>
                                 </div>
                             </blockquote>
-
                             <label class="text-info">Registration</label>
                             <blockquote class="blockquote">
                                 <div class="row">
@@ -137,11 +136,17 @@
                                         </tr>
                                         @php($total +=$bill->total_amount_to_pay)
                                     @endforeach
+                                    @if($detentionBill)
+                                        <tr>
+                                            <td>Detention</td>
+                                            <td>{{$detentionBill}}.00</td>
+                                        </tr>
+                                    @endif
                                     <tr class="bg-primary text-white">
                                         <td class="p-2 text-right">
                                             Total
                                         </td>
-                                        <td class="p-2">GH₵ {!! $total !!}.00</td>
+                                        <td class="p-2">GH₵ {!! $total+$detentionBill !!}.00</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -158,6 +163,15 @@
             <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label class="badge badge-info">
+                                    <a href="{{route('consultation.edit',$registered->id)}}" class="text-white" style="text-decoration: none">
+                                        <i class="icon icon-note"> </i>Edit
+                                    </a>
+                                </label>
+                            </div>
+                        </div>
                         @if(\Request::is('patientRecord'))
                             @foreach($consultation as $consult)
                                 <h6 class="card-title text-danger">Consultation</h6>

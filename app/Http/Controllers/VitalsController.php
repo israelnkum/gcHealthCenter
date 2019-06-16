@@ -186,18 +186,17 @@ class VitalsController extends Controller
             $registration->vitals = 1;
             $registration->save();
 
-            if ($registration->isInsured != 1){
-                $bill = new Bill();
-                $bill->registration_id = $request->input('registration_id');
-                $bill->patient_id =$registration->patient_id;
-                $bill->item = "Malaria Test";
-                $bill->amount =10;
-                $bill->insurance_amount =0;
-                $bill->total_amount_to_pay=10;
-                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+            //add a new bill for rdt (malaria Test)
+            $bill = new Bill();
+            $bill->registration_id = $request->input('registration_id');
+            $bill->patient_id =$registration->patient_id;
+            $bill->item = "Malaria Test";
+            $bill->amount =10;
+            $bill->insurance_amount =0;
+            $bill->total_amount_to_pay=10;
+            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
-                $bill->save();
-            }
+            $bill->save();
             return redirect()->route('vitals.index')->with('success','Vitals Updated');
         }
 

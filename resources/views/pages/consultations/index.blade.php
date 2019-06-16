@@ -57,7 +57,7 @@
 
         @if(count($registration)  == 0)
             <div class="text-center">
-                <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
+                <h6 class="display-4 text-info">Relax! No Patient in Queue</h6>
             </div>
         @elseif(count($registration)  == 1)
 
@@ -452,7 +452,7 @@
             </div>
         @else
             <div class="text-center">
-                <h6 class="display-4 text-info">Good Job! No Patient in Cue</h6>
+                <h6 class="display-4 text-info">Good Job! No Patient in Queue</h6>
             </div>
         @endif
     </div>
