@@ -60,17 +60,25 @@ class DrugController extends Controller
             ->limit(1)
             ->orderBy('created_at','asc')
             ->first();
-        
+
 
         if (!empty($registration)){
             $vitals = Vital::where('registration_id',$registration->id)
                 ->where('patient_id',$registration->patient_id)
                 ->latest()->first();
 
-            $medication= Medication::with('drugs')
+            $medication= Medication::with('bill','drugs')
+                ->where('dispensed',0)
                 ->where('registration_id',$registration->id)
                 ->where('patient_id',$registration->patient_id)
                 ->get();
+
+//            return $medication;
+
+            //get all medication
+           /* $medication= Medication::where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
+                ->get();*/
 
 
             $other_medication= OtherMedication::where('registration_id',$registration->id)

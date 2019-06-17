@@ -13,4 +13,8 @@ class Medication extends Model
     public function drugs(){
         return $this->belongsTo('App\Drug');
     }
+
+    public function bill(){
+        return $this->belongsTo('App\Bill');
+    }
 }

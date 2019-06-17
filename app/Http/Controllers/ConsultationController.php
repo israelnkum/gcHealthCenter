@@ -137,13 +137,6 @@ class ConsultationController extends Controller
         //Add medications
         foreach ($request->input('group-a') as $med) {
             if (!empty($med['drug_id']) && !empty($med['dosage'])) {
-                $medication = new Medication();
-                $medication->patient_id = $request->input('patient_id');
-                $medication->registration_id = $request->input('registration_id');
-                $medication->drugs_id = $med['drug_id'];
-                $medication->dosage = $med['dosage'];
-                $medication->user_id = Auth::user()->id;
-                $medication->save();
 
                 $drugs = Drug::find($med['drug_id']);
 
@@ -173,6 +166,16 @@ class ConsultationController extends Controller
                     $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                     $bill->save();
                 }
+
+                $medication = new Medication();
+                $medication->bill_id = $bill->id;
+                $medication->patient_id = $request->input('patient_id');
+                $medication->registration_id = $request->input('registration_id');
+                $medication->drugs_id = $med['drug_id'];
+                $medication->dosage = $med['dosage'];
+                $medication->user_id = Auth::user()->id;
+                $medication->save();
+
             }
         }
 

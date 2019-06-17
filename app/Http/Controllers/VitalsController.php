@@ -103,6 +103,8 @@ class VitalsController extends Controller
 
         $registration= Patient::with('registration','vitals')
             ->where('folder_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->get();
 
 //        return $registration;

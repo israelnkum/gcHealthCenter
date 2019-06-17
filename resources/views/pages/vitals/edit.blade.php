@@ -38,7 +38,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4></h4>
-                                <h6 class=" text-uppercase mb-0">{{$registered->last_name." ".$registered->first_name}}</h6>
+                                <h6 class=" text-uppercase mb-0">{{$registered->title." ".$registered->first_name." ".$registered->other_name." ".$registered->last_name}}</h6>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <a href="{{route('vitals.show',$registered->id)}}" style="text-decoration: none" class="">
 

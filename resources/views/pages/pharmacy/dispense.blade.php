@@ -161,14 +161,10 @@
                                         @php($total = 0)
                                         @foreach($medication as $med)
                                             <tr>
-                                                <td>{{$med->drugs->name}}</td>
+                                                <td>{{$med->bill->item}}</td>
                                                 <td>{{$med->dosage}}</td>
                                                 <td>
-                                                    @if($registration->isInsured == 1)
-                                                        {{$amount =$med->drugs->retail_price - $med->drugs->nhis_amount}}
-                                                    @else
-                                                        {{$amount =$med->drugs->retail_price}}
-                                                    @endif
+                                                    {{$amount=$med->bill->total_amount_to_pay}}
                                                 </td>
                                                 <td>
                                                     <input name="drug_id[]" required type="number" max="{{$med->drugs->quantity_in_stock}}" min="0" value="0"   class="form-control" style="width: 70px;">

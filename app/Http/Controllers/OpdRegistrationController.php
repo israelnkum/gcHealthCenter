@@ -164,7 +164,6 @@ class OpdRegistrationController extends Controller
                     $bill->insurance_amount =0;
                     $bill->total_amount_to_pay=5;
                     $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-
                     $bill->save();
 
                 }

@@ -45,7 +45,7 @@ Route::resource('registration','OpdRegistrationController');
  */
 
 Route::resource('vitals','VitalsController');
-Route::post('/searchRegistrationForVitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');
+Route::post('/search-registration-for-vitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');
 
 
 /*
