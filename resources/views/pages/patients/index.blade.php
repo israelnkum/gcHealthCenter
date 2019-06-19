@@ -586,6 +586,28 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <div class="row">
+                                    <div class="col-md-6" >
+                                        <div class="form-check form-check-flat mt-0">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input"  name="old_patient" id="old_patient">
+                                                Old Patient
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div  id="old_patient_div" style="display: none;">
+                                            <label for="last_visit">Last Visit</label>
+                                            <input title="Last Visit" type="date" name="last_visit" class="form-control text-uppercase mb-1" id="last_visit" placeholder="Last Visit">
+                                            <div class="invalid-feedback">
+                                                Last Visit Required
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>

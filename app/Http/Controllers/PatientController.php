@@ -76,16 +76,19 @@ class PatientController extends Controller
         }else{
             $record = Patient::latest()->first();
 
-
             $expNum =$record->registration_number;
             //return $expNum;
             if ($expNum == '' ){
                 $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'1';
             } else {
+                if (substr($expNum,0,2) == substr(date('Y'),2)){
+                    $folderNumber=  $patient->registration_number =  $expNum+1;
+                }else{
+                    $folderNumber=  $patient->registration_number =  substr(date('Y'),'2').'01';
+                }
 
-                $folderNumber=  $patient->registration_number =  $expNum+1;
 
-                // $folderNumber= "GC/".str_replace(date('m'),date('m')."/",$folderNumber);
+//                return $folderNumber;//
             }
         }
 
@@ -114,15 +117,11 @@ class PatientController extends Controller
         //  $data = Patient::where('id',$patient->id)->get();
         //check if the incoming request has register patient
         if (\Request::has('register_patient')){
-
             //get the charge information selected
             $charges = Charge::find($request->input('charges'));
 
             //check if incoming request has insured
             if (\Request::has('insured')){
-
-
-//                return $charges;
                 //check if insured is selected as charge option in the charge select box
                 if ($charges->name != "Insured") {
                     return back()->with('error','Please Select Insured as charge option');
@@ -153,18 +152,18 @@ class PatientController extends Controller
                         $consultation->registration_id =$register->id;
                         $consultation->save();
 
-                        $bill = new Bill();
-                        $bill->registration_id = $register->id;
-                        $bill->patient_id =$patient->id;
-                        $bill->item = "Registration (Insured)";
-                        $bill->amount =$charges->amount;
-                        $bill->insurance_amount =$charges->amount;
-                        $bill->total_amount_to_pay=$charges->amount;
-                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-
-                        $bill->save();
-
-
+                        //check if patient is old patient
+                        if (!\Request::has('old_patient')) {
+                            $bill = new Bill();
+                            $bill->registration_id = $register->id;
+                            $bill->patient_id = $patient->id;
+                            $bill->item = "Registration (Insured)";
+                            $bill->amount = $charges->amount;
+                            $bill->insurance_amount = $charges->amount;
+                            $bill->total_amount_to_pay = $charges->amount;
+                            $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                            $bill->save();
+                        }
                     }
                 }
             }else{
@@ -197,17 +196,29 @@ class PatientController extends Controller
                     $consultation->registration_id = $register->id;
                     $consultation->save();
 
-                    $bill = new Bill();
-                    $bill->registration_id = $register->id;
-                    $bill->patient_id =$patient->id;
-                    $bill->item = "Registration (Non-Insured)";
-                    $bill->amount =$charges->amount;
-                    $bill->insurance_amount =0;
-                    $bill->total_amount_to_pay=$charges->amount;
-                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                    if (\Request::has('old_patient')) {
+                        $bill = new Bill();
+                        $bill->registration_id = $register->id;
+                        $bill->patient_id = $patient->id;
+                        $bill->item = "Registration (Non-Insured)";
+                        $bill->amount = $charges->amount;
+                        $bill->insurance_amount = 0;
+                        $bill->total_amount_to_pay = $charges->amount;
+                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
 
-                    $bill->save();
+                        $bill->save();
+                    }else{
+                        $bill = new Bill();
+                        $bill->registration_id = $register->id;
+                        $bill->patient_id = $patient->id;
+                        $bill->item = "Registration (Non-Insured)";
+                        $bill->amount = $charges->amount;
+                        $bill->insurance_amount = 0;
+                        $bill->total_amount_to_pay = $charges->amount;
+                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
 
+                        $bill->save();
+                    }
                 }
 
             }

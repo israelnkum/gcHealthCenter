@@ -48,6 +48,8 @@ class DrugController extends Controller
     {
         $vitals="";
         $other_medication="";
+        $detentionBill ="";
+        $getBills ="";
         $medication="";
         $totalCashSales = Bill::sum('total_amount_to_pay');
         $totalSales = Bill::sum('amount');
@@ -55,7 +57,7 @@ class DrugController extends Controller
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
-            ->where('medication',0)
+//            ->where('medication',0)
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
             ->orderBy('created_at','asc')
@@ -74,11 +76,51 @@ class DrugController extends Controller
                 ->get();
 
 //            return $medication;
+            $getBills = Bill::where('patient_id',$registration->patient_id)
+                ->where('registration_id',$registration->id)
+                ->where('type','!=','Drug')
+                ->orWhere('type',NULL)->get();
 
-            //get all medication
-           /* $medication= Medication::where('registration_id',$registration->id)
-                ->where('patient_id',$registration->patient_id)
-                ->get();*/
+
+            //check if patient is detained Or Admitted
+            if ( $registration->detain == 0){
+                $detentionBill = 0;
+            }elseif ( $registration->detain == 1){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            //if patient is discharged, then use discharged_date instead of today
+            elseif ($registration->detain == 2){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->discharged_date);
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            /*
+             * End detention bill calculation
+             */
 
 
             $other_medication= OtherMedication::where('registration_id',$registration->id)
@@ -98,7 +140,9 @@ class DrugController extends Controller
             ->with('medication',$medication)
             ->with('totalCashSales',$totalCashSales)
             ->with('totalNhisSale',$totalNhisSale)
-            ->with('totalSales',$totalSales);
+            ->with('totalSales',$totalSales)
+            ->with('getBills',$getBills)
+            ->with('detentionBill',$detentionBill);
     }
 
     /**

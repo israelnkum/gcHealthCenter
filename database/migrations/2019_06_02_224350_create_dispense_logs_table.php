@@ -19,8 +19,8 @@ class CreateDispenseLogsTable extends Migration
             $table->integer('patient_id');
             $table->integer('drugs_id');
             $table->decimal('amount_paid')->default(0);
-            $table->decimal('nhis_amount')->default(0);
             $table->decimal('total_amount_to_pay')->default(0);
+            $table->string('dispensed_by');
             $table->timestamps();
         });
     }

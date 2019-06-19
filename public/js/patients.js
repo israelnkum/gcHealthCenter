@@ -40,14 +40,30 @@ $(document).ready(function () {
 
     $('#insurance').click(function () {
         if (!$(this).is(':checked')){
-            document.getElementById('insurance_number_div').style.display ='none';
+            //document.getElementById('insurance_number_div').style.display ='none';
+            $('#insurance_number_div').fadeOut(1000).slideUp(1000);
             $('#insurance_number').removeAttr('required');
             $('#insurance_type').removeAttr('required');
         }  else{
             //alert("ch")
-            document.getElementById('insurance_number_div').style.display ='block';
+            // document.getElementById('insurance_number_div').style.display ='block';
+            $('#insurance_number_div').fadeIn(1000).slideDown(1000);
             $('#insurance_number').attr('required', true);
             $('#insurance_type').attr('required',true);
+        }
+    });
+
+
+    $('#old_patient').click(function () {
+        if (!$(this).is(':checked')){
+            //  document.getElementById('old_patient_div').style.display ='none';
+            $('#old_patient_div').fadeOut(1000).slideUp(1000);
+            $('#last_visit').removeAttr('required');
+        }  else{
+            //alert("ch")
+            // document.getElementById('old_patient_div').style.display ='block';
+            $('#old_patient_div').fadeIn(1000).slideDown(1000);
+            $('#last_visit').attr('required', true);
         }
     });
 
@@ -59,9 +75,12 @@ $(document).ready(function () {
             $('#patient_insured').prop('checked',false);
             $('#patient_insured').attr('disabled',true);
             $('#btn_register').attr('disabled',true);
-            document.getElementById('patient_insurance_number_div').style.display ='none';
-            document.getElementById('patient_insured_div').style.display ='none';
-            document.getElementById('patient_charge_div').style.display ='none';
+            $('#patient_insurance_number_div').fadeOut(1000).slideUp(1000);
+            $('#patient_insured_div').fadeOut(1000).slideUp(1000);
+            $('#patient_charge_div').fadeOut(1000).slideUp(1000);
+            //document.getElementById('patient_insurance_number_div').style.display ='none';
+            //  document.getElementById('patient_insured_div').style.display ='none';
+            //document.getElementById('patient_charge_div').style.display ='none';
 
         }  else{
             //alert("ch")
@@ -69,20 +88,26 @@ $(document).ready(function () {
             $('#btn_register').removeAttr('disabled');
 
             $('#patient_charges').attr('required',true);
-            document.getElementById('patient_charge_div').style.display ='block';
-            document.getElementById('patient_insured_div').style.display ='block';
+            $('#patient_charge_div').fadeIn(1000).slideDown(1000);
+            $('#patient_charge_div').fadeIn(1000).slideDown(1000);
+
+            // document.getElementById('patient_charge_div').style.display ='block';
+            //document.getElementById('patient_insured_div').style.display ='block';
 
         }
     });
     $('#patient_insured').click(function () {
         if (!$(this).is(':checked')){
             //alert("unckecked")
-            document.getElementById('patient_insurance_number_div').style.display ='none';
+            //document.getElementById('patient_insurance_number_div').style.display ='none';
+            $('#patient_insurance_number_div').fadeOut(1000).slideUp(1000);
             $('#patient_insurance_number').removeAttr('required');
             $('#patient_insurance_type').removeAttr('required');
         }  else{
             //alert("ch")
-            document.getElementById('patient_insurance_number_div').style.display ='block';
+           // document.getElementById('patient_insurance_number_div').style.display ='block';
+
+            $('#patient_insurance_number_div').fadeIn(1000).slideDown(1000);
             $('#patient_insurance_number').attr('required', true);
             $('#patient_insurance_type').attr('required',true);
         }

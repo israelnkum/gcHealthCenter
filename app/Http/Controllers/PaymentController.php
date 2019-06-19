@@ -37,6 +37,8 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
+
+        return $request;
         $drug_amount =[];
         $nhis_amount =[];
         foreach ($request->input('drug_id') as $id){
@@ -55,12 +57,6 @@ class PaymentController extends Controller
         $payment->nhis_amount = array_sum($nhis_amount);
         $payment->user_id = Auth::user()->id;
 
-       //update drugs table
-//        foreach ($request->input('drug_id') as $id){
-//            $drugs = Drug::find($id);
-//
-//            $drugs->quantity_in_stock = $drugs->quantity_in_stock-
-//        }
 
 
 

@@ -19,6 +19,7 @@ class CreateBillsTable extends Migration
             $table->integer('patient_id');
             $table->string('item');
             $table->integer('item_id')->nullable();
+            $table->string('type')->nullable();
             $table->decimal('amount')->default(0);
             $table->decimal('insurance_amount')->default(0);
             $table->decimal('total_amount_to_pay')->default(0);

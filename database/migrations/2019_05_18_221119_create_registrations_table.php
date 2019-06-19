@@ -23,6 +23,7 @@ class CreateRegistrationsTable extends Migration
             $table->decimal('registration_fee');
             $table->boolean('vitals')->default(0);
             $table->boolean('consult')->default(0);
+            $table->boolean('medication')->default(0);
             $table->boolean('detain')->default(0);
             $table->string('discharged_date',30)->nullable();
             $table->integer('user_id');

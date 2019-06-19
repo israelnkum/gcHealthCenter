@@ -139,6 +139,42 @@
                                 </div>
                                 <input type="hidden" value="{{$registration->patient->id}}" name="patient_id">
                                 <input type="hidden" value="{{$registration->id}}" name="registration_id">
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="">Bill</h4>
+                                        <table class="table table-borderless">
+                                            <thead>
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @php($total = 0)
+                                            @foreach($getBills as $bill)
+                                                <tr>
+                                                    <td>{{$bill->item}}</td>
+                                                    <td>{{$bill->total_amount_to_pay}}</td>
+                                                </tr>
+                                                @php($total +=$bill->total_amount_to_pay)
+                                            @endforeach
+                                            @if($detentionBill)
+                                                <tr>
+                                                    <td>Detention</td>
+                                                    <td>{{$detentionBill}}.00</td>
+                                                </tr>
+                                            @endif
+                                           {{-- <tr class="bg-primary text-white">
+                                                <td class="p-2 text-right">
+                                                    Total
+                                                </td>
+                                                <td class="p-2">GH₵ {!! $total !!}</td>
+                                            </tr>--}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,43 +182,83 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Dispense Drugs</h4>
-
                                 <div class="table-responsive">
                                     <table class="table table-borderless">
-                                        <thead>
                                         <tr>
                                             <th>Drug</th>
                                             <th>Dose</th>
                                             <th>Selling Price</th>
-                                            <th>Dispense</th>
+                                            <th>N<u>o</u></th>
+                                            <th>Total</th>
+                                            <th>
+                                                Dispensed
+                                                <div class="form-check form-check-flat">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox"  class="form-check-input"  id="checkAllDispensed">
+                                                    </label>
+                                                </div>
+                                            </th>
                                         </tr>
-                                        </thead>
                                         <tbody>
-                                        @php($total = 0)
+                                        @php( $i =1)
                                         @foreach($medication as $med)
-                                            <tr>
-                                                <td>{{$med->bill->item}}</td>
-                                                <td>{{$med->dosage}}</td>
-                                                <td>
-                                                    {{$amount=$med->bill->total_amount_to_pay}}
-                                                </td>
-                                                <td>
-                                                    <input name="drug_id[]" required type="number" max="{{$med->drugs->quantity_in_stock}}" min="0" value="0"   class="form-control" style="width: 70px;">
-                                                </td>
-                                            </tr>
-                                            @php($total = $total+$amount)
-                                        @endforeach
-                                        <tr class="bg-success ">
-                                            <td class="p-2 text-white text-right" colspan="2">Total</td>
-                                            <td class="p-2 text-white">GH₵ {!! $total !!}</td>
-                                            <td class="p-2 text-white"></td>
+                                        <tr class="txtMult">
+                                            <td>{{$med->bill->item}}</td>
+                                            <td>{{$med->dosage}}</td>
+                                            <td>
+                                                {{$med->bill->total_amount_to_pay}}
+                                                <input name="amount" type="hidden" class="val1"  value="{{$med->bill->total_amount_to_pay}}">
+                                            </td>
+                                            <td>
+                                                <input name="number_dispensed[]{{$med->drugs->id}}" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val2 form-control">
+                                            </td>
+                                            <td>
+                                                <span class="multTotal">0.00</span>
+                                            </td>
+                                            <td>
+                                                <div class="form-check form-check-flat">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox"  class="form-check-input checkDispensedItem">
+                                                    </label>
+                                                </div>
+                                            </td>
                                         </tr>
-                                        </tbody>
+                                        @endforeach
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="mt-3">
+                                            <td class="p-2 text-white text-right"   ></td>
+                                            <td class="p-2 text-dark text-center mt-3">Service Total: GH₵ {!! $total+$detentionBill !!}</td>
+                                            <td class="p-2 text-center" ></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 text-white text-right"></td>
+                                            <td class="p-2 text-dark text-center">Drugs Total: GH₵ <span id="drugsTotal">0.00</span></td>
+                                            <td class="p-2 text-dark  text-right" colspan="2">
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 text-white text-right" ></td>
+                                            <td class="p-2 text-dark text-center">
+                                                Grand Total: GH₵ <span id="grandTotal">0.00</span>
+                                            </td>
+                                            <td class="p-2 text-dark  text-right">
+                                                <input type="text" value="{!! $total+$detentionBill !!}" id="grand" hidden>
+
+                                            </td>
+                                            <td></td>
+                                        </tr>
                                     </table>
+
                                     <div class="form-group row mb-2 mt-5">
                                         <div class="col-md-4 offset-md-8">
+                                            <label for="">Amount Paid</label>
                                             <div class="input-group">
-                                                <input type="text" required class="form-control" data-inputmask="'alias': 'currency'" name="search" placeholder="Amount Paid">
+                                                <input type="text" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
                                                 <div class="input-group-prepend bg-info text-white">
                                                     <button type="submit" class="input-group-text btn text-white">
                                                         Dispense

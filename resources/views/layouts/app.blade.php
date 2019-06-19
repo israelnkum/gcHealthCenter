@@ -311,6 +311,7 @@
 <script src="{{asset('public/js/vitals.js')}}"></script>
 
 <script src="{{asset('public/js/drugs.js')}}"></script>
+<script src="{{asset('public/js/dispensed.js')}}"></script>
 <script src="{{asset('public/js/consultation.js')}}"></script>
 <script src="{{asset('public/js/form-validation.js')}}"></script>
 <script src="{{asset('public/js/bt-maxLength.js')}}"></script>
