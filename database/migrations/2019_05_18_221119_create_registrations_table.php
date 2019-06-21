@@ -17,16 +17,20 @@ class CreateRegistrationsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('patient_id');
             $table->boolean('isInsured')->default(0);
-            $table->string('insurance_type')->nullable();
-            $table->string('insurance_number')->nullable();
+            $table->string('insurance_type',50)->nullable();
+            $table->string('insurance_number',50)->nullable();
             $table->decimal('insurance_amount')->nullable();
             $table->decimal('registration_fee');
             $table->boolean('vitals')->default(0);
             $table->boolean('consult')->default(0);
             $table->boolean('medication')->default(0);
             $table->boolean('detain')->default(0);
+            $table->boolean('hasArrears')->default(0);
+            $table->boolean('hasRecords')->default(0);
             $table->string('discharged_date',30)->nullable();
             $table->integer('user_id');
+            $table->boolean('old_patient')->default(0);
+            $table->string('last_visit',30)->nullable();
             $table->timestamps();
         });
     }

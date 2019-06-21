@@ -33,6 +33,7 @@ class HomeController extends Controller
             ->orWhere('role','Admin')
             ->orWhere('role','Pharmacist')->count();
 
+
         //return $totalStaff;
         return view('home')
             ->with('totalPatient',$totalPatient)

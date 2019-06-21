@@ -57,7 +57,7 @@ class DrugController extends Controller
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
-//            ->where('medication',0)
+            ->where('medication',0)
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
             ->orderBy('created_at','asc')
@@ -78,9 +78,10 @@ class DrugController extends Controller
 //            return $medication;
             $getBills = Bill::where('patient_id',$registration->patient_id)
                 ->where('registration_id',$registration->id)
-                ->where('type','!=','Drug')
-                ->orWhere('type',NULL)->get();
+//                ->where('type','!=','Drug')
+                ->get();
 
+//            return $getBills;
 
             //check if patient is detained Or Admitted
             if ( $registration->detain == 0){

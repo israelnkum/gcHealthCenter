@@ -142,6 +142,7 @@ class ConsultationController extends Controller
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $drugs = Drug::find($med['drug_id']);
@@ -221,6 +222,7 @@ class ConsultationController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $diagnosis = new PatientDiagnosis();
@@ -254,17 +256,49 @@ class ConsultationController extends Controller
 
             //charge for consultation if only the person is not insured
             if ($registration->isInsured != 1){
-                $bill = new Bill();
-                $bill->registration_id = $request->input('registration_id');
-                $bill->patient_id =$request->input('patient_id');
-                $bill->item = $service_charge->name;
-                $bill->item_id = $service_charge->id;
-                $bill->amount =$service_charge->amount;
-                $bill->type="Service";
-                $bill->insurance_amount =0;
-                $bill->total_amount_to_pay=$service_charge->amount;
-                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-                $bill->save();
+
+                //check if patient is an old patient that is before the system
+                //then use the last visit
+                if ($registration->old_patient == 1){
+                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $registration->last_visit);
+
+                    $today = \Carbon\Carbon::createFromFormat('Y-m-d',  Carbon::today());
+                    $noOfDays = $today->diffInDays($last_visit);
+
+                    if ($noOfDays>=15){
+                        $bill = new Bill();
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id =$request->input('patient_id');
+                        $bill->item = $service_charge->name;
+                        $bill->item_id = $service_charge->id;
+                        $bill->amount =$service_charge->amount;
+                        $bill->type="Service";
+                        $bill->insurance_amount =0;
+                        $bill->total_amount_to_pay=$service_charge->amount;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                        $bill->save();
+                    }
+                }else{
+                    //if the patient was a member of the hospital but no
+                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($registration->created_at,0,10));
+
+                    $today = \Carbon\Carbon::createFromFormat('Y-m-d',  Carbon::today());
+                    $noOfDays = $today->diffInDays($last_visit);
+
+                    if ($noOfDays>=15){
+                        $bill = new Bill();
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id =$request->input('patient_id');
+                        $bill->item = $service_charge->name;
+                        $bill->item_id = $service_charge->id;
+                        $bill->amount =$service_charge->amount;
+                        $bill->type="Service";
+                        $bill->insurance_amount =0;
+                        $bill->total_amount_to_pay=$service_charge->amount;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                        $bill->save();
+                    }
+                }
             }
 
             //insert selected service charge
@@ -273,6 +307,7 @@ class ConsultationController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)) {
                     $service = new Service();
@@ -758,6 +793,7 @@ class ConsultationController extends Controller
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
 
                 //if medication does not exist then insert
@@ -841,6 +877,7 @@ class ConsultationController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $diagnosis = new PatientDiagnosis();
@@ -875,6 +912,7 @@ class ConsultationController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $service = new Service();

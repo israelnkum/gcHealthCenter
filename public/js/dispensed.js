@@ -148,8 +148,12 @@ $(document).ready(function () {
             $('.multTotal',this).text($total);
             mult += $total;
         });
-         $("#drugsTotal").text(mult);
-        $("#grandTotal").text(mult+Number($('#grand').val()));
+         $("#drugsText").text(mult.toFixed(2));
+        $("#drugs").val(mult);
+
+        let  ser =Number($('#service').val());
+        $("#grandText").text(Number(mult+ser).toFixed(2));
+        $("#grand").val(mult+Number($('#service').val()));
 
     }
 });

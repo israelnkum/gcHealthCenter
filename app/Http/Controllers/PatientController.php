@@ -63,7 +63,6 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-//        return $request;
         $this->validate($request, [
             'folder_number' => ['unique:patients'],
             'registration_number' => ['unique:patients'],
@@ -135,6 +134,10 @@ class PatientController extends Controller
                     $register->insurance_number = strtoupper($request->input('insurance_number'));
                     $register->insurance_amount = str_replace(',', '', substr($request->input('insurance_type'), strpos($request->input('insurance_type'), ',')));
                     $register->registration_fee = $charges->amount;
+                    if (\Request::has('old_patient')) {
+                        $register->old_patient =1;
+                        $register->last_visit = $request->input('last_visit');
+                    }
                     $register->user_id = Auth::user()->id;
                     if ($register->save()){
                         /*
@@ -179,6 +182,10 @@ class PatientController extends Controller
                 $register->patient_id = $patient->id;
                 $register->isInsured = 0;
                 $register->registration_fee = $charges->amount;
+                if (\Request::has('old_patient')) {
+                    $register->old_patient =1;
+                    $register->last_visit = $request->input('last_visit');
+                }
                 $register->user_id=Auth::user()->id;
                 if ($register->save()) {
                     /*
@@ -196,14 +203,15 @@ class PatientController extends Controller
                     $consultation->registration_id = $register->id;
                     $consultation->save();
 
+
                     if (\Request::has('old_patient')) {
                         $bill = new Bill();
                         $bill->registration_id = $register->id;
                         $bill->patient_id = $patient->id;
                         $bill->item = "Registration (Non-Insured)";
-                        $bill->amount = $charges->amount;
+                        $bill->amount = 5;
                         $bill->insurance_amount = 0;
-                        $bill->total_amount_to_pay = $charges->amount;
+                        $bill->total_amount_to_pay = 5;
                         $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
 
                         $bill->save();

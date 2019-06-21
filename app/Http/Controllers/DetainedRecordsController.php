@@ -10,11 +10,13 @@ use App\Diagnose;
 use App\Drug;
 use App\Medication;
 use App\OtherMedication;
+use App\Patient;
 use App\PatientDiagnosis;
 use App\Registration;
 use App\Service;
 use App\Vital;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class DetainedRecordsController extends Controller
@@ -104,6 +106,7 @@ class DetainedRecordsController extends Controller
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $drugs = Drug::find($med['drug_id']);
@@ -183,6 +186,7 @@ class DetainedRecordsController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)){
                     $diagnosis = new PatientDiagnosis();
@@ -235,6 +239,7 @@ class DetainedRecordsController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at',  Carbon::today())
                     ->first();
                 if (empty($check)) {
                     $service = new Service();
@@ -280,6 +285,12 @@ class DetainedRecordsController extends Controller
         //
     }
 
+
+    public function searchPatientForDrugDispersion(){
+        $searchPatient= Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -295,12 +306,12 @@ class DetainedRecordsController extends Controller
         $getVitals = Vital::where('registration_id',$registration->id)
             ->where('patient_id',$registration->patient_id)->get();
 
-/*
-        $to = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 07:30:34');
+        /*
+                $to = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 07:30:34');
 
-        $from = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-8 07:30:35');
+                $from = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-8 07:30:35');
 
-        $diff_in_days = $to->diffInDays($from);*/
+                $diff_in_days = $to->diffInDays($from);*/
 
 
         return view('pages.detention_records.new_detained_record')

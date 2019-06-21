@@ -88,7 +88,7 @@ $(document).ready(function () {
             $('#btn_register').removeAttr('disabled');
 
             $('#patient_charges').attr('required',true);
-            $('#patient_charge_div').fadeIn(1000).slideDown(1000);
+            $('#patient_insured_div').fadeIn(1000).slideDown(1000);
             $('#patient_charge_div').fadeIn(1000).slideDown(1000);
 
             // document.getElementById('patient_charge_div').style.display ='block';
