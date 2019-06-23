@@ -87,7 +87,7 @@ class PatientController extends Controller
                 }
 
 
-//                return $folderNumber;//
+//                return $record;
             }
         }
 

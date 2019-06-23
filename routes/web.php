@@ -89,6 +89,10 @@ Route::post('/bulk_deleteSupplier','SupplierController@bulk_deleteSupplier')->na
  * Detained Records Controller
  */
 Route::resource('records','DetainedRecordsController');
+Route::get('search-detained','DetainedRecordsController@searchPatientForDrugDispersion')->name('searchPatientForDrugDispersion');
+Route::get('view-record/{patient_id}/{registration_id}','DetainedRecordsController@view_detention_record')->name('view_detention_record');
+Route::post('view-record','DetainedRecordsController@view_detention')->name('view_detention');
+
 
 
 
@@ -145,3 +149,4 @@ Route::post('/bulk_deleteCharge','ChargeController@bulk_deleteCharge')->name('bu
 
 
 Route::resource('payment','PaymentController');
+Route::post('pay-arrears','PaymentController@payArrears')->name('payArrears');

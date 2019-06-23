@@ -149,7 +149,8 @@
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <select  class="selectMedicine col-12 form-control mr-1" required   name="drug_id" id="drug_id">
+                                                            <select  class="selectMedicine col-12 form-control mr-1"   name="drug_id" id="drug_id">
+                                                                <option value=""></option>
                                                                 @foreach($drugs as $drug)
                                                                     <option value="{{$drug->id}}">{{$drug->name}}</option>
                                                                 @endforeach
@@ -159,7 +160,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-5">
-                                                            <input type="text" name="dosage" id="dosage" required class="form-control col-12 ml-1">
+                                                            <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">
                                                             <div class="invalid-feedback">
                                                                 Dosage is required
                                                             </div>

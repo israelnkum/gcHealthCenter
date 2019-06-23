@@ -82,6 +82,8 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
+
+
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
@@ -135,17 +137,18 @@ class ConsultationController extends Controller
 
 
         //Add medications
-        foreach ($request->input('group-a') as $med) {
+        foreach ($request->input('medications') as $med) {
             if (!empty($med['drug_id']) && !empty($med['dosage'])) {
 
                 //check if medication already exist
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)){
-                    $drugs = Drug::find($med['drug_id']);
+
+                    /*$drugs = Drug::find($med['drug_id']);
 
                     //if patient is NOT Insured then insert the drug selling price
                     if ($registration->isInsured != 1) {
@@ -174,10 +177,10 @@ class ConsultationController extends Controller
                         $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
                         $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $bill->save();
-                    }
+                    }*/
 
                     $medication = new Medication();
-                    $medication->bill_id = $bill->id;
+//                    $medication->bill_id = $bill->id;
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
@@ -201,7 +204,7 @@ class ConsultationController extends Controller
 
         //Add other  medications
         if (\Request::has('group-b')) {
-            foreach ($request->input('group-b') as $other) {
+            foreach ($request->input('other-medications') as $other) {
                 if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
                     $medication = new OtherMedication();
                     $medication->patient_id = $request->input('patient_id');
@@ -222,7 +225,7 @@ class ConsultationController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)){
                     $diagnosis = new PatientDiagnosis();
@@ -262,7 +265,7 @@ class ConsultationController extends Controller
                 if ($registration->old_patient == 1){
                     $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $registration->last_visit);
 
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d',  Carbon::today());
+                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
                     $noOfDays = $today->diffInDays($last_visit);
 
                     if ($noOfDays>=15){
@@ -282,7 +285,7 @@ class ConsultationController extends Controller
                     //if the patient was a member of the hospital but no
                     $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($registration->created_at,0,10));
 
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d',  Carbon::today());
+                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
                     $noOfDays = $today->diffInDays($last_visit);
 
                     if ($noOfDays>=15){
@@ -307,7 +310,7 @@ class ConsultationController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)) {
                     $service = new Service();
@@ -539,6 +542,9 @@ class ConsultationController extends Controller
             $medication = Medication::with('drugs')->where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id', $recentRegistration->id)->get();
 
+            $otherMedication = OtherMedication::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id', $recentRegistration->id)->get();
+
             $getBills = Bill::where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id',$recentRegistration->id)->get();
             $getDiagIds =[];
@@ -628,7 +634,6 @@ class ConsultationController extends Controller
                 $getVitals =[];
             }
 
-//            return $recentRegistration;
 
             return view('pages.consultations.search_result')
                 ->with('registration',$registration)
@@ -647,6 +652,7 @@ class ConsultationController extends Controller
                 ->with('patientDiagnosis',$patientDiagnosis)
                 ->with('medication',$medication)
                 ->with('getBills',$getBills)
+                ->with('otherMedication',$otherMedication)
                 ->with('detentionBill',$detentionBill);
         }else{
             return view('pages.consultations.search_result')
@@ -661,7 +667,8 @@ class ConsultationController extends Controller
                 ->with('charges',$charges)
                 ->with('patientDiagnosis',$patientDiagnosis)
                 ->with('medication',$medication)
-                ->with('getBills',$getBills);
+                ->with('getBills',$getBills)
+                ->with('otherMedication',$otherMedication);
         }
 
 
@@ -793,7 +800,7 @@ class ConsultationController extends Controller
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
 
                 //if medication does not exist then insert
@@ -877,7 +884,7 @@ class ConsultationController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)){
                     $diagnosis = new PatientDiagnosis();
@@ -912,7 +919,7 @@ class ConsultationController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)){
                     $service = new Service();

@@ -46,6 +46,7 @@ class DrugController extends Controller
      */
     public function create()
     {
+        $recentRegistration ="";
         $vitals="";
         $other_medication="";
         $detentionBill ="";
@@ -69,7 +70,7 @@ class DrugController extends Controller
                 ->where('patient_id',$registration->patient_id)
                 ->latest()->first();
 
-            $medication= Medication::with('bill','drugs')
+            $medication= Medication::with('drugs')
                 ->where('dispensed',0)
                 ->where('registration_id',$registration->id)
                 ->where('patient_id',$registration->patient_id)
@@ -134,7 +135,7 @@ class DrugController extends Controller
 
         $drugs = Drug::all()->count();
 
-        return view('pages.pharmacy.dispense')
+        return view('pages.pharmacy.drug-dispense')
             ->with('registration',$registration)
             ->with('drugs',$drugs)
             ->with('vitals',$vitals)

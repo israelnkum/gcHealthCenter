@@ -299,14 +299,28 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <label class="text-info">Select <u><b>Service</b></u></label>
-                                                            <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
-                                                                @foreach($charges as $charge)
-                                                                    @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
-                                                                        <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label class="text-info">Select <u><b>Service</b></u></label>
+                                                                    <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
+                                                                        @foreach($charges as $charge)
+                                                                            @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
+                                                                                <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <blockquote class="blockquote">
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" name="detain_admit" class="form-check-input">
+                                                                                Detain/Admit Patient
+                                                                            </label>
+                                                                        </div>
+                                                                    </blockquote>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -513,7 +527,7 @@
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-12 mt-1">
-                                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-info pt-1 pb-1 pr-1 pl-1">
+                                                                <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}?{{Hash::make(time())}}" class="btn btn-info pt-1 pb-1 pr-1 pl-1">
                                                                     <i class="icon icon-notebook"></i>View Record
                                                                 </a>
                                                             </div>
@@ -672,17 +686,44 @@
                                         <div class="col-md-6">
                                             <label for="med" class="text-info">Medication</label>
                                             <blockquote class="blockquote">
-                                                <ul>
+                                                <table class="table-borderless table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Drug</th>
+                                                        <th>Dosage</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
                                                     @foreach($medication as $med)
-                                                        <li>{{$med->drugs->name}}</li>
+                                                        <tr>
+                                                            <td>{{$med->drugs->name}}</td>
+                                                            <td>{{$med->dosage}}</td>
+                                                        </tr>
                                                     @endforeach
-                                                </ul>
+                                                    </tbody>
+                                                </table>
                                             </blockquote>
 
-                                            <label class="text-info">Bill</label>
+                                            <label class="text-info">Other Medication</label>
                                             <blockquote class="blockquote">
                                                 <div class="row">
-                                                    <table class="table table-borderless">
+                                                    <table class="table-borderless table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Drug</th>
+                                                            <th>Dosage</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @foreach($otherMedication as $med)
+                                                            <tr>
+                                                                <td>{{$med->drug}}</td>
+                                                                <td>{{$med->dosage}}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                    {{--<table class="table table-borderless">
                                                         <thead>
                                                         <tr>
                                                             <th>Item</th>
@@ -711,7 +752,7 @@
                                                             <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
                                                         </tr>
                                                         </tbody>
-                                                    </table>
+                                                    </table>--}}
 
                                                     {{-- <div class="col-md-12 text-right mt-3">
                                                          <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>

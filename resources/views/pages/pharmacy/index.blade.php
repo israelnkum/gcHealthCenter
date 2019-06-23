@@ -580,6 +580,40 @@
                             </div>
 
                             <div class="col-md-6">
+                                <label for="">Unit Of Pricing</label>
+                                <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                                    <option value="">~Select Supplier~</option>
+                                    <option value="Blister (x10tabs)">Blister (x10tabs)</option>
+                                    <option value="10ml">10ml</option>
+                                    <option value="20ml">20ml</option>
+                                    <option value="30GR">30GR</option>
+                                    <option value="6 PESS">6 PESS</option>
+                                    <option value="15G">15G</option>
+                                    <option value="AMPOULE">AMPOULE</option>
+                                    <option value="VIAL">VIAL</option>
+                                    <option value="BOTTLE">BOTTLE</option>
+                                    <option value="SATCHET">SATCHET</option>
+                                    <option value="BOTTLE/SATCHET">BOTTLE/SATCHET</option>
+                                    <option value="DOSE">DOSE</option>
+                                    <option value="SUPP">SUPP</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="PACK (6caps)">PACK (6caps)</option>
+                                    <option value="PACK (9tabs)">PACK (9tabs)</option>
+                                    <option value="PACK (14tabs)">PACK (14tabs)</option>
+                                    <option value="PACK (28tabs)">PACK (28tabs)</option>
+                                    <option value="PACK (30tabs)">PACK (30tabs)</option>
+                                    <option value="1 course">1 course</option>
+                                    <option value="1 course (6tabs)">1 course (6tabs)</option>
+                                    <option value="1 course (24tabs)">1 course (24tabs)</option>
+                                    <option value="2 course (12tabs)">2 course (12tabs)</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Supplier is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row form-group">
+                            <div class="col-md-4">
                                 <label for="">Supplier</label>
                                 <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Supplier~</option>
@@ -591,16 +625,14 @@
                                     Supplier is required.
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="">Receiving Stock</label>
                                 <input required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" name="receiving_stock">
                                 <div class="invalid-feedback">
                                     Receiving Stock is required
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="">NHIS Amount</label>
                                 <input value="0" required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" name="nhis_amount">
                                 <div class="invalid-feedback">

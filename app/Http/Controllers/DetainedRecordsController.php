@@ -12,6 +12,7 @@ use App\Medication;
 use App\OtherMedication;
 use App\Patient;
 use App\PatientDiagnosis;
+use App\Payment;
 use App\Registration;
 use App\Service;
 use App\Vital;
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\Auth;
 
 class DetainedRecordsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -44,7 +49,7 @@ class DetainedRecordsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -53,7 +58,7 @@ class DetainedRecordsController extends Controller
 
         //Upload labs
         $labFileNames = [];
-        $scanFileNames =[];
+        $scanFileNames = [];
         if (\Request::has('labs')) {
 
             for ($i = 0; $i < count($request->file('labs')); $i++) {
@@ -64,13 +69,13 @@ class DetainedRecordsController extends Controller
 
                 $file->move('public/labs', $fileName);
 
-                array_push($labFileNames,$fileName);
+                array_push($labFileNames, $fileName);
             }
         }
 
 
 //Upload Scans
-        if (\Request::has('scan')){
+        if (\Request::has('scan')) {
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $scannedFile = $request->file('scan')[$i];
                 $scannedExtension = $scannedFile->getClientOriginalExtension();
@@ -78,24 +83,23 @@ class DetainedRecordsController extends Controller
                 $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
                 $scannedFile->move('public/scan', $scannedFileName);
-                array_push($scanFileNames,$scannedFileName);
+                array_push($scanFileNames, $scannedFileName);
             }
         }
 
 
         $records = new DetentionRecord();
-        $records ->patient_id =$request->input('patient_id');
-        $records ->registration_id = $request->input('registration_id');
-        $records ->complains=$request->input('complains');
-        $records ->findings=$request->input('findings');
-        $records ->physical_examination=$request->input('physical_examination');
-        $records ->other_diagnosis=$request->input('other_diagnosis');
+        $records->patient_id = $request->input('patient_id');
+        $records->registration_id = $request->input('registration_id');
+        $records->complains = $request->input('complains');
+        $records->findings = $request->input('findings');
+        $records->physical_examination = $request->input('physical_examination');
+        $records->other_diagnosis = $request->input('other_diagnosis');
 //        $records ->detain_admit=$request->input('detain_admit');
-        $records ->labs=implode($labFileNames,',');
-        $records ->ultra_sound_scan=implode($scanFileNames,',');
-        $records ->user_id=Auth::user()->id;
+        $records->labs = implode($labFileNames, ',');
+        $records->ultra_sound_scan = implode($scanFileNames, ',');
+        $records->user_id = Auth::user()->id;
         $records->save();
-
 
 
         //Add medications
@@ -106,9 +110,9 @@ class DetainedRecordsController extends Controller
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', Carbon::today())
                     ->first();
-                if (empty($check)){
+                if (empty($check)) {
                     $drugs = Drug::find($med['drug_id']);
 
                     //if patient is NOT Insured then insert the drug selling price
@@ -118,21 +122,20 @@ class DetainedRecordsController extends Controller
                         $bill->patient_id = $request->input('patient_id');
                         $bill->item = $drugs->name;
                         $bill->item_id = $drugs->id;
-                        $bill->type="Drug";
+                        $bill->type = "Drug";
                         $bill->amount = $drugs->retail_price;
                         $bill->insurance_amount = $drugs->nhis_amount;
                         $bill->total_amount_to_pay = $drugs->retail_price;
                         $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $bill->save();
-                    }
-                    else {
+                    } else {
                         //if patient is Insured the total amount to pay is sellingPrice - NHIS Price
                         $bill = new Bill();
                         $bill->registration_id = $request->input('registration_id');
                         $bill->patient_id = $request->input('patient_id');
                         $bill->item = $drugs->name;
                         $bill->item_id = $drugs->id;
-                        $bill->type="Drug";
+                        $bill->type = "Drug";
                         $bill->amount = $drugs->retail_price;
                         $bill->insurance_amount = $drugs->nhis_amount;
                         $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
@@ -148,7 +151,7 @@ class DetainedRecordsController extends Controller
                     $medication->dosage = $med['dosage'];
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
-                }else{
+                } else {
 
                     //update
                     $medication = Medication::find($check->id);
@@ -156,7 +159,7 @@ class DetainedRecordsController extends Controller
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
                     $medication->dosage = $med['dosage'];
-                    $medication->user_id =Auth::user()->id;
+                    $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
             }
@@ -186,9 +189,9 @@ class DetainedRecordsController extends Controller
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', Carbon::today())
                     ->first();
-                if (empty($check)){
+                if (empty($check)) {
                     $diagnosis = new PatientDiagnosis();
                     $diagnosis->patient_id = $request->input('patient_id');
                     $diagnosis->registration_id = $request->input('registration_id');
@@ -216,20 +219,20 @@ class DetainedRecordsController extends Controller
 
 
         if (\Request::has('service')) {
-            $service_charge = Charge::where('name','Consultation')->first();
+            $service_charge = Charge::where('name', 'Consultation')->first();
 
             //charge for consultation if only the person is not insured
-            if ($registration->isInsured != 1){
+            if ($registration->isInsured != 1) {
                 $bill = new Bill();
                 $bill->registration_id = $request->input('registration_id');
-                $bill->patient_id =$request->input('patient_id');
+                $bill->patient_id = $request->input('patient_id');
                 $bill->item = $service_charge->name;
                 $bill->item_id = $service_charge->id;
-                $bill->amount =$service_charge->amount;
-                $bill->type="Service";
-                $bill->insurance_amount =0;
-                $bill->total_amount_to_pay=$service_charge->amount;
-                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                $bill->amount = $service_charge->amount;
+                $bill->type = "Service";
+                $bill->insurance_amount = 0;
+                $bill->total_amount_to_pay = $service_charge->amount;
+                $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                 $bill->save();
             }
 
@@ -239,7 +242,7 @@ class DetainedRecordsController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at',  Carbon::today())
+                    ->whereDate('created_at', Carbon::today())
                     ->first();
                 if (empty($check)) {
                     $service = new Service();
@@ -270,14 +273,13 @@ class DetainedRecordsController extends Controller
         }
 
 
-
-        return back()->with('success','New Record Added');
+        return back()->with('success', 'New Record Added');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -286,10 +288,135 @@ class DetainedRecordsController extends Controller
     }
 
 
-    public function searchPatientForDrugDispersion(){
-        $searchPatient= Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+    public function searchPatientForDrugDispersion(Request $request)
+    {
+        $totalCashSales = Bill::sum('total_amount_to_pay');
+        $totalSales = Bill::sum('amount');
+        $totalNhisSale = Bill::sum('insurance_amount');
+        $drugs = Drug::all()->count();
+
+        //get patient
+        $searchPatient = Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
-            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->first();
+
+        //get patient recent registration
+        $recentRegistration = Registration::with('patient')->where('patient_id', $searchPatient->id)->latest()->first();
+        $vitals = Vital::where('registration_id', $recentRegistration->id)
+            ->where('patient_id', $recentRegistration->patient_id)
+            ->latest()->first();
+
+
+
+        /*
+         * Start Detention Bill Calculation
+         */
+        //check if patient is detained Or Admitted
+        if ( $recentRegistration->detain == 0){
+            $detentionBill = 0;
+        }elseif ( $recentRegistration->detain == 1){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        //if patient is discharged, then use discharged_date instead of today
+        elseif ($recentRegistration->detain == 2){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->discharged_date);
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        /*
+         * End Detention Bill Calculation
+         */
+
+        $getBills = Bill::where('patient_id',$recentRegistration->patient_id)
+            ->where('registration_id',$recentRegistration->id)
+//                ->where('type','!=','Drug')
+            ->get();
+
+
+
+
+        if ($recentRegistration->medication == 0){
+
+            $registration = $recentRegistration;
+            $medication= Medication::with('bill','drugs')
+                ->where('dispensed',0)
+                ->where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
+                ->get();
+
+            return view('pages.pharmacy.drug-dispense')
+                ->with('registration',$registration)
+                ->with('drugs',$drugs)
+                ->with('vitals',$vitals)
+                ->with('medication',$medication)
+                ->with('totalCashSales',$totalCashSales)
+                ->with('totalNhisSale',$totalNhisSale)
+                ->with('totalSales',$totalSales)
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
+        }
+        elseif($recentRegistration->medication == 1){
+
+            return view('pages.pharmacy.bill')
+                ->with('vitals',$vitals)
+                ->with('recentRegistration',$recentRegistration)
+                ->with('totalCashSales', $totalCashSales)
+                ->with('totalNhisSale', $totalNhisSale)
+                ->with('totalSales', $totalSales)
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
+        }
+        elseif ($recentRegistration->medication == 2) {
+            $medication = Medication::with('bill')->where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->where('dispensed', 0)->get();
+
+
+//            return $medication;
+            $arrears = Payment::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->first();
+
+            $registration = "";
+
+            return view('pages.pharmacy.dispense-drugs-and-arrears')
+                ->with('registration', $registration)
+                ->with('drugs', $drugs)
+                ->with('vitals', $vitals)
+                ->with('medication', $medication)
+                ->with('recentRegistration', $recentRegistration)
+                ->with('totalCashSales', $totalCashSales)
+                ->with('totalNhisSale', $totalNhisSale)
+                ->with('totalSales', $totalSales)
+                ->with('arrears', $arrears);
+        }
+
+
+
     }
     /**
      * Show the form for editing the specified resource.
@@ -333,6 +460,48 @@ class DetainedRecordsController extends Controller
     {
         //
     }
+
+    public function view_detention_record($patient_id, $registration_id){
+        $patient =Patient::find($patient_id);
+        $recentRecord = DetentionRecord::where('patient_id',$patient_id)
+            ->where('registration_id',$registration_id)
+            ->latest()->first();
+
+        $allRecords=DetentionRecord::where('patient_id',$patient_id)
+            ->where('registration_id',$registration_id)
+            ->get();
+
+        return view('pages.detention_records.view_detention_record')
+            ->with('recentRecord',$recentRecord)
+            ->with('allRecords',$allRecords)
+            ->with('patient',$patient);
+    }
+
+    public function view_detention(Request $request){
+
+        $data = explode(',',$request->input('info'));
+        $recentRecord = DetentionRecord::where('patient_id',$data[0])
+            ->where('registration_id',$data[1])
+            ->latest()->first();
+
+        $allRecords=DetentionRecord::where('patient_id',$data[0])
+            ->where('registration_id',$data[1])
+            ->get();
+
+        $patient =Patient::find($data[0]);
+
+
+        $charges = Charge::all();
+        $diagnosis = Diagnose::all();
+        return view('pages.detention_records.view_detention_record')
+            ->with('recentRecord',$recentRecord)
+            ->with('allRecords',$allRecords)
+            ->with('patient',$patient)
+            ->with('charges',$charges)
+            ->with('diagnosis',$diagnosis);
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
