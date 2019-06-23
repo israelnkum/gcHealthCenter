@@ -7,21 +7,24 @@
             <div class ="col-md-4 offset-md-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Edit Diagnosis</h4>
-                        <form action="{{route('edit_diagnosis')}}" method="post" class="mb-1">
+                        <h4 class="card-title">Edit Service</h4>
+                        <form action="{{route('edit_service_charge')}}" method="post" class="mb-1">
                             @csrf
-                            <input type="hidden" value="{{$patient_diagnosis->id}}" name="p_diagnosis_id">
+                            <input type="hidden" value="{{$patient_service->id}}" name="p_service_id">
                             <div class="form-group row mb-0">
                                 <div class="col-md-12 mb-2">
                                     <label for="drug">Drug</label>
-                                    <select  name="diagnosis_id" id="diagnosis_id" class="js-example-basic-single w-100 form-control">
-                                        <option value="{{$diagnosis->id}}">{{$diagnosis->name}}</option>
-                                        @foreach($allDiagnosis as $diag)
-                                            <option value="{{$diag->id}}">{{$diag->name}}</option>
+                                    <select  name="charge_id" id="charge_id" class="js-example-basic-single w-100 form-control">
+                                        <option value="{{$service->id}}">{{$service->name}}</option>
+                                        @foreach($allServices as $services)
+                                            @if($services->name != "Insured" && $services->name != "Non-Insured" && $services->name != "Consultation")
+                                                <option value="{{$services->id}}">{{$services->name}}</option>
+                                            @endif
+{{--                                            <option value="{{$services->id}}">{{$services->name}}</option>--}}
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">
-                                        Select a date
+                                        Select a Service
                                     </div>
                                 </div>
 

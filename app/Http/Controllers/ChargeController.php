@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
 use App\Charge;
+use App\Service;
 use Illuminate\Http\Request;
 
 class ChargeController extends Controller
@@ -118,6 +120,15 @@ class ChargeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $service = Service::find($id);
+//        return $service
+        if ($service->delete()){
+            Bill::where('registration_id',$service->registration_id)
+                ->where('item_id',$service->charge_id)
+                ->where('patient_id',$service->patient_id)
+                ->where('created_at',$service->created_at)->delete();
+
+            return back()->with('success','Service Deleted');
+        }
     }
 }

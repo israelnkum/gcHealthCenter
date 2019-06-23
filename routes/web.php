@@ -56,7 +56,16 @@ Route::resource('consultation','ConsultationController');
 Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
 Route::post('/patientRecord','ConsultationController@patientRecord')->name('patientRecord');
 Route::get('/edit-medication/{drug_id}/{med_id}','ConsultationController@editMedication')->name('editMedication');
+Route::post('/edit-medication','ConsultationController@edit_med')->name('edit_med');
 
+
+//edit_consultation_charge
+Route::get('/edit-diagnosis/{diagnosis_id}','ConsultationController@editDiagnosis')->name('editDiagnosis');
+Route::post('/edit-diagnosis','ConsultationController@edit_diagnosis')->name('edit_diagnosis');
+
+//edit_consultation_charge
+Route::get('/edit-service/{service_id}','ConsultationController@edit_service')->name('edit_service');
+Route::post('/edit-service','ConsultationController@edit_service_charge')->name('edit_service_charge');
 
 /*
  * Pharmacy -drugs Route
@@ -76,6 +85,10 @@ Route::post('/bulk_deleteSupplier','SupplierController@bulk_deleteSupplier')->na
 
 
 
+/*
+ * Detained Records Controller
+ */
+Route::resource('records','DetainedRecordsController');
 
 
 

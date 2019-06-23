@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Diagnose;
+use App\PatientDiagnosis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -122,6 +123,10 @@ class DiagnoseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $patient_diagnosis = PatientDiagnosis::find($id);
+
+        if ($patient_diagnosis->delete()){
+            return back()->with('success','Diagnosis Deleted Successfully');
+        }
     }
 }

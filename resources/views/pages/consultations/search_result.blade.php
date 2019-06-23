@@ -86,13 +86,13 @@
             Check if patient has registered today
              if yes then add consultation
              --}}
+
             @if(count($registration) == 1)
                 <div class="row">
                     <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-8 offset-md-2 @endif grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
                                 <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
-
                                     @foreach($registration as $registered)
                                         <div class="card-header" role="tab" id="heading-4">
                                             <a data-toggle="collapse" style="text-decoration: none" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
@@ -499,8 +499,21 @@
                         </h4>
                         <div class="card">
                             <div class="card-body">
+
                                 @if(!empty($recentVitals))
                                     <div class="row">
+                                        <div class="col-md-6 offset-md-4 text-right mb-3">
+                                            @if($recentRegistration->detain == 1)
+                                                <a role="button" href="{{route('records.create')}}" class="btn btn-info">Add Record</a>
+                                            @endif
+                                        </div>
+                                        @if($recentRegistration->detain == 1)
+                                            <div class="col-md-2 mb-3">
+                                                <form action="">
+                                                    <button class="btn btn-success">Discharge</button>
+                                                </form>
+                                            </div>
+                                        @endif
                                         <div class="col-md-6">
                                             <h5 class=" text-uppercase mb-0"><i class="icon icon-user"></i> {{$recentRegistration->patient->first_name." ".$recentRegistration->patient->other_name." ".$recentRegistration->patient->last_name}}</h5>
                                             <div class="d-flex justify-content-between align-items-center">
@@ -575,127 +588,107 @@
 
                                     <hr>
                                     <h6 class="card-title">Consultation</h6>
-                                    <form class="needs-validation" enctype="multipart/form-data"  novalidate method="post" action="{{route('consultation.update',$recentRegistration->id)}}">
-                                        @csrf
-                                        {!! method_field('put') !!}
-                                        <input type="hidden" name="registration_id" value="{{$recentRegistration->id}}">
-                                        <input type="hidden" name="patient_id" value="{{$recentRegistration->patient->id}}">
-                                        <input type="hidden" name="registration_number" value="{{$recentRegistration->patient->registration_number}}">
-                                        <div class="form-group row">
-                                            <div class="col-sm-6">
-                                                <label class="text-info">Complains</label>
-                                                <blockquote class="blockquote">
-                                                    <p class="mb-0">{{$recentConsultation->complains}}</p>
-                                                </blockquote>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <label class="text-info">Physical Examination</label>
-                                                <blockquote class="blockquote">
-                                                    <p class="mb-0">{{$recentConsultation->physical_examination}}</p>
-                                                </blockquote>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-6">
-                                                <label class="text-info">Findings</label>
-                                                <blockquote class="blockquote">
-                                                    <p class="mb-0">{{$recentConsultation->findings}}</p>
-                                                </blockquote>
-                                            </div>
 
-                                            <div class="col-sm-6">
-                                                <label class="text-info">Diagnosis</label>
-                                                <blockquote class="blockquote">
-                                                    <ul>
-                                                        @foreach($patientDiagnosis as $diagnosis)
-                                                            <li>{{$diagnosis->diagnoses->name}}</li>
-                                                        @endforeach
-                                                        @if($recentConsultation->other_diagnosis != "")
-                                                            <li>{{$recentConsultation->other_diagnosis}}</li>
-                                                        @endif
-                                                    </ul>
-                                                </blockquote>
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="text-info">Complains</label>
+                                            <blockquote class="blockquote">
+                                                <p class="mb-0">{{$recentConsultation->complains}}</p>
+                                            </blockquote>
 
-                                            <div class="col-sm-6">
-                                                <label for="med" class="text-info">Medication</label>
-                                                <blockquote class="blockquote">
-                                                    <ul>
-                                                        @foreach($medication as $med)
-                                                            <li>{{$med->drugs->name}}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </blockquote>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="col-sm-12">
-                                                    <h4>Scan Result(s)</h4>
-                                                    <?php
-                                                    $scans=explode(',',$recentConsultation->ultra_sound_scan)
-                                                    ?>
-                                                    <div id="lightgallery" class="row lightGallery">
-                                                        @foreach($scans as $scan)
+                                            <label class="text-info">Findings</label>
+                                            <blockquote class="blockquote">
+                                                <p class="mb-0">{{$recentConsultation->findings}}</p>
+                                            </blockquote>
 
-                                                            <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
-                                                        @endforeach
-                                                    </div>
+                                            <label class="text-info">Physical Examination</label>
+                                            <blockquote class="blockquote">
+                                                <p class="mb-0">{{$recentConsultation->physical_examination}}</p>
+                                            </blockquote>
+
+                                            <label class="text-info">Diagnosis</label>
+                                            <blockquote class="blockquote">
+                                                <ul>
+                                                    @foreach($patientDiagnosis as $diagnosis)
+                                                        <li>{{$diagnosis->diagnoses->name}}</li>
+                                                    @endforeach
+                                                    @if($recentConsultation->other_diagnosis != "")
+                                                        <li>{{$recentConsultation->other_diagnosis}}</li>
+                                                    @endif
+                                                </ul>
+                                            </blockquote>
+
+                                            <label for="" class="text-info">Scan Result(s)</label>
+                                            <blockquote class="blockquote">
+                                                <?php
+                                                $scans=explode(',',$recentConsultation->ultra_sound_scan)
+                                                ?>
+                                                <div id="lightgallery" class="row lightGallery">
+                                                    @foreach($scans as $scan)
+
+                                                        <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                                    @endforeach
                                                 </div>
-                                                <div class="col-sm-12">
-                                                    <h4>Lab Result(s)</h4>
-                                                    <?php
-                                                    $labs=explode(',',$recentConsultation->labs)
-                                                    ?>
-                                                    <div id="lightgallery-without-thumb" class="row lightGallery">
-                                                        @foreach($labs as $lab)
-                                                            {{--                                                    {{$lab}}--}}
-                                                            <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
-                                                        @endforeach
-                                                    </div>
-
+                                            </blockquote>
+                                            <label for="" class="text-info">Lab Result(s)</label>
+                                            <blockquote class="blockquote">
+                                                <?php
+                                                $labs=explode(',',$recentConsultation->labs)
+                                                ?>
+                                                <div id="lightgallery-without-thumb" class="row lightGallery">
+                                                    @foreach($labs as $lab)
+                                                        {{--                                                    {{$lab}}--}}
+                                                        <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                                    @endforeach
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="col-md-12">
-                                                    <label class="text-info">Bill</label>
-                                                    <blockquote class="blockquote">
-                                                        <div class="row">
-                                                            <table class="table table-borderless">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Item</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                @php($total = 0)
-                                                                @foreach($getBills as $bill)
-                                                                    <tr>
-                                                                        <td>{{$bill->item}}</td>
-                                                                        <td>{{$bill->total_amount_to_pay}}</td>
-                                                                    </tr>
-                                                                    @php($total +=$bill->total_amount_to_pay)
-                                                                @endforeach
-                                                                <tr class="bg-primary text-white">
-                                                                    <td class="p-2 text-right">
-                                                                        Total
-                                                                    </td>
-                                                                    <td class="p-2">GH₵ {!! $total !!}.00</td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-
-                                                            {{-- <div class="col-md-12 text-right mt-3">
-                                                                 <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
-                                                             </div>--}}
-                                                        </div>
-                                                    </blockquote>
-                                                </div>
-                                            </div>
+                                            </blockquote>
                                         </div>
-                                    </form>
+                                        <div class="col-md-6">
+                                            <label for="med" class="text-info">Medication</label>
+                                            <blockquote class="blockquote">
+                                                <ul>
+                                                    @foreach($medication as $med)
+                                                        <li>{{$med->drugs->name}}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </blockquote>
+
+                                            <label class="text-info">Bill</label>
+                                            <blockquote class="blockquote">
+                                                <div class="row">
+                                                    <table class="table table-borderless">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Item</th>
+                                                            <th>Amount</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @php($total = 0)
+                                                        @foreach($getBills as $bill)
+                                                            <tr>
+                                                                <td>{{$bill->item}}</td>
+                                                                <td>{{$bill->total_amount_to_pay}}</td>
+                                                            </tr>
+                                                            @php($total +=$bill->total_amount_to_pay)
+                                                        @endforeach
+                                                        <tr class="bg-primary text-white">
+                                                            <td class="p-2 text-right">
+                                                                Total
+                                                            </td>
+                                                            <td class="p-2">GH₵ {!! $total !!}.00</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                    {{-- <div class="col-md-12 text-right mt-3">
+                                                         <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
+                                                     </div>--}}
+                                                </div>
+                                            </blockquote>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
                         </div>

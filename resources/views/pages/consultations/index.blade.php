@@ -60,6 +60,7 @@
                 <h6 class="display-4 text-info">Relax! No Patient in Cue</h6>
             </div>
         @elseif(count($registration)  == 1)
+
             <div class="row">
                 <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-8 offset-md-2 @endif grid-margin stretch-card">
                     <div class="card">
@@ -272,14 +273,28 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <label class="text-info">Select <u><b>Service</b></u></label>
-                                                        <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
-                                                            @foreach($charges as $charge)
-                                                                @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
-                                                                    <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="text-info">Select <u><b>Service</b></u></label>
+                                                                <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
+                                                                    @foreach($charges as $charge)
+                                                                        @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
+                                                                            <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <blockquote class="blockquote">
+                                                                    <div class="form-check">
+                                                                        <label class="form-check-label">
+                                                                            <input type="checkbox" name="detain_admit" class="form-check-input">
+                                                                            Detain/Admit Patient
+                                                                        </label>
+                                                                    </div>
+                                                                </blockquote>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 

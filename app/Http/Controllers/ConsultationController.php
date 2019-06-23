@@ -82,12 +82,12 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
 
+        $registration = Registration::find($request->input('registration_id'));
+//        return $getRegistration;
 
         //Upload labs
         $labFileNames = [];
@@ -131,20 +131,51 @@ class ConsultationController extends Controller
         $consultation ->labs=implode($labFileNames,',');
         $consultation ->ultra_sound_scan=implode($scanFileNames,',');
         $consultation ->user_id=Auth::user()->id;
-
         $consultation->save();
 
 
 
         //Add medications
         foreach ($request->input('group-a') as $med) {
-            $medication = new Medication();
-            $medication->patient_id = $request->input('patient_id');
-            $medication->registration_id = $request->input('registration_id');
-            $medication->drugs_id = $med['drug_id'];
-            $medication->dosage = $med['dosage'];
-            $medication->user_id =Auth::user()->id;
-            $medication->save();
+            if (!empty($med['drug_id']) && !empty($med['dosage'])) {
+                $medication = new Medication();
+                $medication->patient_id = $request->input('patient_id');
+                $medication->registration_id = $request->input('registration_id');
+                $medication->drugs_id = $med['drug_id'];
+                $medication->dosage = $med['dosage'];
+                $medication->user_id = Auth::user()->id;
+                $medication->save();
+
+                $drugs = Drug::find($med['drug_id']);
+
+//            return $drugs;
+                //if patient is NOT Insured then insert
+                if ($registration->isInsured != 1) {
+                    $bill = new Bill();
+                    $bill->registration_id = $request->input('registration_id');
+                    $bill->patient_id = $request->input('patient_id');
+                    $bill->item = $drugs->name;
+                    $bill->item_id = $drugs->id;
+                    $bill->amount = $drugs->retail_price;
+                    $bill->insurance_amount = $drugs->nhis_amount;
+                    $bill->total_amount_to_pay = $drugs->retail_price;
+                    $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                    $bill->save();
+                }
+                else {
+                    //if patient is Insured
+                    $bill = new Bill();
+                    $bill->registration_id = $request->input('registration_id');
+                    $bill->patient_id = $request->input('patient_id');
+                    $bill->item = $drugs->name;
+                    $bill->item_id = $drugs->id;
+                    $bill->amount = $drugs->retail_price;
+                    $bill->insurance_amount = $drugs->nhis_amount;
+                    $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
+                    $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                    $bill->save();
+                }
+            }
         }
 
 
@@ -177,7 +208,21 @@ class ConsultationController extends Controller
             }
         }
 
-        $registration = Registration::find($request->input('registration_id'));
+        //add detention bill if patient is detained or admitted
+        if (\Request::has('detain_admit')){
+            $service_charge = Charge::where('name','Detain/Admit')->first();
+            $bill = new Bill();
+            $bill->registration_id = $request->input('registration_id');
+            $bill->patient_id =$request->input('patient_id');
+            $bill->item = $service_charge->name;
+            $bill->item_id = $service_charge->id;
+            $bill->amount =$service_charge->amount;
+            $bill->insurance_amount =0;
+            $bill->total_amount_to_pay=$service_charge->amount;
+            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+            $bill->save();
+        }
+
 
         if (\Request::has('service')) {
 
@@ -186,7 +231,8 @@ class ConsultationController extends Controller
                 $bill = new Bill();
                 $bill->registration_id = $request->input('registration_id');
                 $bill->patient_id =$request->input('patient_id');
-                $bill->item = "Consultation";
+                $bill->item = $service_charge->name;
+                $bill->item_id = $service_charge->id;
                 $bill->amount =$service_charge->amount;
                 $bill->insurance_amount =0;
                 $bill->total_amount_to_pay=$service_charge->amount;
@@ -205,12 +251,12 @@ class ConsultationController extends Controller
 
 
                 $service_charge = Charge::where('name',$data[1])->first();
-
                 if ($registration->isInsured != 1){
                     $bill = new Bill();
                     $bill->registration_id = $request->input('registration_id');
                     $bill->patient_id =$request->input('patient_id');
                     $bill->item = $service_charge->name;
+                    $bill->item_id = $service_charge->id;
                     $bill->amount =$service_charge->amount;
                     $bill->insurance_amount =0;
                     $bill->total_amount_to_pay=$service_charge->amount;
@@ -225,6 +271,9 @@ class ConsultationController extends Controller
 
 
         $registration->consult = 1;
+        if (\Request::has('detain_admit')){
+            $registration->detain= 1;
+        }
         $registration->save();
 
         return redirect()->route('consultation.index')
@@ -241,14 +290,16 @@ class ConsultationController extends Controller
     {
         $diagnosis = Diagnose::all();
         $drugs = Drug::all();
-
+        $charges = Charge::all();
         $searchPatient[] = Patient::find($id);
         $recentConsultation="";
         $recentVitals ="";
         $recentRegistration="";
         $getImplodedMedicine ="";
         $getImplodedDiagnosis="";
-
+        $patientDiagnosis="";
+        $medication="";
+        $getBills="";
 
         if (!empty($searchPatient)) {
 
@@ -334,7 +385,8 @@ class ConsultationController extends Controller
 
             ->with('patientDiagnosis',$patientDiagnosis)
             ->with('medication',$medication)
-            ->with('getBills',$getBills);
+            ->with('getBills',$getBills)
+            ->with('charges',$charges);
     }
 
 
@@ -352,6 +404,9 @@ class ConsultationController extends Controller
         $recentRegistration="";
         $getImplodedMedicine ="";
         $getImplodedDiagnosis="";
+        $patientDiagnosis="";
+        $medication="";
+        $getBills="";
         if (count($searchPatient) !=0) {
             $recentRegistration = Registration::with('patient')
                 ->where('patient_id', $searchPatient[0]->id)
@@ -469,6 +524,10 @@ class ConsultationController extends Controller
      */
     public function edit($id)
     {
+//        return $id;
+        $diagnosis = Diagnose::all();
+        $drugs = Drug::all();
+        $allCharges = Charge::all();
 
         $getImplodedMedicine = "";
         $getImplodedDiagnosis = "";
@@ -486,9 +545,11 @@ class ConsultationController extends Controller
         $patientDiagnosis = PatientDiagnosis::with('diagnoses')->where('patient_id',$patient->id)
             ->where('registration_id',$registration->id)->latest()->get();
 
+        $services = Service::with('charge')->where('patient_id',$patient->id)
+            ->where('registration_id',$registration->id)->latest()->get();
 
-//        return $patientDiagnosis;
-        return view('pages.consultations.edit')
+//        return $services;
+        return view('pages.consultations.consult-edit')
             ->with('registration',$registration)
             ->with('patient',$patient)
             ->with('consultation',$consultation)
@@ -496,7 +557,11 @@ class ConsultationController extends Controller
             ->with('patientDiagnosis',$patientDiagnosis)
             ->with('getImplodedMedicine',$getImplodedMedicine)
             ->with('getImplodedDiagnosis',$getImplodedDiagnosis)
-            ->with('vitals',$vitals);
+            ->with('vitals',$vitals)
+            ->with('services',$services)
+            ->with('diagnosis',$diagnosis)
+            ->with('drugs',$drugs)
+            ->with('allCharges',$allCharges);
 
     }
 
@@ -509,20 +574,11 @@ class ConsultationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $registration = Registration::find($request->input('registration_id'));
 
-        $old_medicine= explode(',',$request->input('old_medicine'));
-
-        return $request->input('treatment_medication');
-//         $old_medicine;
-        //get current registration from the consultation table to update
-        $data = Consultation::where('registration_id',$id)
-            ->where('patient_id',$request->input('patient_id'))->first();
-
-
+        //Upload labs
         $labFileNames = [];
         $scanFileNames =[];
-
-        //check if request has lab result before uploading
         if (\Request::has('labs')) {
 
             for ($i = 0; $i < count($request->file('labs')); $i++) {
@@ -537,68 +593,191 @@ class ConsultationController extends Controller
             }
         }
 
-        //check if request has scan result before uploading
+
+//Upload Scans
         if (\Request::has('scan')){
             for ($i = 0; $i < count($request->file('scan')); $i++) {
-                $file = $request->file('scan')[$i];
-                $extension = $file->getClientOriginalExtension();
-                $files = substr($file->getClientOriginalName(), 0, strpos($file->getClientOriginalName(), '.'));
-                $fileName = $files . '_' . time() . '.' . $extension;
+                $scannedFile = $request->file('scan')[$i];
+                $scannedExtension = $scannedFile->getClientOriginalExtension();
+                $scannedFiles = substr($scannedFile->getClientOriginalName(), 0, strpos($scannedFile->getClientOriginalName(), '.'));
+                $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
-                $file->move('public/scan', $fileName);
-                array_push($scanFileNames,$fileName);
-
+                $scannedFile->move('public/scan', $scannedFileName);
+                array_push($scanFileNames,$scannedFileName);
             }
-
-
         }
 
 
-        //update consultation table where patient_id and registration equals the current
-        $consultation = Consultation::find($data->id);
-        $consultation ->complains=$request->input('complains');
-        $consultation ->findings=$request->input('findings');
-        $consultation ->physical_examination=$request->input('physical_examination');
-        $consultation ->other_diagnosis=$request->input('other_diagnosis');
-        $consultation ->detain_admit=$request->input('detain_admit');
-        $consultation ->labs=implode($labFileNames,',');
-        $consultation ->ultra_sound_scan=implode($scanFileNames,',');
-        $consultation ->user_id=Auth::user()->id;
+        $consultation = Consultation::find($id);
+        $consultation->patient_id =$request->input('patient_id');
+        $consultation->complains=$request->input('complains');
+        $consultation->findings=$request->input('findings');
+        $consultation->physical_examination=$request->input('physical_examination');
+        $consultation->other_diagnosis=$request->input('other_diagnosis');
+        $consultation->detain_admit=$request->input('detain_admit');
+        $consultation->labs=$consultation->labs.",".implode($labFileNames,',');
+        $consultation->ultra_sound_scan=$consultation->ultra_sound_scan.",".implode($scanFileNames,',');
+        $consultation->user_id=Auth::user()->id;
+
         $consultation->save();
 
+
+
         //Add medications
-        foreach ($request->input('treatment_medication') as $key){
-            $med = new Medication();
-            $med->patient_id =$request->input('patient_id');
-            $med->registration_id = $id;
-            $med->drug_id = $key;
-            $med->save();
+        foreach ($request->input('group-a') as $med) {
+            //check request has no drug id
+            if (!empty($med['drug_id']) && !empty($med['dosage'])){
+                //check if medication already exist
+                $check = Medication::where('drugs_id', $med['drug_id'])
+                    ->where('patient_id', $request->input('patient_id'))
+                    ->where('registration_id', $request->input('registration_id'))
+                    ->first();
+
+                //if medication does not exist then insert
+                if (empty($check)){
+                    $medication = new Medication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = $med['dosage'];
+                    $medication->user_id =Auth::user()->id;
+                    $medication->save();
+
+
+                    //create a new bill for patient if drug does not exist
+                    $drugs = Drug::find($med['drug_id']);
+
+
+
+                    //if patient is NOT Insured then insert
+                    if ($registration->isInsured != 1) {
+                        $bill = new Bill();
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id = $request->input('patient_id');
+                        $bill->item = $drugs->name;
+                        $bill->item_id = $drugs->id;
+                        $bill->amount = $drugs->retail_price;
+                        $bill->insurance_amount = $drugs->nhis_amount;
+                        $bill->total_amount_to_pay = $drugs->retail_price;
+                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $bill->save();
+                    }
+                    else {
+                        //if patient is Insured
+                        $bill = new Bill();
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id = $request->input('patient_id');
+                        $bill->item = $drugs->name;
+                        $bill->item_id = $drugs->id;
+                        $bill->amount = $drugs->retail_price;
+                        $bill->insurance_amount = $drugs->nhis_amount;
+                        $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
+                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $bill->save();
+                    }
+                }else{
+
+                    //update
+                    $medication = Medication::find($check->id);
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = $med['dosage'];
+                    $medication->user_id =Auth::user()->id;
+                    $medication->save();
+                }
+            }
+
         }
+
+
+        //Add other  medications
+
+        if (\Request::has('group-b')) {
+            foreach ($request->input('group-b') as $other) {
+                if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
+                    $medication = new OtherMedication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drug = $other['other_medication'];
+                    $medication->dosage = $other['other_dosage'];
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+                }
+            }
+        }
+
 
         //add diagnosis
         if (\Request::has('diagnosis')) {
-
             foreach ($request->input('diagnosis') as $key) {
-                $diagnosis = new PatientDiagnosis();
-                $diagnosis->patient_id = $request->input('patient_id');
-                $diagnosis->registration_id = $id;
-                $diagnosis->diagnoses_id = $key;
-                $diagnosis->user_id = Auth::user()->id;
-                $diagnosis->save();
+                $check = PatientDiagnosis::where('diagnoses_id', $key)
+                    ->where('patient_id', $request->input('patient_id'))
+                    ->where('registration_id', $request->input('registration_id'))
+                    ->first();
+                if (empty($check)){
+                    $diagnosis = new PatientDiagnosis();
+                    $diagnosis->patient_id = $request->input('patient_id');
+                    $diagnosis->registration_id = $request->input('registration_id');
+                    $diagnosis->diagnoses_id = $key;
+                    $diagnosis->user_id = Auth::user()->id;
+                    $diagnosis->save();
+                }
             }
         }
 
 
+        if (\Request::has('service')) {
 
+//            $service_charge = Charge::where('name','Consultation')->first();
+//            if ($registration->isInsured != 1){
+//                $bill = new Bill();
+//                $bill->registration_id = $request->input('registration_id');
+//                $bill->patient_id =$request->input('patient_id');
+//                $bill->item = $service_charge->name;
+//                $bill->item_id = $service_charge->id;
+//                $bill->amount =$service_charge->amount;
+//                $bill->insurance_amount =0;
+//                $bill->total_amount_to_pay=$service_charge->amount;
+//                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+//                $bill->save();
+//            }
 
+            foreach ($request->input('service') as $key) {
+                $data = explode(',', $key);
+                $check = Service::where('charge_id', $data[0])
+                    ->where('patient_id', $request->input('patient_id'))
+                    ->where('registration_id', $request->input('registration_id'))
+                    ->first();
+                if (empty($check)){
+                    $service = new Service();
+                    $service->patient_id = $request->input('patient_id');
+                    $service->registration_id = $request->input('registration_id');
+                    $service->charge_id = $data[0];
+                    $service->user_id = Auth::user()->id;
+                    $service->save();
 
-        //update registration table, set consultation = 1 to avoid multiple consultations
-        $registration = Registration::find($request->input('registration_id'));
+                    $service_charge = Charge::where('name',$data[1])->first();
+                    if ($registration->isInsured != 1){
+                        $bill = new Bill();
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id =$request->input('patient_id');
+                        $bill->item = $service_charge->name;
+                        $bill->item_id = $service_charge->id;
+                        $bill->amount =$service_charge->amount;
+                        $bill->insurance_amount =0;
+                        $bill->total_amount_to_pay=$service_charge->amount;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                        $bill->save();
+                    }
+                }
+            }
+
+        }
         $registration->consult = 1;
         $registration->save();
 
-        return redirect()->route('consultation.index')
-            ->with('success','Consulting Success');
+        return back()->with('success','Consultation Updated');
     }
 
     public function patientRecord(Request $request){
@@ -625,7 +804,6 @@ class ConsultationController extends Controller
             ->where('patient_id',$data[1])
             ->whereDate('created_at', Carbon::today())
             ->get()->count();
-
 
 
 
@@ -691,40 +869,82 @@ class ConsultationController extends Controller
 
     }
 
-
-
-
-    //EDit patient's medication
-
+    //return view
     public function editMedication($drug_id, $med_id){
         $drug = Drug::find($drug_id);
-
         $drugs = Drug::all();
-
         $medication = Medication::find($med_id);
 
-
-        return view('pages.consultations.edit-medication')
+        return view('pages.consultations.consult-edit-medication')
             ->with('drug',$drug)
             ->with('drugs',$drugs)
             ->with('medication',$medication);
+    }
+
+    //update medication
+    public function edit_med(Request $request){
+
+        $medication = Medication::find($request->input('med_id'));
+
+        $medication->drugs_id = $request->input('drug_id');
+        $medication->dosage=$request->input('dosage');
+
+        $medication->save();
+
+        return redirect()->route('consultation.edit',[$medication->registration_id])
+            ->with('success','Medication Updated');
     }
 
     //EDit patient's diagnosis
 
-    public function editDiagnosis($drug_id, $med_id){
-        $drug = Drug::find($drug_id);
-
-        $drugs = Drug::all();
-
-        $medication = Medication::find($med_id);
+    //return view
+    public function editDiagnosis($diagnosis_id){
+        $patient_diagnosis = PatientDiagnosis::find($diagnosis_id);
 
 
-        return view('pages.consultations.edit-medication')
-            ->with('drug',$drug)
-            ->with('drugs',$drugs)
-            ->with('medication',$medication);
+        $diagnosis = Diagnose::find($patient_diagnosis->diagnoses_id);
+
+        $allDiagnosis = Diagnose::all();
+        return view('pages.consultations.consult-edit-diagnosis')
+            ->with('diagnosis',$diagnosis)
+            ->with('allDiagnosis',$allDiagnosis)
+            ->with('patient_diagnosis',$patient_diagnosis);
     }
+
+    //update diagnosis
+
+    public function edit_diagnosis(Request $request){
+
+//        return $request;
+        $patient_diagnosis = PatientDiagnosis::find($request->input('p_diagnosis_id'));
+        $patient_diagnosis->diagnoses_id =$request->input('diagnosis_id');
+        $patient_diagnosis->save();
+        return redirect()->route('consultation.edit',[$patient_diagnosis->registration_id])
+            ->with('success','Diagnosis Updated');
+    }
+
+
+    public function edit_service($service_id){
+        $patient_service = Service::find($service_id);
+        $service = Charge::find($patient_service->charge_id);
+        $allServices = Charge::all();
+
+
+        return view('pages.consultations.consult-edit-charge')
+            ->with('allServices',$allServices)
+            ->with('service',$service)
+            ->with('patient_service',$patient_service);
+    }
+
+    public function edit_service_charge(Request $request){
+        $patient_service = Service::find($request->input('p_service_id'));
+        $patient_service->charge_id =$request->input('charge_id');
+        $patient_service->save();
+        return redirect()->route('consultation.edit',[$patient_service->registration_id])
+            ->with('success','Service Updated');
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *

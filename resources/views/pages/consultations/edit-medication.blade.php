@@ -8,20 +8,20 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Edit Medication</h4>
-                        <form action="{{route('patientRecord')}}" method="post" class="mb-1">
+                        <form action="{{route('edit_med')}}" method="post" class="mb-1">
                             @csrf
-                            {!! method_field('put') !!}
+                            <input type="hidden" class="form-control" name="med_id" value="{{$medication->id}}">
                             <div class="form-group row mb-0">
                                 <div class="col-md-12 mb-2">
                                     <label for="drug">Drug</label>
-                                    <select  name="drug" id="drug" class="js-example-basic-single w-100 form-control">
+                                    <select  name="drug_id" id="drug" class="js-example-basic-single w-100 form-control">
                                         <option value="{{$drug->id}}">{{$drug->name}}</option>
                                         @foreach($drugs as $drg)
                                             <option value="{{$drg->id}}">{{$drg->name}}</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">
-                                        Select a date
+                                        Select a Drug
                                     </div>
                                 </div>
 

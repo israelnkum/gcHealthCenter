@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
 use App\Drug;
 use App\DrugType;
 use App\Medication;
@@ -267,6 +268,13 @@ class DrugController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $medication = Medication::find($id);
+        if ($medication->delete()){
+            Bill::where('registration_id',$medication->registration_id)
+                ->where('item_id',$medication->drugs_id)
+                ->where('patient_id',$medication->patient_id)
+                ->where('created_at',$medication->created_at)->delete();
+            return back()->with('success','Medication Updated');
+        }
     }
 }

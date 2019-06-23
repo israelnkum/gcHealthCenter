@@ -69,8 +69,9 @@
                             <div id="GC{{$patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                 <div class="card-body">
                                     {{--  New Consultaion Form --}}
-                                    <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.store')}}">
+                                    <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.update',$consultation->id)}}">
                                         @csrf
+                                        {!! method_field('put') !!}
                                         <input  type="hidden" name="registration_id" value="{{$registration->id}}">
                                         <input  type="hidden" name="patient_id" value="{{$patient->id}}">
                                         <input  type="hidden" name="registration_number" value="{{$patient->registration_number}}">
@@ -106,9 +107,9 @@
                                                 <label for="diagnosis" class="text-info">Diagnosis</label>
                                                 <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                     <option value="">Select Diagnosis</option>
-                                                    {{--@foreach($diagnosis as $diag)
+                                                    @foreach($diagnosis as $diag)
                                                         <option value="{{$diag->id}}">{{$diag->name}}</option>
-                                                    @endforeach--}}
+                                                    @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Diagnosis is
@@ -137,9 +138,9 @@
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <select  class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
-                                                                {{--@foreach($drugs as $drug)
+                                                                @foreach($drugs as $drug)
                                                                     <option value="{{$drug->id}}">{{$drug->name}}</option>
-                                                                @endforeach--}}
+                                                                @endforeach
                                                             </select>
                                                             <div class="invalid-feedback">
                                                                 Drug is
@@ -215,18 +216,18 @@
                                             <div class="col-sm-6">
                                                 <label class="text-info">Select <u><b>Service</b></u></label>
                                                 <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
-                                                    {{--@foreach($charges as $charge)
+                                                    @foreach($allCharges as $charge)
                                                         @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
                                                             <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
                                                         @endif
-                                                    @endforeach--}}
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="form-group row mt-5">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-primary" type="submit" id="btn_finalize">Finalize</button>
+                                                <button class="btn btn-primary" type="submit">Update</button>
                                             </div>
                                         </div>
                                     </form>
@@ -265,7 +266,9 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-6 text-left">
-                                                    <form action="">
+                                                    <form action="{{route('drugs.destroy',$medicine->id)}}" method="post" onsubmit="return confirm('Do you really want to delete this medication')">
+                                                        @csrf
+                                                        {!! method_field('delete') !!}
                                                         <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
                                                             <i class="icon icon-trash"></i>
                                                         </button>
@@ -277,18 +280,6 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                            {{-- <ul class="list-group list-group-flush">
-                                 @foreach($medications as $medicine)
-                                     <li class="list-group-item d-flex justify-content-between align-items-center p-1 mt-0">
-                                         <small>{{$medicine->drugs->name}}</small>
-                                         <form action="">
-                                             <button class="btn btn-link">
-                                                 <i class="icon icon-trash"></i>
-                                             </button>
-                                         </form>
-                                     </li>
-                                 @endforeach
-                             </ul>--}}
                         </blockquote>
 
                         <label class="text-info">Diagnosis</label>
@@ -306,13 +297,15 @@
                                         <td><small>{{$diagnosis->diagnoses->name}}</small></td>
                                         <td>
                                             <div class="row">
-                                                <div class="col-md-6 text-right">
-                                                    <a href="">
+                                                <div class="col-md-2">
+                                                    <a href="{{route('editDiagnosis',[$diagnosis->id])}}">
                                                         <i class="icon icon-note"></i>
                                                     </a>
                                                 </div>
                                                 <div class="col-md-6 text-left">
-                                                    <form action="">
+                                                    <form action="{{route('diagnoses.destroy',$diagnosis->id)}}" method="post" onsubmit="return confirm('Do you really want to delete this Diagnosis')">
+                                                        {!! method_field('delete') !!}
+                                                        @csrf
                                                         <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
                                                             <i class="icon icon-trash"></i>
                                                         </button>
@@ -326,6 +319,44 @@
                             </table>
                         </blockquote>
 
+                        <label class="text-info">Services</label>
+                        <blockquote class="blockquote">
+                            <table class="table ">
+                                <thead>
+                                <tr>
+                                    <th>Service</th>
+                                    <th>Charge</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($services as $service)
+                                    <tr>
+                                        <td><small>{{$service->charge->name}}</small></td>
+                                        <td>{{$service->charge->amount}}</td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <a href="{{route('edit_service',[$service->id])}}">
+                                                        <i class="icon icon-note"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-6 text-left">
+                                                    <form action="{{route('charges.destroy',$service->id)}}" method="post" onsubmit="return confirm('Do you really want to delete this Diagnosis')">
+                                                        {!! method_field('delete') !!}
+                                                        @csrf
+                                                        <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
+                                                            <i class="icon icon-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </blockquote>
 
                         <label class="text-info">Scan Result</label>
                         <blockquote class="blockquote">
