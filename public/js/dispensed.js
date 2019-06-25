@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    window.onload = function() {
+        multInputs
+    };
 
     $(".txtMult input").keyup(multInputs);
     $(".txtMult input").click(multInputs);
@@ -15,9 +18,9 @@ $(document).ready(function () {
         // for each row:
         $("tr.txtMult").each(function () {
             // get the values from this row:
-            let $val1 = parseInt($('.val1', this).text());
-            let $val2 = parseInt($('.val2', this).val());
-            let $val3 = parseInt($('.val3',this).val());
+            let $val1 = parseFloat($('.val1', this).text());
+            let $val2 = parseFloat($('.val2', this).text());
+            let $val3 = parseFloat($('.val3',this).val());
             let dispenseTotal = ($val1) * ($val3);
             let $total = ($val1) * ($val2);
             $('.multTotal',this).text($total);
@@ -48,8 +51,8 @@ $(document).ready(function () {
         // for each row:
         $("tr.arrearsMulti").each(function () {
             // get the values from this row:
-            let val1 = parseInt($('.val1', this).text());
-            let val2 = parseInt($('.val2', this).val());
+            let val1 = parseFloat($('.val1', this).text());
+            let val2 = parseFloat($('.val2', this).val());
             let total = (val1) * (val2);
             $('.arrearsTotal',this).text(total);
             addition += total;

@@ -50,7 +50,7 @@ class PaymentController extends Controller
                 $med = Medication::where('drugs_id',$drug_id)
                     ->where('registration_id',$request->input('registration_id'))
                     ->where('patient_id',$request->input('patient_id'))->first();
-                $med->number_to_dispense = $no_to_dispensed;
+                $med->qty = $no_to_dispensed;
                 $med->save();
             }
         }
@@ -61,7 +61,7 @@ class PaymentController extends Controller
                 $med = Medication::where('drugs_id',$drug_id)
                     ->where('registration_id',$request->input('registration_id'))
                     ->where('patient_id',$request->input('patient_id'))->first();
-                $med->number_dispensed = $no_dispensed;
+                $med->qty_dispensed = $no_dispensed;
                 $med->save();
             }
         }
@@ -70,7 +70,7 @@ class PaymentController extends Controller
             $med = Medication::where('drugs_id',$drug_id)
                 ->where('registration_id',$request->input('registration_id'))
                 ->where('patient_id',$request->input('patient_id'))->first();
-            if ($med->number_to_dispense ==  $med->number_dispensed){
+            if ($med->qty ==  $med->qty_dispensed){
                 $med->dispensed = 1;
             }else{
                 $med->dispensed = 0;
@@ -187,7 +187,7 @@ class PaymentController extends Controller
                  $med = Medication::where('drugs_id',$drug_id)
                      ->where('registration_id',$request->input('registration_id'))
                      ->where('patient_id',$request->input('patient_id'))->first();
-                 $med->number_to_dispense = $no_to_dispensed;
+                 $med->qty = $no_to_dispensed;
                  $med->save();
              }
          }*/
@@ -198,7 +198,7 @@ class PaymentController extends Controller
                 $med = Medication::where('drugs_id',$drug_id)
                     ->where('registration_id',$request->input('registration_id'))
                     ->where('patient_id',$request->input('patient_id'))->first();
-                $med->number_dispensed =$med->number_dispensed+ $no_dispensed;
+                $med->qty_dispensed =$med->qty_dispensed+ $no_dispensed;
                 $med->save();
             }
         }
@@ -208,7 +208,7 @@ class PaymentController extends Controller
             $med = Medication::where('drugs_id',$drug_id)
                 ->where('registration_id',$request->input('registration_id'))
                 ->where('patient_id',$request->input('patient_id'))->first();
-            if ($med->number_to_dispense ==  $med->number_dispensed){
+            if ($med->qty ==  $med->qty_dispensed){
                 $med->dispensed = 1;
             }else{
                 $med->dispensed = 0;

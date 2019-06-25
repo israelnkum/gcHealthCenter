@@ -39,7 +39,7 @@
                     <h4 class="card-title"></h4>
                     <img class="img-fluid mt-0" src="{{asset('public/images/no_result.png')}}" alt="">
                     <br>
-{{--                    <h4 class="display-4">Try again</h4>--}}
+                    {{--                    <h4 class="display-4">Try again</h4>--}}
                 </div>
             </div>
         @elseif(count($data) == 1)
@@ -197,11 +197,13 @@
                                                         <div class="form-row form-group">
                                                             <div class="col-md-6" >
                                                                 <div id="patient_charge_div" style="display: none;">
-                                                                    <label>Charge</label>
-                                                                    <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                    <label for="patient_charges">Charge</label>
+                                                                    <select  title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
                                                                         <option value="">~Charge~</option>
                                                                         @foreach($charges as $charge)
-                                                                            <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                            @if($charge->name == "Insured" || $charge->name == "Non-Insured")
+                                                                                <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                            @endif
                                                                         @endforeach
                                                                     </select>
                                                                     <div class="invalid-feedback">

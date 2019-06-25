@@ -270,7 +270,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2">
-                                                                    <input type="number" style="width: 70px;" min="1" value="1" class="form-control">
+                                                                    <input type="number" name="other_days" style="width: 70px;" min="1" value="1" class="form-control">
                                                                 </div>
                                                                 <div class="col-md-1">
                                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
@@ -305,7 +305,7 @@
                                                         <div class="row">
                                                             <div class="col-md-12 mb-3">
                                                                 <label class="text-info">Select <u><b>Service</b></u></label>
-                                                                <select  class="col-12 form-control mr-1 selectMedicine p-3"   name="service[]" id="service">
+                                                                <select  class="col-12 form-control mr-1 selectMedicine p-3" multiple   name="service[]" id="service">
                                                                     <option value=""></option>
                                                                     @foreach($charges as $charge)
                                                                         @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")

@@ -195,10 +195,10 @@
                                         <tr>
                                             <th>Drug</th>
                                             <th>Dose</th>
-                                            <th>Selling Price</th>
-                                            <th>N<u>o</u> to Dispense</th>
-                                            <th>Dispensed</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
                                             <th>Total</th>
+                                            <th>Dispensed</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -206,25 +206,32 @@
                                         @foreach($medication as $med)
                                             <tr class="txtMult">
                                                 <td>{{$med->drugs->name}}</td>
-                                                <td>{{$med->dosage}}</td>
-
+                                                <td>{{$med->dosage}} x {{$med->days}}days</td>
                                                 <td>
                                                     @if($registration->isInsured ==0)
-                                                        <span class="val1">{{$med->drugs->retail_price}}</span>
-
+                                                        @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
+                                                            <span class="val1">{{$med->drugs->retail_price/10}}</span>
+                                                        @else
+                                                            <span class="val1">{{$med->drugs->retail_price}}</span>
+                                                        @endif
                                                     @else
-                                                        <span class="val1">{{$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
+                                                        @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
+                                                            <span class="val1">{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}</span>
+                                                        @else
+                                                            <span class="val1">{{$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <input name="number_to_dispensed[{{$med->drugs->id}}]" required value="0" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val2 form-control">
-                                                </td>
-                                                <td>
-                                                    <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val3 form-control">
+                                                    <span class="val2">{{$med->qty}}</span>
+                                                    <input name="number_to_dispensed[{{$med->drugs->id}}]" required value="{{$med->qty}}" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" hidden style="width: 80px;" class=" form-control">
                                                 </td>
                                                 <td>
                                                     <span class="multTotal">0.00</span>
                                                     <input type="hidden" id="drug_total_value" name="drug_total[{{$med->drugs->id}}]">
+                                                </td>
+                                                <td>
+                                                    <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val3 form-control">
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -255,7 +262,7 @@
                                             <blockquote class="blockquote" style="border: dashed 1px;">
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                       <b>Amount Patient Can Pay</b>
+                                                        <b>Amount Patient Can Pay</b>
                                                     </li>
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                                         Grand Total

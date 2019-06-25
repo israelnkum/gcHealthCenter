@@ -52,7 +52,7 @@ class ConsultationController extends Controller
         }
 
         $diagnosis = Diagnose::all();
-        $drugs = Drug::where('quantity_in_stock','>',0)->get();
+        $drugs = Drug::where('qty_in_stock','>',0)->get();
         $charges = Charge::all();
 
         return view('pages.consultations.index')
@@ -82,8 +82,8 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-
-
+//        return substr($request->input('medications')[0]['dosage'],0,1);
+//        return $request;
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
@@ -108,7 +108,7 @@ class ConsultationController extends Controller
         }
 
 
-//Upload Scans
+        //Upload Scans
         if (\Request::has('scan')){
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $scannedFile = $request->file('scan')[$i];
@@ -184,7 +184,10 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }else{
@@ -194,8 +197,10 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
-                    $medication->user_id =Auth::user()->id;
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
                     $medication->save();
                 }
             }
@@ -203,7 +208,7 @@ class ConsultationController extends Controller
 
 
         //Add other  medications
-        if (\Request::has('group-b')) {
+        if (\Request::has('other-medications')) {
             foreach ($request->input('other-medications') as $other) {
                 if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
                     $medication = new OtherMedication();

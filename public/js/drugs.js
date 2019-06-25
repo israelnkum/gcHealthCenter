@@ -17,11 +17,31 @@ $(document).ready(function () {
     $("#select_drug_type").select2({
         dropdownParent: $('#upload_drugs .modal-content')
     });
+    $("#unit_of_pricing").select2({
+        dropdownParent: $('#newDrugModal .modal-content')
+    });
+    $("#drug_type1").select2({
+        dropdownParent: $('#newDrugModal .modal-content')
+    });
 
     $("#supplier_id").select2({
         dropdownParent: $('#upload_drugs .modal-content')
     });
 
+    $("#unit_of_pricing").change(function () {
+        if ($("#unit_of_pricing").val() == "Blister (x10tabs)"){
+            $('#blisters').fadeIn(1000).slideDown(1000);
+            $('#number_blisters').attr('required', true);
+
+        }else {
+            $('#blisters').fadeOut(1000).slideUp(1000);
+            $('#number_blisters').removeAttr('required');
+        }
+    });
+
+
+
+    $('#patient_insurance_type').attr('required',true);
 
     $(function () {
         $('.checkItemSupplier').click(function () {

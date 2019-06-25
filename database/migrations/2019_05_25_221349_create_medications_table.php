@@ -15,11 +15,12 @@ class CreateMedicationsTable extends Migration
     {
         Schema::create('medications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('bill_id');
+            $table->integer('bill_id')->nullable();
             $table->integer('registration_id');
             $table->integer('patient_id');
             $table->integer('drugs_id');
             $table->string('dosage',200);
+            $table->string('days',20);
             $table->integer('qty')->default(0);
             $table->integer('qty_dispensed')->default(0);
             $table->boolean('dispensed')->default(0);

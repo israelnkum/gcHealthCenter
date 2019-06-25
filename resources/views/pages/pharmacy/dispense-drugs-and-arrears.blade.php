@@ -188,11 +188,10 @@
                                             <tr>
                                                 <th>Drug</th>
                                                 <th>Dose</th>
-                                                <th>S. Price</th>
-                                                <th>N<u>o</u> to Dispense</th>
-                                                <th>Last Dispensed</th>
-                                                <th>Dispense</th>
-{{--                                                <th>Total</th>--}}
+                                                <th>Price</th>
+                                                <th>Qty</th>
+                                                <th>Taken</th>
+                                                <th>Dispensed</th>
                                             </tr>
                                             <tbody>
                                             @php( $i =1)
@@ -200,16 +199,16 @@
                                             @foreach($medication as $med)
                                                 <tr class="arrearsMulti">
                                                     <td>{{$med->bill->item}}</td>
-                                                    <td>{{$med->dosage}}</td>
+                                                    <td>{{$med->dosage}} x {{$med->days}}days</td>
                                                     <td>
                                                         <span class="val1">{{$med->bill->total_amount_to_pay}}</span>
                                                     </td>
-                                                    <td>{{$med->number_to_dispense}}</td>
+                                                    <td>{{$med->qty}}</td>
                                                     <td>
-                                                        {{$med->number_dispensed}}
+                                                        {{$med->qty_dispensed}}
                                                     </td>
                                                     <td>
-                                                        <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->number_to_dispense-$med->number_dispensed}}" type="number" style="width: 80px;" class="val2 form-control">
+                                                        <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->qty-$med->qty_dispensed}}" type="number" style="width: 80px;" class="val2 form-control">
                                                     </td>
                                                     {{--<td>
                                                         <span class="arrearsTotal">0</span>

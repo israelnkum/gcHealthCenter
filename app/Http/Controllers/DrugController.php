@@ -161,16 +161,24 @@ class DrugController extends Controller
             return back()->with('error','Drug Already Exist');
         }else {
             $drug = new Drug();
-
             $drug->name = $request->input('name');
             $drug->drug_type_id = $request->input('type_id');
-            $drug->cost_price = $request->input('cost_price');
+            $drug->qty_in_stock = $request->input('receiving_stock');
+            $drug->unit_of_pricing = $request->input('receiving_stock');
+            if (\Request::has('no_of_blisters')){
+//                $drug->no_of_blisters = $request->input('no_of_blisters');
+                $drug->no_of_blisters = $request->input('no_of_blisters');
+                $drug->qty_in_tablet = $request->input('receiving_stock')*10;
+            }
+
             $drug->retail_price = $request->input('retail_price');
-            $drug->quantity_in_stock = $request->input('receiving_stock');
+
+            $drug->supplier_id = $request->input('supplier_id');
+            $drug->cost_price = $request->input('cost_price');
+
             $drug->nhis_amount = $request->input('nhis_amount');
             $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
             $drug->user_id = Auth::user()->id;
-            $drug->supplier_id = $request->input('supplier_id');
 
             $drug->save();
             return redirect('/drugs')
@@ -220,6 +228,7 @@ class DrugController extends Controller
                 $path = $request->file('file')->getRealPath();
                 $data = Excel::load($path, function($reader) {})->get();
                 $total=count($data);
+
                 if(!empty($data) && $data->count()){
                     // $user = \Auth::user()->id;
                     foreach($data as $value=>$row)
@@ -229,6 +238,7 @@ class DrugController extends Controller
                         $retail_price = $row->retail_price;
                         $receiving_stock=$row->receiving_stock;
                         $nhis_amount=$row->nhis_amount;
+                        $blister_per_pack =$row->blister_per_pack;
                         if ($row->unit_of_pricing == ""){
                             $unit_of_pricing ="-";
                         }else{
@@ -240,7 +250,7 @@ class DrugController extends Controller
                         $testQuery = Drug::where('name', $name)
                             ->where('drug_type_id',$request->input('drug_type_id'))->first();
                         if(empty($testQuery)){
-                            $drug = new Drug();
+                          /*  $drug = new Drug();
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->cost_price = $cost_price;
@@ -251,6 +261,25 @@ class DrugController extends Controller
                             $drug->supplier_id = $request->input('supplier_id');
                             $drug->retail_price = $retail_price;
                             $drug->user_id = Auth::user()->id;
+                            $drug->save();*/
+
+                            $drug = new Drug();
+                            $drug->name = $name;
+                            $drug->drug_type_id = $request->input('drug_type_id');
+                            $drug->qty_in_stock = $receiving_stock;
+                            $drug->unit_of_pricing = $unit_of_pricing;
+                            if ($unit_of_pricing == "Blister (x10tabs)"){
+                                $drug->no_of_blisters = $blister_per_pack;
+                                $drug->qty_in_tablet = $receiving_stock*10;
+                            }
+
+                            $drug->retail_price = $retail_price;
+                            $drug->supplier_id = $request->input('supplier_id');
+                            $drug->cost_price = $cost_price;
+                            $drug->nhis_amount = $nhis_amount;
+                            $drug->expiry_date = str_replace('/','-',$expiry_date);
+                            $drug->user_id = Auth::user()->id;
+
                             $drug->save();
                         }
                         else{
@@ -258,14 +287,20 @@ class DrugController extends Controller
                             $drug = Drug::where('name', $name)->first();
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
-                            $drug->cost_price = $cost_price;
+                            $drug->qty_in_stock = $receiving_stock;
                             $drug->unit_of_pricing = $unit_of_pricing;
+                            if ($unit_of_pricing == "Blister (x10tabs)"){
+                                $drug->no_of_blisters = $blister_per_pack;
+                                $drug->qty_in_tablet = $receiving_stock*10;
+                            }
+
+                            $drug->retail_price = $retail_price;
+                            $drug->supplier_id = $request->input('supplier_id');
+                            $drug->cost_price = $cost_price;
                             $drug->nhis_amount = $nhis_amount;
                             $drug->expiry_date = str_replace('/','-',$expiry_date);
-                            $drug->quantity_in_stock = $receiving_stock+$testQuery->quantity_in_stock;
-                            $drug->supplier_id = $request->input('supplier_id');
-                            $drug->retail_price = $retail_price;
                             $drug->user_id = Auth::user()->id;
+
                             $drug->save();
                         }
                     }

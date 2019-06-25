@@ -174,7 +174,7 @@
                                                                 <th>Retail Price</th>
                                                                 <th>Supplier ID</th>
                                                                 <th>Drug type ID</th>
-                                                                <th>Insurance Amount</th>
+                                                                <th>Insurance</th>
                                                                 {{--<th>Expiry Date</th>--}}
                                                                 <th>Action</th>
                                                             </tr>
@@ -197,7 +197,7 @@
                                                                     <td>{{$drug->name}}</td>
                                                                     <td>{{$drug->supplier->name}}</td>
                                                                     <td>{{$drug->drug_type->name}}</td>
-                                                                    <td>{{$drug->quantity_in_stock}}</td>
+                                                                    <td>{{$drug->qty_in_stock}}</td>
                                                                     <td>{{$drug->cost_price}}</td>
                                                                     <td>{{$drug->retail_price}}</td>
                                                                     <td>{{$drug->supplier_id}}</td>
@@ -545,7 +545,7 @@
     {{--    Drugs--}}
     <!-- new Drug   modal -->
     <div class="modal fade" id="newDrugModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="post" action="{{route('drugs.store')}}" class="needs-validation" novalidate>
                 @csrf
                 <div class="modal-content">
@@ -565,10 +565,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-6">
-                                <label for="">Drug Type</label>
-                                <select title="Select Drug Type" name="type_id" class="js-example-basic-single form-control" style="width: 100%" required>
+                        <div class="row form-group">
+                            <div class="col-md-5">
+                                <label for="drug_type1">Drug Type</label>
+                                <select id="drug_type1" title="Select Drug Type" name="type_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Type~</option>
                                     @foreach($drug_types as $type)
                                         <option value="{{$type->id}}">{{$type->name}}</option>
@@ -579,10 +579,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="">Unit Of Pricing</label>
-                                <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
-                                    <option value="">~Select Supplier~</option>
+                            <div class="col-md-5">
+                                <label for="unit_of_pricing">Unit Of Pricing</label>
+                                <select id="unit_of_pricing" title="Select Supplier" name="unit_of_pricing" class="js-example-basic-single form-control" style="width: 100%" required>
+                                    <option value="">~Select~</option>
                                     <option value="Blister (x10tabs)">Blister (x10tabs)</option>
                                     <option value="10ml">10ml</option>
                                     <option value="20ml">20ml</option>
@@ -608,7 +608,14 @@
                                     <option value="2 course (12tabs)">2 course (12tabs)</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    Supplier is required.
+                                    Unit of Pricing is required.
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="display: none;" id="blisters">
+                                <label for="number_blisters">Blister Per Box</label>
+                                <input name="no_of_blisters" id="number_blisters" type="number" class="form-control">
+                                <div class="invalid-feedback">
+                                    N<u>o</u> Blisters is required.
                                 </div>
                             </div>
                         </div>
