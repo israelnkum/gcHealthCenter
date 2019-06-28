@@ -12,12 +12,12 @@
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <div class="form-check form-check-flat">
-                                        <label class="form-check-label">
-                                            <input type="checkbox"   class="form-check-input">
-                                            Detaned
-                                        </label>
-                                    </div>
+                                    {{--                                    <div class="form-check form-check-flat">--}}
+                                    {{--                                        <label class="form-check-label">--}}
+                                    {{--                                            <input type="checkbox"   class="form-check-input">--}}
+                                    {{--                                            Detaned--}}
+                                    {{--                                        </label>--}}
+                                    {{--                                    </div>--}}
                                     <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
@@ -88,7 +88,6 @@
                 </div>
             </div>
         </div>
-
         @if(!empty($registration))
             <form action="{{route('payment.store')}}" method="post" class="needs-validation" novalidate>
                 @csrf
@@ -166,18 +165,18 @@
                                                     @php($total +=$bill->total_amount_to_pay)
                                                 @endif
                                             @endforeach
+                                            <tr class="bg-primary text-white">
+                                                <td class="p-2 text-right">
+                                                    Total
+                                                </td>
+                                                <td class="p-2">GH₵ {!! $total !!}</td>
+                                            </tr>
                                             @if($detentionBill)
                                                 <tr>
                                                     <td>Detention</td>
                                                     <td>{{$detentionBill}}.00</td>
                                                 </tr>
                                             @endif
-                                            <tr class="bg-primary text-white">
-                                                <td class="p-2 text-right">
-                                                    Total
-                                                </td>
-                                                <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
-                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -211,27 +210,38 @@
                                                     @if($registration->isInsured ==0)
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
                                                             <span class="val1">{{$med->drugs->retail_price/10}}</span>
+                                                            <input name="price[]" type="number" hidden value="{{$med->drugs->retail_price/10}}">
+                                                            <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount/10}}">
                                                         @else
                                                             <span class="val1">{{$med->drugs->retail_price}}</span>
+                                                            <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price)}}">
+                                                            <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount}}">
                                                         @endif
                                                     @else
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
                                                             <span class="val1">{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}</span>
+                                                            <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}">
+                                                            <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount/10}}">
                                                         @else
                                                             <span class="val1">{{$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
+                                                            <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)}}">
+                                                            <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount}}">
                                                         @endif
                                                     @endif
                                                 </td>
+                                                <td style="display: none;"><input name="data[]" type="text" value="{{$med->drugs->name.",".$med->dosage." x ".$med->days.",".$med->drugs->unit_of_pricing.",".$med->qty.",".$med->days.",".$med->drugs->retail_price.",".$med->drugs->nhis_amount}}"></td>
+
                                                 <td>
                                                     <span class="val2">{{$med->qty}}</span>
-                                                    <input name="number_to_dispensed[{{$med->drugs->id}}]" required value="{{$med->qty}}" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" hidden style="width: 80px;" class=" form-control">
+                                                    <input name="qty[]" required value="{{$med->qty}}" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" hidden style="width: 80px;" class=" form-control">
                                                 </td>
+                                                <td><input type="hidden" name="drug_id[]" value="{{$med->drugs->id}}"></td>
                                                 <td>
                                                     <span class="multTotal">0.00</span>
-                                                    <input type="hidden" id="drug_total_value" name="drug_total[{{$med->drugs->id}}]">
+                                                    <input type="hidden" id="drug_total_value" name="drug_total[]">
                                                 </td>
                                                 <td>
-                                                    <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val3 form-control">
+                                                    <input name="qty_dispensed[]" value="0" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val3 form-control">
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -242,8 +252,8 @@
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                                         Service Total:
-                                                        <span class="badge  badge-pill" id="serviceText">GH₵ {!! $total+$detentionBill !!}.00</span>
-                                                        <input type="hidden" value="{!! $total+$detentionBill !!}" id="service" name="service_total">
+                                                        <span class="badge  badge-pill" id="serviceText">GH₵ {!! $total !!}.00</span>
+                                                        <input type="hidden" value="{!! $total !!}" id="service" name="service_total">
                                                     </li>
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                                         Drugs Total:
@@ -276,7 +286,7 @@
                                         <div class="col-md-4 offset-md-8">
                                             <label for="">Amount Paid</label>
                                             <div class="input-group">
-                                                <input type="number" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
+                                                <input type="text" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
                                                 <div class="input-group-prepend bg-info text-white">
                                                     <button type="submit" class="input-group-text btn text-white">
                                                         Dispense
@@ -306,6 +316,39 @@
                     <h6 class="display-4">
                         Relax! No patient in Queue
                     </h6>
+                </div>
+            </div>
+        @endif
+
+        @if(!empty($other_medication))
+            <div class="row">
+                <div class="col-md-8 offset-md-4">
+                    <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
+                        <div class="card">
+                            <div class="card-header" role="tab" id="heading-4">
+                                <a data-toggle="collapse" href="#other_medication" aria-expanded="false" aria-controls="collapse-4">
+                                    <div class="row">
+                                        Other Medication
+                                    </div>
+                                </a>
+                            </div>
+                            <div id="other_medication" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        @php($i =1)
+                                        @foreach($other_medication as $me)
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><span class="badge-info badge badge-pill">{!! $i !!}.</span> {{$me->drug}}</span>
+
+                                                <span>{{$me->dosage}}</span>
+                                            </li>
+                                            @php($i++)
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endif

@@ -8,6 +8,7 @@ use App\Consultation;
 use App\DetentionRecord;
 use App\Diagnose;
 use App\Drug;
+use App\DrugArrears;
 use App\Medication;
 use App\OtherMedication;
 use App\Patient;
@@ -56,6 +57,8 @@ class DetainedRecordsController extends Controller
     {
         $registration = Registration::find($request->input('registration_id'));
 
+
+
         //Upload labs
         $labFileNames = [];
         $scanFileNames = [];
@@ -73,8 +76,7 @@ class DetainedRecordsController extends Controller
             }
         }
 
-
-//Upload Scans
+        //Upload Scans
         if (\Request::has('scan')) {
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $scannedFile = $request->file('scan')[$i];
@@ -95,80 +97,118 @@ class DetainedRecordsController extends Controller
         $records->findings = $request->input('findings');
         $records->physical_examination = $request->input('physical_examination');
         $records->other_diagnosis = $request->input('other_diagnosis');
-//        $records ->detain_admit=$request->input('detain_admit');
+        //        $records ->detain_admit=$request->input('detain_admit');
         $records->labs = implode($labFileNames, ',');
         $records->ultra_sound_scan = implode($scanFileNames, ',');
         $records->user_id = Auth::user()->id;
         $records->save();
 
 
+        $total_drug_bill =0;
+        $total_service_bill = 0;
+        $total_insurance_bill =0;
         //Add medications
-        foreach ($request->input('group-a') as $med) {
+        foreach ($request->input('medications') as $med) {
             if (!empty($med['drug_id']) && !empty($med['dosage'])) {
 
                 //check if medication already exist
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at', Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d H:m:i'))
                     ->first();
                 if (empty($check)) {
                     $drugs = Drug::find($med['drug_id']);
-
                     //if patient is NOT Insured then insert the drug selling price
-                    if ($registration->isInsured != 1) {
-                        $bill = new Bill();
-                        $bill->registration_id = $request->input('registration_id');
-                        $bill->patient_id = $request->input('patient_id');
-                        $bill->item = $drugs->name;
-                        $bill->item_id = $drugs->id;
-                        $bill->type = "Drug";
-                        $bill->amount = $drugs->retail_price;
-                        $bill->insurance_amount = $drugs->nhis_amount;
-                        $bill->total_amount_to_pay = $drugs->retail_price;
-                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
-                        $bill->save();
-                    } else {
+                    if ($registration->isInsured != 1)
+                    {
+                        $drugArrears = new DrugArrears();
+                        $drugArrears->registration_id = $request->input('registration_id');
+                        $drugArrears->patient_id = $request->input('patient_id');
+                        $drugArrears->item = $drugs->name;
+                        $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
+                        $drugArrears->dosage=substr($med['dosage'],1)." x ".$med['days'];
+                        $drugArrears->insurance_amount = 0;
+                        $drugArrears->qty_dispensed =0;
+
+                        //check if unit of pricing is blister
+                        //then divide the retail price and by 10
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = $drugs->retail_price/10;
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * (substr($med['dosage'],0,1)*$med['days']);
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price;
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
+                        }
+                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+
+                        $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $drugArrears->save();
+                    }else{
+
                         //if patient is Insured the total amount to pay is sellingPrice - NHIS Price
-                        $bill = new Bill();
-                        $bill->registration_id = $request->input('registration_id');
-                        $bill->patient_id = $request->input('patient_id');
-                        $bill->item = $drugs->name;
-                        $bill->item_id = $drugs->id;
-                        $bill->type = "Drug";
-                        $bill->amount = $drugs->retail_price;
-                        $bill->insurance_amount = $drugs->nhis_amount;
-                        $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
-                        $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
-                        $bill->save();
+                        $drugArrears = new DrugArrears();
+                        $drugArrears->registration_id = $request->input('registration_id');
+                        $drugArrears->patient_id = $request->input('patient_id');
+                        $drugArrears->item = $drugs->name;
+                        $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
+                        $drugArrears->dosage=substr($med['dosage'],1)." x ".$med['days'];
+                        $drugArrears->insurance_amount = 0;
+
+                        //check if unit of pricing is blister
+                        //then divide the retail price and by 10
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = ($drugs->retail_price-$drugs->nhis_amount)/10;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*(substr($med['dosage'],0,1)*$med['days']);
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price-$drugs->nhis_amount;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount;
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*(substr($med['dosage'],0,1)*$med['days']);
+                        }
+                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+
+                        $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $drugArrears->save();
+
+
                     }
 
+                    $total_drug_bill += $drugArrears->total_amount_to_pay;
+                    $total_insurance_bill  += $drugArrears->insurance_amount;
                     $medication = new Medication();
-                    $medication->bill_id = $bill->id;
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
+                    $medication->bill_id =$drugArrears->id;
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
-                } else {
-
+                }
+                /*else {
                     //update
                     $medication = Medication::find($check->id);
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
+                    $medication->bill_id =$bill->id;
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
-                }
+                }*/
             }
         }
 
 
         //Add other  medications
-        if (\Request::has('group-b')) {
-            foreach ($request->input('group-b') as $other) {
+        if (\Request::has('other_medications')) {
+            foreach ($request->input('other_medications') as $other) {
                 if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
                     $medication = new OtherMedication();
                     $medication->patient_id = $request->input('patient_id');
@@ -219,7 +259,7 @@ class DetainedRecordsController extends Controller
 
 
         if (\Request::has('service')) {
-            $service_charge = Charge::where('name', 'Consultation')->first();
+            /*$service_charge = Charge::where('name', 'Consultation')->first();
 
             //charge for consultation if only the person is not insured
             if ($registration->isInsured != 1) {
@@ -234,7 +274,7 @@ class DetainedRecordsController extends Controller
                 $bill->total_amount_to_pay = $service_charge->amount;
                 $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                 $bill->save();
-            }
+            }*/
 
             //insert selected service charge
             foreach ($request->input('service') as $key) {
@@ -242,7 +282,7 @@ class DetainedRecordsController extends Controller
                 $check = Service::where('charge_id', $data[0])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
-                    ->whereDate('created_at', Carbon::today())
+                    ->whereDate('created_at', date('Y-m-d H:m:i'))
                     ->first();
                 if (empty($check)) {
                     $service = new Service();
@@ -255,8 +295,8 @@ class DetainedRecordsController extends Controller
 
                     $service_charge = Charge::where('name', $data[1])->first();
 
-                    //create a bill for selected service charges
-                    $bill = new Bill();
+                   /* //create a bill for selected service charges
+                    $bill = new ServiceAndDrugs();
                     $bill->registration_id = $request->input('registration_id');
                     $bill->patient_id = $request->input('patient_id');
                     $bill->item = $service_charge->name;
@@ -266,11 +306,26 @@ class DetainedRecordsController extends Controller
                     $bill->insurance_amount = 0;
                     $bill->total_amount_to_pay = $service_charge->amount;
                     $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
-                    $bill->save();
+                    $bill->save();*/
+
+                    $total_service_bill += $bill->total_amount_to_pay ;
                 }
             }
 
         }
+
+        $payment = Payment::where('registration_id',$request->input('registration_id'))
+            ->where('patient_id',$request->input('patient_id'))
+            ->first();
+
+        $payment->grand_total = $payment->grand_total+$total_drug_bill+$total_service_bill;
+        $payment->arrears = str_replace('-','',$payment->arrears)+$total_drug_bill+$total_service_bill;
+        $payment->save();
+
+
+        $registration->medication =2;
+        $registration->hasArrears =1;
+        $registration->save();
 
 
         return back()->with('success', 'New Record Added');
@@ -284,24 +339,15 @@ class DetainedRecordsController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-
-    public function searchPatientForDrugDispersion(Request $request)
-    {
         $totalCashSales = Bill::sum('total_amount_to_pay');
         $totalSales = Bill::sum('amount');
         $totalNhisSale = Bill::sum('insurance_amount');
         $drugs = Drug::all()->count();
+        $recentRegistration = Registration::with('patient')->where('patient_id', $id)->latest()->first();
+        if (empty($recentRegistration)){
+            return back()->with('error','Patient has no registration');
+        }
 
-        //get patient
-        $searchPatient = Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
-            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
-            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->first();
-
-        //get patient recent registration
-        $recentRegistration = Registration::with('patient')->where('patient_id', $searchPatient->id)->latest()->first();
         $vitals = Vital::where('registration_id', $recentRegistration->id)
             ->where('patient_id', $recentRegistration->patient_id)
             ->latest()->first();
@@ -314,7 +360,8 @@ class DetainedRecordsController extends Controller
         //check if patient is detained Or Admitted
         if ( $recentRegistration->detain == 0){
             $detentionBill = 0;
-        }elseif ( $recentRegistration->detain == 1){
+        }
+        elseif ( $recentRegistration->detain == 1){
             //get date admitted
             $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
 
@@ -356,9 +403,6 @@ class DetainedRecordsController extends Controller
 //                ->where('type','!=','Drug')
             ->get();
 
-
-
-
         if ($recentRegistration->medication == 0){
 
             $registration = $recentRegistration;
@@ -391,7 +435,8 @@ class DetainedRecordsController extends Controller
                 ->with('detentionBill',$detentionBill);
         }
         elseif ($recentRegistration->medication == 2) {
-            $medication = Medication::with('bill')->where('registration_id', $recentRegistration->id)
+            $medication = Medication::with('bill')
+                ->where('registration_id', $recentRegistration->id)
                 ->where('patient_id', $recentRegistration->patient_id)
                 ->where('dispensed', 0)->get();
 
@@ -414,6 +459,153 @@ class DetainedRecordsController extends Controller
                 ->with('totalSales', $totalSales)
                 ->with('arrears', $arrears);
         }
+    }
+
+
+    public function searchPatientForDrugDispersion(Request $request)
+    {
+        $totalCashSales = Bill::sum('total_amount_to_pay');
+        $totalSales = Bill::sum('amount');
+        $totalNhisSale = Bill::sum('insurance_amount');
+        $drugs = Drug::all()->count();
+
+        //get patient
+        $searchPatient = Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
+
+        if (count($searchPatient) == 0){
+            return back()->with('error','No Data Found');
+        } elseif(count($searchPatient)>1){
+            return view('pages.pharmacy.search-results')
+                ->with('searchResults',$searchPatient);
+        }else{
+//            return $searchPatient;
+            //get patient recent registration
+            $recentRegistration = Registration::with('patient')
+                ->where('patient_id', $searchPatient[0]->id)->latest()->first();
+
+            //check if patient has no registration
+            if (empty($recentRegistration)){
+                return back()->with('error','Patient has no registration');
+            }
+
+            //get patient vitals
+            $vitals = Vital::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->latest()->first();
+
+
+
+            /*
+             * Start Detention Bill Calculation
+             */
+            //check if patient is detained Or Admitted
+            if ( $recentRegistration->detain == 0){
+                $detentionBill = 0;
+            }
+            elseif ( $recentRegistration->detain == 1){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            //if patient is discharged, then use discharged_date instead of today
+            elseif ($recentRegistration->detain == 2){
+                //get date admitted
+                $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
+
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->discharged_date);
+                $detentionDays = $today->diffInDays($dateAdmitted);
+
+                if ($detentionDays < 3){
+                    $detentionBill = 20;
+                }else{
+                    $additionalDays = $detentionDays - 2;
+                    $calAdditionalCharges = $additionalDays*5;
+
+                    $detentionBill = $calAdditionalCharges+20;
+                }
+            }
+            /*
+             * End Detention Bill Calculation
+             */
+
+            $getBills = Bill::where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id',$recentRegistration->id)
+//                ->where('type','!=','Drug')
+                ->get();
+
+        }
+        if ($recentRegistration->medication == 0){
+
+            $registration = $recentRegistration;
+            $medication= Medication::with('bill','drugs')
+                ->where('dispensed',0)
+                ->where('registration_id',$registration->id)
+                ->where('patient_id',$registration->patient_id)
+                ->get();
+
+            return view('pages.pharmacy.drug-dispense')
+                ->with('registration',$registration)
+                ->with('drugs',$drugs)
+                ->with('vitals',$vitals)
+                ->with('medication',$medication)
+                ->with('totalCashSales',$totalCashSales)
+                ->with('totalNhisSale',$totalNhisSale)
+                ->with('totalSales',$totalSales)
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
+        }
+        elseif($recentRegistration->medication == 1){
+
+            return view('pages.pharmacy.bill')
+                ->with('vitals',$vitals)
+                ->with('recentRegistration',$recentRegistration)
+                ->with('totalCashSales', $totalCashSales)
+                ->with('totalNhisSale', $totalNhisSale)
+                ->with('totalSales', $totalSales)
+                ->with('getBills',$getBills)
+                ->with('detentionBill',$detentionBill);
+        }
+        elseif ($recentRegistration->medication == 2) {
+            $recordMedication = DrugArrears::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->latest()->get();
+
+            $medication = DrugArrears::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)->get();
+
+//            return $medication;
+            $arrears = Payment::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->first();
+
+            $registration = "";
+
+            return view('pages.pharmacy.dispense-drugs-and-arrears')
+                ->with('registration', $registration)
+                ->with('drugs', $drugs)
+                ->with('vitals', $vitals)
+                ->with('medication', $medication)
+                ->with('recentRegistration', $recentRegistration)
+                ->with('totalCashSales', $totalCashSales)
+                ->with('totalNhisSale', $totalNhisSale)
+                ->with('totalSales', $totalSales)
+                ->with('arrears', $arrears)
+                ->with('recordMedication',$recordMedication);
+        }
+
 
 
 
@@ -463,10 +655,13 @@ class DetainedRecordsController extends Controller
 
     public function view_detention_record($patient_id, $registration_id){
         $patient =Patient::find($patient_id);
+
+        // $patient;
         $recentRecord = DetentionRecord::where('patient_id',$patient_id)
             ->where('registration_id',$registration_id)
             ->latest()->first();
 
+//        return $recentRecord;
         $allRecords=DetentionRecord::where('patient_id',$patient_id)
             ->where('registration_id',$registration_id)
             ->get();

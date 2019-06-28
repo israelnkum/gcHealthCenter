@@ -90,6 +90,8 @@ $(document).ready(function () {
             $('#patient_charges').attr('required',true);
             $('#patient_insured_div').fadeIn(1000).slideDown(1000);
             $('#patient_charge_div').fadeIn(1000).slideDown(1000);
+            $('#patient_insurance_number').removeAttr('required');
+            $('#patient_insurance_type').removeAttr('required');
 
             // document.getElementById('patient_charge_div').style.display ='block';
             //document.getElementById('patient_insured_div').style.display ='block';

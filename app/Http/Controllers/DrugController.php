@@ -144,7 +144,8 @@ class DrugController extends Controller
             ->with('totalNhisSale',$totalNhisSale)
             ->with('totalSales',$totalSales)
             ->with('getBills',$getBills)
-            ->with('detentionBill',$detentionBill);
+            ->with('detentionBill',$detentionBill)
+            ->with('other_medication',$other_medication);
     }
 
     /**

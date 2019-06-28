@@ -224,7 +224,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2">
-                                                                    <input type="number" required name="days" style="width: 70px;" min="1" value="1" class="form-control">
+                                                                    <input type="number" required name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
                                                                 </div>
                                                                 <div class="col-md-1">
                                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
@@ -240,8 +240,6 @@
                                                         </button>
                                                     </div>
                                                 </div>
-
-
 
                                                 <div class="row">
                                                     <div class="col-md-6" >
@@ -270,7 +268,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2">
-                                                                    <input type="number" name="other_days" style="width: 70px;" min="1" value="1" class="form-control">
+                                                                    <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
                                                                 </div>
                                                                 <div class="col-md-1">
                                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >

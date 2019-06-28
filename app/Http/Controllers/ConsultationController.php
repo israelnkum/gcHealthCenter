@@ -52,7 +52,8 @@ class ConsultationController extends Controller
         }
 
         $diagnosis = Diagnose::all();
-        $drugs = Drug::where('qty_in_stock','>',0)->get();
+        $drugs = Drug::where('qty_in_stock','>',0)
+            ->where('retail_price','>',0)->get();
         $charges = Charge::all();
 
         return view('pages.consultations.index')
@@ -82,8 +83,7 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-//        return substr($request->input('medications')[0]['dosage'],0,1);
-//        return $request;
+
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
@@ -215,7 +215,7 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
-                    $medication->dosage = $other['other_dosage'];
+                    $medication->dosage = substr($other['other_dosage'],1)." x ".$other['other_days']." days";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
@@ -342,7 +342,6 @@ class ConsultationController extends Controller
                     $bill->save();
                 }
             }
-
         }
 
         //update registration set consult = 1 and detain_admit if request has detain_admit

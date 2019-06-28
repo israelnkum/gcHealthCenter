@@ -3,6 +3,7 @@
     <!-- partial -->
 
     <div class="content-wrapper">
+        {{--Search form--}}
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
@@ -12,12 +13,12 @@
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <div class="form-check form-check-flat">
+                                    {{--<div class="form-check form-check-flat">
                                         <label class="form-check-label">
                                             <input type="checkbox"   class="form-check-input">
                                             Detaned
                                         </label>
-                                    </div>
+                                    </div>--}}
                                     <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
@@ -34,6 +35,9 @@
                   </button>
               </div>--}}
         </div>
+        {{--End search form --}}
+
+        {{--Statistics--}}
         <div class="row">
             <div class="col-md-4 grid-margin">
                 <div class="card">
@@ -89,14 +93,15 @@
                 </div>
             </div>
         </div>
+        {{--End Statistics--}}
 
         @if(!empty($recentRegistration))
-
             <div class="row">
                 <div class="col-md-4 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Patient's Information</h4>
+                            {{--display patient information--}}
                             <div class="row">
                                 <div class="col-md-6">
                                     <h5 class="mb-1 text-primary" >
@@ -116,8 +121,11 @@
                                     <small style="font-size: 14px">Marital Status: <span class="font-weight-bold">{{$recentRegistration->patient->marital_status}}</span></small>
                                 </div>
                             </div>
+                            {{--End patient information--}}
                             <hr>
+
                             <h6 class="card-title">Vital Signs</h6>
+                            {{--Vital Signs--}}
                             <div class="row">
                                 <div class="col-md-8">
                                     <small style="font-size: 13px">Blood Pressure(BP) - <span class="text-danger">{{$vitals->blood_pressure}} mmHg</span></small>
@@ -140,7 +148,10 @@
                                     <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></small>
                                 </div>
                             </div>
+                            {{--End Vital Signs--}}
                             <hr>
+
+                            {{--Bill--}}
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="">Bill</h4>
@@ -168,6 +179,7 @@
                                     </table>
                                 </div>
                             </div>
+                            {{--End Bill--}}
                         </div>
                     </div>
                 </div>
@@ -195,26 +207,58 @@
                                             </tr>
                                             <tbody>
                                             @php( $i =1)
-
                                             @foreach($medication as $med)
+                                                <tr>
+                                                    <td>{{$med->item}}</td>
+                                                    <td>{{$med->dosage}} x {{$med->days}}days</td>
+                                                    <td>{{$med->amount}} </td>
+                                                    <td>{{$med->qty}}</td>
+                                                    <td>{{$med->qty_dispensed}}</td>
+                                                    <td>
+                                                        <input name="qty_dispensed[]" value="0" min="0" max="{{$med->qty-$med->qty_dispensed}}" type="number" style="width: 80px;" class="val3 form-control">
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            {{--@foreach($medication as $med)
                                                 <tr class="arrearsMulti">
                                                     <td>{{$med->bill->item}}</td>
                                                     <td>{{$med->dosage}} x {{$med->days}}days</td>
                                                     <td>
-                                                        <span class="val1">{{$med->bill->total_amount_to_pay}}</span>
+                                                        @if($recentRegistration->isInsured ==0)
+                                                            @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
+                                                                <span class="val1">{{$med->drugs->retail_price/10}}</span>
+                                                                <input name="price[{{$med->drugs->id}}]" type="number" hidden value="{{$med->drugs->retail_price/10}}">
+                                                            @else
+                                                                <span class="val1">{{$med->drugs->retail_price}}</span>
+                                                                <input name="price[{{$med->drugs->id}}]" type="number" hidden value="{{($med->drugs->retail_price)}}">
+                                                            @endif
+                                                        @else
+                                                            @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
+                                                                <span class="val1">{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}</span>
+                                                                <input name="price[{{$med->drugs->id}}]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}">
+                                                            @else
+                                                                <span class="val1">{{$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
+                                                                <input name="price[{{$med->drugs->id}}]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)}}">
+                                                            @endif
+                                                        @endif
+                                                        --}}{{--<span class="val1">{{$med->bill->total_amount_to_pay}}</span>--}}{{--
                                                     </td>
-                                                    <td>{{$med->qty}}</td>
+                                                    <td>
+                                                        {{$med->qty}}
+                                                        <input name="number_to_dispensed[{{$med->drugs->id}}]" required value="{{$med->qty}}" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" hidden style="width: 80px;" class=" form-control">
+                                                    </td>
+
                                                     <td>
                                                         {{$med->qty_dispensed}}
                                                     </td>
                                                     <td>
                                                         <input name="number_dispensed[{{$med->drugs->id}}]" value="0" min="0" max="{{$med->qty-$med->qty_dispensed}}" type="number" style="width: 80px;" class="val2 form-control">
                                                     </td>
-                                                    {{--<td>
+                                                    --}}{{--<td>
                                                         <span class="arrearsTotal">0</span>
-                                                    </td>--}}
+                                                    </td>--}}{{--
                                                 </tr>
-                                            @endforeach
+                                            @endforeach--}}
 
                                             <tr>
                                                 <td></td>
@@ -223,30 +267,30 @@
                                             @if($arrears->arrears != 0)
                                                 <tr class="mt-3">
                                                     <td class="p-2 text-white text-right"   ></td>
-                                                    <td class="p-2 text-dark text-center mt-3">Arrears: GH₵ {!! substr($arrears->arrears,1) !!}</td>
+                                                    <td class="p-2 text-dark text-center mt-3">Arrears: GH₵ {!! str_replace('-','',$arrears->arrears) !!}</td>
                                                     <td class="p-2 text-center" >
-                                                        <input type="hidden" value="{!! substr($arrears->arrears,1) !!}" id="arrears" name="service_total">
+                                                        <input type="hidden" value="{!! str_replace('-','',$arrears->arrears) !!}" id="arrears" name="service_total">
                                                     </td>
                                                     <td></td>
                                                 </tr>
-                                                {{--<tr>
-                                                    <td class="p-2 text-white text-right"></td>
-                                                    <td class="p-2 text-dark text-center">Drugs Total: GH₵ <span id="drugsText">0.00</span></td>
-                                                    <td class="p-2 text-dark  text-right">
-                                                        <input type="hidden" value="0" name="drugs_total" id="drugs">
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr class="bg-success ">
-                                                    <td class="p-2 text-white text-right" ></td>
-                                                    <td class="p-2 text-white text-center">
-                                                        Grand Total: GH₵ <span id="grandText">0.00</span>
-                                                    </td>
-                                                    <td class="p-2 text-dark  text-right">
-                                                        <input type="hidden" value="0" id="grand" name="grand_total">
-                                                    </td>
-                                                    <td colspan="3"></td>
-                                                </tr>--}}
+                                            {{--<tr>
+                                                <td class="p-2 text-white text-right"></td>
+                                                <td class="p-2 text-dark text-center">Drugs Total: GH₵ <span id="drugsText">0.00</span></td>
+                                                <td class="p-2 text-dark  text-right">
+                                                    <input type="hidden" value="0" name="drugs_total" id="drugs">
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr class="bg-success ">
+                                                <td class="p-2 text-white text-right" ></td>
+                                                <td class="p-2 text-white text-center">
+                                                    Grand Total: GH₵ <span id="grandText">0.00</span>
+                                                </td>
+                                                <td class="p-2 text-dark  text-right">
+                                                    <input type="hidden" value="0" id="grand" name="grand_total">
+                                                </td>
+                                                <td colspan="3"></td>
+                                            </tr>--}}
                                             @endif
                                         </table>
                                         <div class="form-group row mb-2 mt-5">
@@ -257,7 +301,7 @@
                                                 <div class="input-group">
                                                     @if($arrears->arrears != 0)
                                                         <input type="hidden" name="arrears" value="{{substr($arrears->arrears,1)}}">
-                                                        <input type="number" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
+                                                        <input type="text" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
                                                     @endif
                                                     <div class="input-group-prepend bg-info text-white">
                                                         <button type="submit" class="input-group-text btn text-white">
@@ -285,7 +329,7 @@
                                         <div class="col-md-4 offset-md-4">
                                             <label for="amount_paid">Amount Paid</label>
                                             {{--                                            {{substr($arrears->arrears,1)}}--}}
-                                            <input type="number" name="amount_paid" min="0" max="{{substr($arrears->arrears,1)}}" id="amount_paid" class="form-control" required>
+                                            <input type="text" name="amount_paid" min="0" data-inputmask="'alias': 'currency'" max="{{substr($arrears->arrears,1)}}" id="amount_paid" class="form-control" required>
                                             <div class="invalid-feedback">
                                                 Amount required
                                             </div>

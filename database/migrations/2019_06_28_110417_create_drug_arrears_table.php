@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBillsTable extends Migration
+class CreateDrugArrearsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateBillsTable extends Migration
      */
     public function up()
     {
-        Schema::create('bills', function (Blueprint $table) {
+        Schema::create('drug_arrears', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('registration_id');
             $table->integer('patient_id');
+            $table->string('dosage',199);
             $table->string('item');
-            $table->integer('item_id')->nullable();
-            $table->string('type')->nullable();
+            $table->string('unit_of_pricing')->nullable();
             $table->integer('qty')->default(0);
+            $table->integer('qty_dispensed')->default(0);
+            $table->integer('days')->default(0);
             $table->decimal('amount')->default(0);
             $table->decimal('insurance_amount')->default(0);
             $table->decimal('total_amount_to_pay')->default(0);
@@ -36,6 +38,6 @@ class CreateBillsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bills');
+        Schema::dropIfExists('drug_arrears');
     }
 }

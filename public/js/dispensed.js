@@ -23,7 +23,7 @@ $(document).ready(function () {
             let $val3 = parseFloat($('.val3',this).val());
             let dispenseTotal = ($val1) * ($val3);
             let $total = ($val1) * ($val2);
-            $('.multTotal',this).text($total);
+            $('.multTotal',this).text(Number($total).toFixed(2));
             $('#drug_total_value',this).val($total);
             mult += $total;
             addDispense += dispenseTotal;
@@ -54,7 +54,8 @@ $(document).ready(function () {
             let val1 = parseFloat($('.val1', this).text());
             let val2 = parseFloat($('.val2', this).val());
             let total = (val1) * (val2);
-            $('.arrearsTotal',this).text(total);
+
+            $('.arrearsTotal',this).text(Number(total).toFixed(2));
             addition += total;
         });
         $("#drugsText").text(addition.toFixed(2));
