@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 grid-margin offset-md-2">
-                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="post">
+                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12">
@@ -64,8 +64,8 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-records" role="tab" aria-controls="patient-records" aria-selected="false">
-                                            <i class="icon-note"></i>
-                                            Records
+                                            <i class="icon-cloud-upload"></i>
+                                            Upload Old Records
                                         </a>
                                     </li>
                                 </ul>
@@ -96,41 +96,89 @@
                                                 <div class="wrapper mb-4">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <h6 class=" mb-0 text-uppercase text-primary">Personal Information</h6>
-                                                            <div class="card-body mt-0 p-1">
-                                                                <p style="line-height: 13px" class="mt-2"><b>Last Name</b> : <u>{{$data[0]->last_name}}</u></p>
-                                                                <p style="line-height: 13px"><b>First Name :</b> <u>{{$data[0]->first_name}}</u> </p>
-                                                                <p style="line-height: 13px"><b>Other Name :</b> <u>{{$data[0]->other_name}}</u> </p>
-                                                                <p style="line-height: 13px"><b>Date Of Birth</b> : <u>{{$data[0]->date_of_birth}}</u></p>
-                                                                <p style="line-height: 13px"><b>Occupation</b> : <u>{{$data[0]->occupation}}</u></p>
-                                                                <p style="line-height: 13px"><b>Gender</b> : <u>{{$data[0]->gender}}</u></p>
-                                                                <p style="line-height: 13px"><b>Religion</b> : <u>{{$data[0]->religion}}</u></p>
-                                                            </div>
+                                                            <blockquote class="blockquote">
+                                                                <h6 class=" mb-0 text-uppercase text-primary">Personal Information</h6>
+                                                                <ul class="list-group" >
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>First Name :</b>
+                                                                        <span class="">{{$data[0]->first_name}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1">
+                                                                        <b>Middle Name :</b>
+                                                                        <span>{{$data[0]->other_name}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1 ">
+                                                                        <b> Last Name :</b>
+                                                                        <span>{{$data[0]->last_name}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1 ">
+                                                                        <b> Date Of Birth :</b>
+                                                                        <span>{{$data[0]->date_of_birth}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1 ">
+                                                                        <b>Occupation:</b>
+                                                                        <span>{{$data[0]->occupation}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1 ">
+                                                                        <b>Gender:</b>
+                                                                        <span>{{$data[0]->gender}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-inline-flex justify-content-between p-1 ">
+                                                                        <b>Religion:</b>
+                                                                        <span>{{$data[0]->religion}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </blockquote>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <h6 class=" mb-0 text-uppercase text-primary">Contact Information</h6>
-                                                            <div class="card-body mt-0 p-1">
-                                                                <p style="line-height: 13px" class="mt-2"><b>Marital Status</b> : <u>{{$data[0]->marital_status}}</u></p>
-                                                                <p style="line-height: 13px"><b>Address :</b> <u>{{$data[0]->postal_address}}</u> </p>
-                                                                <p style="line-height: 13px"><b>Home Address</b> : <u>{{$data[0]->house_number}}</u></p>
-                                                                <p style="line-height: 13px"><b>Locality</b> : <u>{{$data[0]->locality}}</u></p>
-                                                                <p style="line-height: 13px"><b>Phone Number</b> : <u>{{$data[0]->phone_number}}</u></p>
-                                                            </div>
+                                                            <blockquote class="blockquote">
+                                                                <h6 class=" mb-0 text-uppercase text-primary">Contact Information</h6>
+                                                                <ul class="list-group" >
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>Address:</b>
+                                                                        <span class="">{{$data[0]->postal_address}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1">
+                                                                        <b>Home Address:</b>
+                                                                        <span>{{$data[0]->house_number}}</span>
+                                                                    </li>
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>Locality:</b>
+                                                                        <span class="">{{$data[0]->locality}}</span>
+                                                                    </li>
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>Phone Number:</b>
+                                                                        <span class="">{{$data[0]->phone_number}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </blockquote>
                                                         </div>
                                                     </div>
                                                     <div class="row mt-5">
                                                         <div class="col-md-6">
-                                                            <h6 class=" mb-0 text-uppercase text-primary">Other Information</h6>
-                                                            <div class="card-body mt-0 p-1">
-                                                                <p style="line-height: 20px" class="mt-2">{{$data[0]->other_information}}</p>
-                                                            </div>
+                                                            <blockquote class="blockquote">
+                                                                <h6 class=" mb-0 text-uppercase text-primary">Other Information</h6>
+                                                                <ul class="list-group" >
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>Marital Status:</b>
+                                                                        <span class="">{{$data[0]->marital_status}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1">
+                                                                        <b>Other Info :</b>
+                                                                        <span>{{$data[0]->other_information}}</span>
+                                                                    </li>
+                                                                    <li  style="border: none" class="list-group-item d-flex  justify-content-between p-1 ">
+                                                                        <b>Relative's Name:</b>
+                                                                        <span class="">{{$data[0]->name_of_nearest_relative}}</span>
+                                                                    </li>
+                                                                    <li style="border: none" class="list-group-item d-flex justify-content-between p-1">
+                                                                        <b>Relative's Phone Number:</b>
+                                                                        <span>{{$data[0]->number_of_nearest_relative}}</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </blockquote>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <div class="card-body mt-0 p-1">
-                                                                <p style="line-height: 13px" class="mt-2"><b>Relative</b> : <u>{{$data[0]->name_of_nearest_relative}}</u></p>
-                                                                <p style="line-height: 13px"><b>Phone Number :</b> <u>{{$data[0]->number_of_nearest_relative}}</u> </p>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -319,20 +367,44 @@
                                     </div>
                                     <div class="tab-pane fade" id="patient-records" role="tabpanel" aria-labelledby="tab-2-2">
                                         <div class="row">
-                                            <div class="col-md-5">
-                                                REcords
-                                                {{--                                                <img class="img-fluid rounded" src="../../images/samples/tab_preview/04.png" alt="tab Preview">--}}
+                                            <div class="col-md-12 text-center">
+                                                <blockquote class="blockquote" style="border: dashed 1px;">
+                                                    <h5 class="text-uppercase">Upload Old Record(s)</h5>
+
+                                                    <form action="{{route('upload-records')}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
+                                                        @csrf
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6 offset-md-3">
+                                                                <input type="hidden"  name="patient_id" value="{{$data[0]->id}}">
+                                                                <input required type="file" class="form-control-file bg-dark text-white" name="old_records[]" multiple>
+                                                                <div class="invalid-feedback">
+                                                                    No file selected
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6 offset-md-3">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        Record Date
+                                                                    </div>
+                                                                    <div class="col-md-8">
+                                                                        <input required placeholder="Record Date" type="date" class="form-control" name="record_date">
+                                                                        <div class="invalid-feedback">
+                                                                            Date is required
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-md-12 text-center">
+                                                                <button class="btn btn-dark" type="submit">Upload Record(s)</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </blockquote>
                                             </div>
-                                            {{--<div class="col-md-7 pl-md-5">
-                                                <div class="wrapper mb-4">
-                                                    <h4 class="mb-3"><i class="icon-present mr-3"></i>Anonymous Proxy</h4>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                                </div>
-                                                <div class="wrapper mt-4 pt-4">
-                                                    <h4 class="mb-3"><i class="icon-tag mr-3"></i>Addiction When Gambling</h4>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                                </div>
-                                            </div>--}}
                                         </div>
                                     </div>
                                 </div>
@@ -377,9 +449,6 @@
     </div>
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
-
-
-
 
 
     <!-- new patient modal -->
@@ -538,6 +607,9 @@
                                         </div>
                                     </div>--}}
                                     <input type="hidden" name="register_patient" value="register_patient">
+                                    <div class="col-md-2">
+                                        <label for="charges" class="mt-3">Insurance</label>
+                                    </div>
                                     <div class="col-md-6">
                                         <select required title="Select Charge"  name="charges" id="charges" class="js-example-basic-single form-control" style="width: 100%" >
                                             <option value="">~Insurance~</option>

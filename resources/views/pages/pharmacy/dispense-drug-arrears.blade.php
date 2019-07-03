@@ -38,7 +38,7 @@
         {{--End search form --}}
 
         {{--Statistics--}}
-        <div class="row">
+       {{-- <div class="row">
             <div class="col-md-4 grid-margin">
                 <div class="card">
                     <div class="card-body">
@@ -82,7 +82,7 @@
                                 <div class="d-md-flex">
                                     <h2 class="mb-0">₵{{$totalSales}}</h2>
                                 </div>
-                                {{--                                <small class="text-gray">Raised from 89 orders.</small>--}}
+                                --}}{{--                                <small class="text-gray">Raised from 89 orders.</small>--}}{{--
                             </div>
                             <div class="d-inline-block">
                                 <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
@@ -92,7 +92,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--}}
         {{--End Statistics--}}
 
         @if(!empty($recentRegistration))
@@ -145,7 +145,7 @@
                                 </div>
 
                                 <div class="col-md-6 text-right">
-                                    <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></small>
+                                    <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}}</span></small>
                                 </div>
                             </div>
                             {{--End Vital Signs--}}
@@ -209,9 +209,17 @@
                                             @php( $i =1)
                                             @foreach($medication as $med)
                                                 <tr>
-                                                    <td>{{$med->item}}</td>
+                                                    <td style="display: none;"><input type="hidden" value="{{$med->medication_id}}" name="medication_id[]"></td>
+                                                    <td>
+                                                        {{$med->item}}
+                                                        <input type="hidden" name="item[]" value="{{$med->item}}">
+                                                    </td>
                                                     <td>{{$med->dosage}} x {{$med->days}}days</td>
-                                                    <td>{{$med->amount}} </td>
+                                                    <td>
+                                                        {{$med->amount}}
+                                                        <input type="hidden" name="insurance" value="{{$med->insurance_amount}}">
+                                                        <input type="hidden" name="price[]" value="{{$med->amount}}">
+                                                    </td>
                                                     <td>{{$med->qty}}</td>
                                                     <td>{{$med->qty_dispensed}}</td>
                                                     <td>
@@ -273,24 +281,6 @@
                                                     </td>
                                                     <td></td>
                                                 </tr>
-                                            {{--<tr>
-                                                <td class="p-2 text-white text-right"></td>
-                                                <td class="p-2 text-dark text-center">Drugs Total: GH₵ <span id="drugsText">0.00</span></td>
-                                                <td class="p-2 text-dark  text-right">
-                                                    <input type="hidden" value="0" name="drugs_total" id="drugs">
-                                                </td>
-                                                <td></td>
-                                            </tr>
-                                            <tr class="bg-success ">
-                                                <td class="p-2 text-white text-right" ></td>
-                                                <td class="p-2 text-white text-center">
-                                                    Grand Total: GH₵ <span id="grandText">0.00</span>
-                                                </td>
-                                                <td class="p-2 text-dark  text-right">
-                                                    <input type="hidden" value="0" id="grand" name="grand_total">
-                                                </td>
-                                                <td colspan="3"></td>
-                                            </tr>--}}
                                             @endif
                                         </table>
                                         <div class="form-group row mb-2 mt-5">
@@ -300,7 +290,7 @@
                                                 @endif
                                                 <div class="input-group">
                                                     @if($arrears->arrears != 0)
-                                                        <input type="hidden" name="arrears" value="{{substr($arrears->arrears,1)}}">
+                                                        <input type="hidden" name="arrears" value="{{str_replace('-','',$arrears->arrears)}}">
                                                         <input type="text" min="0" required class="form-control" data-inputmask="'alias': 'currency'" name="amount_paid" placeholder="Amount Paid">
                                                     @endif
                                                     <div class="input-group-prepend bg-info text-white">

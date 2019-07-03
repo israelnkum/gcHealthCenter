@@ -25,11 +25,9 @@ Route::get('/home', 'HomeController@index')->name('home');
  */
 
 Route::resource('patients','PatientController');
-/*Route::resource('patients', 'PhotoController')->names([
-    'create' => 'photos.build'
-]);*/
-Route::post('/searchPatient','PatientController@searchPatient')->name('searchPatient');
-
+Route::post('/old-records','PatientController@upload_old_files')->name('upload-records');
+Route::get('/search-patient','PatientController@searchPatient')->name('searchPatient');
+Route::get('/view-old-records/{id}','PatientController@viewOldRecord')->name('view-old-records');
 
 
 
@@ -53,10 +51,11 @@ Route::post('/search-registration-for-vitals','VitalsController@searchRegistrati
  */
 
 Route::resource('consultation','ConsultationController');
-Route::post('/searchConsultation','ConsultationController@searchConsultation')->name('searchConsultation');
-Route::post('/patientRecord','ConsultationController@patientRecord')->name('patientRecord');
+Route::get('/search-consultation','ConsultationController@searchConsultation')->name('searchConsultation');
+Route::post('/patient-record','ConsultationController@patientRecord')->name('patientRecord');
 Route::get('/edit-medication/{drug_id}/{med_id}','ConsultationController@editMedication')->name('editMedication');
 Route::post('/edit-medication','ConsultationController@edit_med')->name('edit_med');
+Route::post('/discharge-patient/{id}','ConsultationController@discharge')->name('discharge-patient');
 
 
 //edit_consultation_charge
@@ -93,7 +92,8 @@ Route::get('search-detained','DetainedRecordsController@searchPatientForDrugDisp
 Route::get('view-record/{patient_id}/{registration_id}','DetainedRecordsController@view_detention_record')->name('view_detention_record');
 Route::post('view-record','DetainedRecordsController@view_detention')->name('view_detention');
 
-
+Route::post('change-password','UserController@change_password')->name('password-change');
+Route::get('password-change','UserController@password_change')->name('change-password');
 
 
 /*
@@ -108,7 +108,7 @@ Route::post('/bulk_deleteDrugType','DrugTypeController@bulk_deleteDrugType')->na
 
 
 /*
- * Patients Route
+ * users Route
  */
 
 Route::resource('users','UserController');
@@ -117,7 +117,7 @@ Route::post('/bulk_delete','UserController@bulk_delete')->name('bulk_delete');
 
 
 /*
- * Patients Route
+ * preferences Route
  */
 
 Route::resource('preferences','PreferenceController');
@@ -128,14 +128,14 @@ Route::resource('preferences','PreferenceController');
  * Insurance Route
  */
 Route::resource('insurance','InsuranceController');
-Route::post('/bulk_deleteInsurance','InsuranceController@bulk_deleteInsurance')->name('bulk_deleteInsurance');
+Route::post('/bulk-deleteInsurance','InsuranceController@bulk_deleteInsurance')->name('bulk_deleteInsurance');
 
 
 /*
  * Insurance Route
  */
 Route::resource('diagnoses','DiagnoseController');
-Route::post('/bulk_deleteDiagnoses','DiagnoseController@bulk_deleteDiagnoses')->name('bulk_deleteDiagnoses');
+Route::post('/bulk-deleteDiagnoses','DiagnoseController@bulk_deleteDiagnoses')->name('bulk_deleteDiagnoses');
 
 
 
@@ -144,7 +144,7 @@ Route::post('/bulk_deleteDiagnoses','DiagnoseController@bulk_deleteDiagnoses')->
  * Charges Route
  */
 Route::resource('charges','ChargeController');
-Route::post('/bulk_deleteCharge','ChargeController@bulk_deleteCharge')->name('bulk_deleteCharge');
+Route::post('/bulk-deleteCharge','ChargeController@bulk_deleteCharge')->name('bulk_deleteCharge');
 
 
 

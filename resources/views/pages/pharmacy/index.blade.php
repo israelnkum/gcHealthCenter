@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="content-wrapper">
-        <div class="row">
+       {{-- <div class="row">
             <div class="col-md-4 grid-margin">
                 <div class="card">
                     <div class="card-body">
@@ -45,7 +45,7 @@
                                 <div class="d-md-flex">
                                     <h2 class="mb-0">$10,200</h2>
                                 </div>
-                                {{--                                <small class="text-gray">Raised from 89 orders.</small>--}}
+                                --}}{{--                                <small class="text-gray">Raised from 89 orders.</small>--}}{{--
                             </div>
                             <div class="d-inline-block">
                                 <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--}}
         {{--<div class="row">
             <div class="col-md-1 grid-margin">
                 <div class="card">

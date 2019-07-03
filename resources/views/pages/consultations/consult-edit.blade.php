@@ -60,7 +60,7 @@
 
                                         <div class="col-md-6 text-right">
                                             <div class="form-group">
-                                                <h6>RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></h6>
+                                                <h6>RDT - <span class="text-danger">{{$vitals->RDT}}</span></h6>
                                             </div>
                                         </div>
                                     </div>

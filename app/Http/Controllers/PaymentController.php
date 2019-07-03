@@ -6,6 +6,7 @@ use App\Bill;
 use App\Drug;
 use App\DrugArrears;
 use App\Medication;
+use App\Patient;
 use App\Payment;
 use App\PaymentLogs;
 use App\Registration;
@@ -74,37 +75,40 @@ class PaymentController extends Controller
                     $drugArrears = new DrugArrears();
                     $drugArrears->registration_id = $request->input('registration_id');
                     $drugArrears->patient_id = $request->input('patient_id');
+                    $drugArrears->medication_id =$med->id;
                     $drugArrears->item = $findDrug->name;
                     $drugArrears->dosage=$check->dosage;
                     $drugArrears->unit_of_pricing = $findDrug->unit_of_pricing;
                     $drugArrears->qty = $check->qty;
                     $drugArrears->days = $check->days;
                     $drugArrears->qty_dispensed = $check->qty_dispensed;
-                    $register = Registration::find($request->input('registration_id'));
+                    $drugArrears->amount = $request->input('price')[$i];
+                    $drugArrears->insurance_amount = $request->input('insurance')[$i];
+                    $drugArrears->total_amount_to_pay = ($check->qty-$request->input('qty_dispensed')[$i])*floatval($request->input('price')[$i]);
 
-                    if ($register->insured != 1){
-                        //check if unit of pricing is blister
-                        //then divide the retail price and by 10
-                        if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                            $drugArrears->amount = $findDrug->retail_price/10;
-                            $drugArrears->total_amount_to_pay = ($findDrug->retail_price/10) * (floatval($check->qty)*floatval($check->days));
-                        }else{
-                            $drugArrears->amount = $findDrug->retail_price;
-                            $drugArrears->total_amount_to_pay = ($findDrug->retail_price) * (floatval($check->qty)*floatval($check->days));
-                        }
-                    }else{
-                        //check if unit of pricing is blister
-                        //then divide the retail price and by 10
-                        if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                            $drugArrears->amount = ($findDrug->retail_price-$findDrug->nhis_amount)/10;
-                            $drugArrears->insurance_amount = $findDrug->nhis_amount/10;
-                            $drugArrears->total_amount_to_pay = (($findDrug->retail_price-$drugs->nhis_amount)/10)*(floatval($check->qty)*floatval($check->days));
-                        }else{
-                            $drugArrears->amount = $findDrug->retail_price-$findDrug->nhis_amount;
-                            $drugArrears->insurance_amount = $findDrug->nhis_amount;
-                            $drugArrears->total_amount_to_pay = (($findDrug->retail_price) - ($findDrug->nhis_amount))*(floatval($check->qty)*floatval($check->days));
-                        }
-                    }
+                    /* if ($register->insured != 1){
+                         //check if unit of pricing is blister
+                         //then divide the retail price and by 10
+                         if ($check->unit_of_pricing == "Blister (x10tabs)"){
+                             $drugArrears->amount = $request->input('qty_dispensed')[$i]/10;
+                             $drugArrears->total_amount_to_pay = ($request->input('qty_dispensed')[$i]/10) * (floatval($check->qty_dispensed)*floatval($check->days));
+                         }else{
+                             $drugArrears->amount = $findDrug->retail_price;
+                             $drugArrears->total_amount_to_pay = ($request->input('qty_dispensed')[$i]) * (floatval($check->qty)*floatval($check->days));
+                         }
+                     }else{
+                         //check if unit of pricing is blister
+                         //then divide the retail price and by 10
+                         if ($check->unit_of_pricing == "Blister (x10tabs)"){
+                             $drugArrears->amount = ($findDrug->retail_price-$findDrug->nhis_amount)/10;
+                             $drugArrears->insurance_amount = $request->input('insurance')[$i]/10;
+                             $drugArrears->total_amount_to_pay = (($request->input('qty_dispensed')[$i]-$request->input('insurance')[$i])/10)*(floatval($check->qty)*floatval($check->days));
+                         }else{
+                             $drugArrears->amount = $findDrug->retail_price-$findDrug->nhis_amount;
+                             $drugArrears->insurance_amount = $findDrug->nhis_amount;
+                             $drugArrears->total_amount_to_pay = (($findDrug->retail_price) - ($findDrug->nhis_amount))*(floatval($check->qty)*floatval($check->days));
+                         }
+                     }*/
 
                     $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                     $drugArrears->save();
@@ -120,9 +124,10 @@ class PaymentController extends Controller
                 $bill->item_id = $getDrug->id;
                 $bill->type="Drug";
                 $bill->qty = $check->qty;
+                $bill->qty_dispensed = floatval($request->input('qty_dispensed')[$i]);
                 $bill->amount = $request->input('price')[$i];
                 $bill->insurance_amount = $request->input('insurance')[$i];
-                $bill->total_amount_to_pay = $request->input('drug_total')[$i];
+                $bill->total_amount_to_pay =floatval($request->input('qty_dispensed')[$i])*floatval($request->input('price')[$i]);
                 $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                 $bill->save();
 
@@ -143,8 +148,6 @@ class PaymentController extends Controller
         }
 
         $registration->save();
-
-
         $payment = new Payment();
         $payment->registration_id = $request->input('registration_id');
         $payment->patient_id = $request->input('patient_id');
@@ -205,13 +208,10 @@ class PaymentController extends Controller
     {
 
         //update medication table set total number to dispense
-        if (\Request::has('drug_id')) {
-            for ($i=0; $i<count($request->input('drug_id')); $i++) {
-                $med = Medication::where('drugs_id',$request->input('drug_id')[$i])
-                    ->where('registration_id',$request->input('registration_id'))
-                    ->where('patient_id',$request->input('patient_id'))->first();
-
-                $med->qty_dispensed = $request->input('qty_dispensed')[$i];
+        if (\Request::has('medication_id')) {
+            for ($i=0; $i<count($request->input('medication_id')); $i++) {
+                $med = Medication::find($request->input('medication_id')[$i]);
+                $med->qty_dispensed = $med->qty_dispensed+$request->input('qty_dispensed')[$i];
                 $med->save();
 
                 $findMed = Medication::find($med->id);
@@ -227,118 +227,65 @@ class PaymentController extends Controller
 
                 //get medication
                 $check = Medication::find($findMed->id);
-
+                $drugArrears = DrugArrears::where('medication_id',$check->id)->first();
                 //check if qty = qty_dispensed and set drug_arrears
-                if ($check->qty != $check->qty_dispensed){
+                $drugArrears->qty_dispensed = $check->qty_dispensed;
+                $drugArrears->save();
 
-                    $findDrug = Drug::find($check->drugs_id);
-
-                    $drugArrears = new DrugArrears();
-                    $drugArrears->registration_id = $request->input('registration_id');
-                    $drugArrears->patient_id = $request->input('patient_id');
-                    $drugArrears->item = $findDrug->name;
-                    $drugArrears->dosage=$check->dosage;
-                    $drugArrears->unit_of_pricing = $findDrug->unit_of_pricing;
-                    $drugArrears->qty = $check->qty;
-                    $drugArrears->days = $check->days;
-                    $drugArrears->qty_dispensed = $check->qty_dispensed;
-                    $register = Registration::find($request->input('registration_id'));
-
-                    if ($register->insured != 1){
-                        //check if unit of pricing is blister
-                        //then divide the retail price and by 10
-                        if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                            $drugArrears->amount = $findDrug->retail_price/10;
-                            $drugArrears->total_amount_to_pay = ($findDrug->retail_price/10) * (floatval($check->qty)*floatval($check->days));
-                        }else{
-                            $drugArrears->amount = $findDrug->retail_price;
-                            $drugArrears->total_amount_to_pay = ($findDrug->retail_price) * (floatval($check->qty)*floatval($check->days));
-                        }
-                    }else{
-                        //check if unit of pricing is blister
-                        //then divide the retail price and by 10
-                        if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                            $drugArrears->amount = ($findDrug->retail_price-$findDrug->nhis_amount)/10;
-                            $drugArrears->insurance_amount = $findDrug->nhis_amount/10;
-                            $drugArrears->total_amount_to_pay = (($findDrug->retail_price-$drugs->nhis_amount)/10)*(floatval($check->qty)*floatval($check->days));
-                        }else{
-                            $drugArrears->amount = $findDrug->retail_price-$findDrug->nhis_amount;
-                            $drugArrears->insurance_amount = $findDrug->nhis_amount;
-                            $drugArrears->total_amount_to_pay = (($findDrug->retail_price) - ($findDrug->nhis_amount))*(floatval($check->qty)*floatval($check->days));
-                        }
-                    }
-
-                    $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
-                    $drugArrears->save();
+                $getDrugArrears = DrugArrears::find($drugArrears->id);
+                if ($getDrugArrears->qty == $getDrugArrears->qty_dispensed){
+                    $getDrugArrears->delete();
                 }
 
-
-                $getDrug = Drug::find($findMed->drugs_id);
 
                 $bill = new Bill();
                 $bill->registration_id = $request->input('registration_id');
                 $bill->patient_id = $request->input('patient_id');
-                $bill->item = $getDrug->name;
-                $bill->item_id = $getDrug->id;
+                $bill->item = $request->input('item')[$i];
+                $bill->item_id = 1;
                 $bill->type="Drug";
                 $bill->qty = $check->qty;
+                $bill->qty_dispensed = floatval($request->input('qty_dispensed')[$i]);
                 $bill->amount = $request->input('price')[$i];
-                $bill->insurance_amount = $request->input('insurance')[$i];
-                $bill->total_amount_to_pay = $request->input('drug_total')[$i];
+                $bill->insurance_amount = floatval($request->input('insurance')[$i]);
+                $bill->total_amount_to_pay =floatval($request->input('qty_dispensed')[$i])*floatval($request->input('price')[$i]);
                 $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                 $bill->save();
-
-                $update_med = Medication::find($check->id);
-
-                $update_med->bill_id = $bill->id;
-                $update_med->save();
             }
         }
+        if (\Request::has('arrears')) {
+            /* $registration = Registration::find($request->input('registration_id'));
+             if ($request->input('grand_total') > $request->input('amount_paid')) {
+                 $registration->hasArrears = 1;
+                 $registration->medication = 2;
+             } else {
+                 $registration->medication = 1;
+                 $registration->hasArrears = 0;
+             }
 
-        $registration = Registration::find($request->input('registration_id'));
-        if ($request->input('grand_total') > $request->input('amount_paid')){
-            $registration->hasArrears =1;
-            $registration->medication =2;
-        }else{
-            $registration->medication =1;
-            $registration->hasArrears =0;
+             $registration->save();*/
+
+
+            $payment = Payment::where('registration_id', $request->input('registration_id'))
+                ->where('patient_id', $request->input('patient_id'))->first();
+
+            $payment->amount_paid = $payment->amount_paid + $request->input('amount_paid');
+            $payment->arrears = str_replace('-', '', $payment->arrears) - $request->input('amount_paid');
+            $payment->user_id = Auth::user()->id;
+
+            $payment->save();
+
+            $paymentLogs = new PaymentLogs();
+            $paymentLogs->registration_id = $request->input('registration_id');
+            $paymentLogs->patient_id = $request->input('patient_id');
+            $paymentLogs->service_total = 0;
+            $paymentLogs->drugs_total = 0;
+            $paymentLogs->grand_total = $request->input('arrears');
+            $paymentLogs->amount_paid = $request->input('amount_paid');
+            $paymentLogs->arrears = $request->input('amount_paid') - $request->input('grand_total');
+            $paymentLogs->user_id = Auth::user()->id;
+            $paymentLogs->save();
         }
-
-        $registration->save();
-
-
-        $payment = Payment::where('registration_id',$request->input('registration_id'))
-            ->where('patient_id',$request->input('patient_id'))->first();
-
-        $payment->amount_paid =$payment->amount_paid+ $request->input('amount_paid');
-        $payment->arrears = str_replace('-','',$payment->arrears)-$request->input('amount_paid');
-        $payment->user_id = Auth::user()->id;
-
-        $payment->save();
-
-        $paymentLogs = new PaymentLogs();
-        $paymentLogs->registration_id = $request->input('registration_id');
-        $paymentLogs->patient_id = $request->input('patient_id');
-        $paymentLogs->service_total = 0;
-        $paymentLogs->drugs_total = 0;
-        $paymentLogs->grand_total = $request->input('arrears');
-        $paymentLogs->amount_paid = $request->input('amount_paid');
-        $paymentLogs->arrears = $request->input('amount_paid')-$request->input('grand_total');
-        $paymentLogs->user_id = Auth::user()->id;
-        $paymentLogs->save();
-
-        /*if (\Request::has('arrears')){
-
-            $registration = Registration::find($request->input('registration_id'));
-            if ($request->input('grand_total') < $request->input('amount_paid')){
-                $registration->hasArrears =1;
-                $registration->medication =2;
-            }else{
-                $registration->hasArrears =0;
-                $registration->medication =1;
-            }
-            $registration->save();
-        }*/
 
         return redirect()->route('drugs.create')
             ->with('success','Drugs Dispensed');
@@ -354,8 +301,10 @@ class PaymentController extends Controller
         $payment->save();
 
 
-        if ($request->input('amount_paid') >0)
-        {
+        if ($request->input('amount_paid') <= 0){
+
+            return back()->with('error','Amount cannot be Zero');
+        }else{
             $paymentLogs = new PaymentLogs();
             $paymentLogs->registration_id = $payment->registration_id;
             $paymentLogs->patient_id = $payment->patient_id;
@@ -369,9 +318,9 @@ class PaymentController extends Controller
         }
 
 
-        $patient = Payment::find($payment->patient_id);
-        return redirect()->route('searchPatientForDrugDispersion',$patient->folder_number)
-            ->with('success','Arrears Paid');
+        $patient = Patient::find($payment->patient_id);
+//        return redirect()->route('searchPatientForDrugDispersion',$patient->folder_number)
+        return back()->with('success','Arrears Paid');
 
     }
     /**

@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="post">
+                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">

@@ -16,6 +16,7 @@ use App\PatientDiagnosis;
 use App\Payment;
 use App\Registration;
 use App\Service;
+use App\ServiceArrears;
 use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -97,7 +98,6 @@ class DetainedRecordsController extends Controller
         $records->findings = $request->input('findings');
         $records->physical_examination = $request->input('physical_examination');
         $records->other_diagnosis = $request->input('other_diagnosis');
-        //        $records ->detain_admit=$request->input('detain_admit');
         $records->labs = implode($labFileNames, ',');
         $records->ultra_sound_scan = implode($scanFileNames, ',');
         $records->user_id = Auth::user()->id;
@@ -118,6 +118,19 @@ class DetainedRecordsController extends Controller
                     ->whereDate('created_at', date('Y-m-d H:m:i'))
                     ->first();
                 if (empty($check)) {
+
+//                    return $med['days'];
+                    $medication = new Medication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+
                     $drugs = Drug::find($med['drug_id']);
                     //if patient is NOT Insured then insert the drug selling price
                     if ($registration->isInsured != 1)
@@ -126,9 +139,10 @@ class DetainedRecordsController extends Controller
                         $drugArrears->registration_id = $request->input('registration_id');
                         $drugArrears->patient_id = $request->input('patient_id');
                         $drugArrears->item = $drugs->name;
+                        $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1)." x ".$med['days'];
-                        $drugArrears->insurance_amount = 0;
+                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->days=$med['days'];
                         $drugArrears->qty_dispensed =0;
 
                         //check if unit of pricing is blister
@@ -136,9 +150,11 @@ class DetainedRecordsController extends Controller
                         if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
                             $drugArrears->amount = $drugs->retail_price/10;
                             $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }else{
                             $drugArrears->amount = $drugs->retail_price;
                             $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }
                         $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
 
@@ -151,9 +167,10 @@ class DetainedRecordsController extends Controller
                         $drugArrears->registration_id = $request->input('registration_id');
                         $drugArrears->patient_id = $request->input('patient_id');
                         $drugArrears->item = $drugs->name;
+                        $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1)." x ".$med['days'];
-                        $drugArrears->insurance_amount = 0;
+                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->days=$med['days'];
 
                         //check if unit of pricing is blister
                         //then divide the retail price and by 10
@@ -176,17 +193,7 @@ class DetainedRecordsController extends Controller
 
                     $total_drug_bill += $drugArrears->total_amount_to_pay;
                     $total_insurance_bill  += $drugArrears->insurance_amount;
-                    $medication = new Medication();
-                    $medication->patient_id = $request->input('patient_id');
-                    $medication->registration_id = $request->input('registration_id');
-                    $medication->bill_id =$drugArrears->id;
-                    $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
-                    $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
-                    $medication->qty_dispensed =0;
-                    $medication->user_id = Auth::user()->id;
-                    $medication->save();
+
                 }
                 /*else {
                     //update
@@ -295,20 +302,17 @@ class DetainedRecordsController extends Controller
 
                     $service_charge = Charge::where('name', $data[1])->first();
 
-                   /* //create a bill for selected service charges
-                    $bill = new ServiceAndDrugs();
-                    $bill->registration_id = $request->input('registration_id');
-                    $bill->patient_id = $request->input('patient_id');
-                    $bill->item = $service_charge->name;
-                    $bill->item_id = $service_charge->id;
-                    $bill->amount = $service_charge->amount;
-                    $bill->type = "Service";
-                    $bill->insurance_amount = 0;
-                    $bill->total_amount_to_pay = $service_charge->amount;
-                    $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
-                    $bill->save();*/
+                    //create a bill for selected service charges
+                    $serviceArrears = new ServiceArrears();
+                    $serviceArrears->registration_id = $request->input('registration_id');
+                    $serviceArrears->patient_id = $request->input('patient_id');
+                    $serviceArrears->service_id = $service->id;
+                    $serviceArrears->item = $service_charge->name;
+                    $serviceArrears->amount = $service_charge->amount;
+                    $serviceArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                    $serviceArrears->save();
 
-                    $total_service_bill += $bill->total_amount_to_pay ;
+                    $total_service_bill += $serviceArrears->amount;
                 }
             }
 
@@ -343,11 +347,19 @@ class DetainedRecordsController extends Controller
         $totalSales = Bill::sum('amount');
         $totalNhisSale = Bill::sum('insurance_amount');
         $drugs = Drug::all()->count();
-        $recentRegistration = Registration::with('patient')->where('patient_id', $id)->latest()->first();
+
+
+//            return $searchPatient;
+        //get patient recent registration
+        $recentRegistration = Registration::with('patient')
+            ->where('patient_id', $id)->latest()->first();
+
+        //check if patient has no registration
         if (empty($recentRegistration)){
             return back()->with('error','Patient has no registration');
         }
 
+        //get patient vitals
         $vitals = Vital::where('registration_id', $recentRegistration->id)
             ->where('patient_id', $recentRegistration->patient_id)
             ->latest()->first();
@@ -425,6 +437,18 @@ class DetainedRecordsController extends Controller
         }
         elseif($recentRegistration->medication == 1){
 
+            $getBills = Bill::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->orderBy('created_at')
+                ->get()
+//                ->groupBy('created_at as date');
+                ->groupBy(function ($bill){
+                    return substr($bill->created_at,0,10);
+                });
+
+
+
+
             return view('pages.pharmacy.bill')
                 ->with('vitals',$vitals)
                 ->with('recentRegistration',$recentRegistration)
@@ -435,11 +459,12 @@ class DetainedRecordsController extends Controller
                 ->with('detentionBill',$detentionBill);
         }
         elseif ($recentRegistration->medication == 2) {
-            $medication = Medication::with('bill')
-                ->where('registration_id', $recentRegistration->id)
+            $recordMedication = DrugArrears::where('registration_id', $recentRegistration->id)
                 ->where('patient_id', $recentRegistration->patient_id)
-                ->where('dispensed', 0)->get();
+                ->latest()->get();
 
+            $medication = DrugArrears::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)->get();
 
 //            return $medication;
             $arrears = Payment::where('registration_id', $recentRegistration->id)
@@ -448,7 +473,7 @@ class DetainedRecordsController extends Controller
 
             $registration = "";
 
-            return view('pages.pharmacy.dispense-drugs-and-arrears')
+            return view('pages.pharmacy.dispense-drug-arrears')
                 ->with('registration', $registration)
                 ->with('drugs', $drugs)
                 ->with('vitals', $vitals)
@@ -457,8 +482,10 @@ class DetainedRecordsController extends Controller
                 ->with('totalCashSales', $totalCashSales)
                 ->with('totalNhisSale', $totalNhisSale)
                 ->with('totalSales', $totalSales)
-                ->with('arrears', $arrears);
+                ->with('arrears', $arrears)
+                ->with('recordMedication',$recordMedication);
         }
+
     }
 
 
@@ -569,6 +596,18 @@ class DetainedRecordsController extends Controller
         }
         elseif($recentRegistration->medication == 1){
 
+            $getBills = Bill::where('registration_id', $recentRegistration->id)
+                ->where('patient_id', $recentRegistration->patient_id)
+                ->orderBy('created_at')
+                ->get()
+//                ->groupBy('created_at as date');
+                ->groupBy(function ($bill){
+                    return substr($bill->created_at,0,10);
+                });
+
+
+
+
             return view('pages.pharmacy.bill')
                 ->with('vitals',$vitals)
                 ->with('recentRegistration',$recentRegistration)
@@ -593,7 +632,7 @@ class DetainedRecordsController extends Controller
 
             $registration = "";
 
-            return view('pages.pharmacy.dispense-drugs-and-arrears')
+            return view('pages.pharmacy.dispense-drug-arrears')
                 ->with('registration', $registration)
                 ->with('drugs', $drugs)
                 ->with('vitals', $vitals)

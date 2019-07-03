@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -13,6 +14,44 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 
+
+    public function change_password(Request $request){
+        $this->validate($request,[
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if (Auth::User()->updated == 1){
+            if (!Hash::check($request['old_password'],Auth::user()->password)){
+                return back()->with('error','Old Password is incorrect');
+            }elseif(Hash::check($request['password'],Auth::user()->password)){
+                return back()->with('error','New Password is the same as current');
+            }else{
+                $user = User::find(Auth::User()->id);
+
+                $user->password = Hash::make($request->input('password'));
+                $user->updated = 1;
+
+                $user->save();
+                return back()->with('success','Password Changed');
+            }
+        }else{
+            $user = User::find(Auth::User()->id);
+
+            $user->password = Hash::make($request->input('password'));
+            $user->updated = 1;
+
+            if ($user->save()){
+                return redirect('/home')
+                    ->with('success','Password Changed Successfully');
+            }
+        }
+
+    }
+
+
+    public function password_change(){
+        return view('change-password');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -52,7 +91,8 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect('/users');
+        return redirect('/users')
+            ->with('success','A new '.$user->role.' Added');
     }
 
 
@@ -69,8 +109,9 @@ class UserController extends Controller
             $level->delete();
         }
 
-      //  toastr()->success('success');
-        return redirect('/users');
+        //  toastr()->success('success');
+        return redirect('/users')
+            ->with('success','Selected data deleted');
 
     }
 
@@ -93,7 +134,10 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+
+        return view('pages.users.profile')
+            ->with('user',$user);
     }
 
     /**
@@ -106,15 +150,24 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
+        $user->first_name = $request->input('first_name');
+        $user->middle_name = $request->input('middle_name');
+        $user->last_name = $request->input('last_name');
         $user->username = $request->input('username');
         $user->email = $request->input('email');
         $user->phone_number = $request->input('phone_number');
-        $user->role = $request->input('role');
-
+        $user->date_of_birth = $request->input('date_of_birth');
+        $user->place_of_birth = $request->input('place_of_birth');
+        $user->school_attended = $request->input('school_attended');
+        $user->year_completed = $request->input('year_completed');
+        $user->pin = $request->input('pin');
+        $user->qualification = $request->input('qualification');
+        $user->document = $request->input('document');
 
         $user->save();
 
-        return redirect('/users');
+        return back()
+            ->with('success','Profile Updated');
     }
 
     /**

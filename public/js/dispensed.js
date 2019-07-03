@@ -34,6 +34,7 @@ $(document).ready(function () {
 
         let  ser =Number($('#service').val());
         $("#grandText").text(Number(mult+ser).toFixed(2));
+
         $("#grand").val(mult+Number($('#service').val()));
 
         $('.dispenseTotal').text(Number(addDispense+ser).toFixed(2));
@@ -67,4 +68,17 @@ $(document).ready(function () {
         $("#grand").val(addition+Number($('#arrears').val()));
 
     }
+    
+
+
+
+    $('#add_detention').click(function () {
+        if (!$(this).is(':checked')) {
+            let result =parseFloat($("#grand").val())-parseFloat($('#detention_value').val());
+            $("#grand").val(result)
+        }else{
+            let result =parseFloat($('#detention_value').val())+parseFloat($("#grand").val());
+            $("#grand").val(result)
+        }
+    });
 });

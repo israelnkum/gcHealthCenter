@@ -6,6 +6,7 @@ use App\Bill;
 use App\Charge;
 use App\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChargeController extends Controller
 {
@@ -44,6 +45,7 @@ class ChargeController extends Controller
         $ins = new Charge();
         $ins->name = $request->input('name');
         $ins->amount = $request->input('amount');
+        $ins->user_id = Auth::user()->id;
 
         $ins->save();
 

@@ -6,6 +6,7 @@ use App\Bill;
 use App\Charge;
 use App\Consultation;
 use App\Insurance;
+use App\OldRecord;
 use App\Patient;
 use App\Registration;
 use App\Vital;
@@ -30,11 +31,41 @@ class PatientController extends Controller
         $data="none";
         $insuranceType = Insurance::all();
 
+
         $charges = Charge::all();
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
             ->with('charges',$charges);
+    }
+
+    public function upload_old_files(Request $request){
+
+        $patient = Patient::find($request->input('patient_id'));
+        $old_file_names =[];
+        for ($i = 0; $i < count($request->file('old_records')); $i++) {
+            $file = $request->file('old_records')[$i];
+            $extension = $file->getClientOriginalExtension();
+            $files = substr($file->getClientOriginalName(), 0, strpos($file->getClientOriginalName(), '.'));
+            $fileName = $files . '_' . time() . '.' . $extension;
+
+            if (!is_dir('public/old_records/'.$patient->registration_number.'')){
+                mkdir('public/old_records/'.$patient->registration_number.'',0777);
+            }
+            $file->move('public/old_records/'.$patient->registration_number.'', $fileName);
+
+            array_push($old_file_names,$fileName);
+        }
+
+
+        $record = new OldRecord();
+        $record->patient_id = $request->input('patient_id');
+        $record->files =implode($old_file_names,',');
+        $record->date=$request->input('record_date');
+        $record->user_id = Auth::user()->id;
+        $record->save();
+
+        return back()->with('success','Record Uploaded');
     }
 
     /**
@@ -108,6 +139,10 @@ class PatientController extends Controller
         $patient->phone_number= $request->input('phone_number');
         $patient->occupation= $request->input('occupation');
         $patient->religion= $request->input('religion');
+        if (\Request::has('old_patient')) {
+            $patient->old_patient =1;
+            $patient->last_visit = $request->input('last_visit');
+        }
         $patient->name_of_nearest_relative= $request->input('name_of_relative');
         $patient->number_of_nearest_relative= $request->input('relative_phone_number');
         $patient->user_id=Auth::user()->id;
@@ -307,8 +342,6 @@ class PatientController extends Controller
     }
 
 
-
-
     public function searchPatient(Request $request){
         $data=Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
@@ -323,6 +356,20 @@ class PatientController extends Controller
             ->with('insuranceType',$insuranceType);
     }
 
+
+    public function viewOldRecord($id){
+
+        $patient = Patient::find($id);
+
+        $records = OldRecord::where('patient_id',$id)
+            ->get()
+            ->groupBy('date');
+
+//        return $records;
+        return view('pages.patients.old-records')
+            ->with('patient',$patient)
+            ->with('records',$records);
+    }
     /**
      * Remove the specified resource from storage.
      *

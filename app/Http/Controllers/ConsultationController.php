@@ -84,12 +84,14 @@ class ConsultationController extends Controller
     public function store(Request $request)
     {
 
+//        return $request;
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
 
         $registration = Registration::find($request->input('registration_id'));
 
+//        return $registration;
         //Upload labs
         $labFileNames = [];
         $scanFileNames =[];
@@ -263,18 +265,35 @@ class ConsultationController extends Controller
             $service_charge = Charge::where('name','Consultation')->first();
 
             //charge for consultation if only the person is not insured
-            if ($registration->isInsured != 1){
+            if ($registration->isInsured != 1){//if patient is not insured
 
-                //check if patient is an old patient that is before the system
-                //then use the last visit
-                if ($registration->old_patient == 1){
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $registration->last_visit);
+                /*
+                 * check if patient is an old patient that is before the system
+                 * then use the last visit
+                 */
+                $patient = Patient::find($request->input('patient_id'));
+                if ($patient->old_patient == 1){//if patient had records before the system
 
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
+                    $getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
 
-                    if ($noOfDays>=15){
-                        $bill = new Bill();
+                    if (count($getAllRegistrations) == 1){
+                        $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $patient->last_visit);
+
+                        $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                        $noOfDays = $today->diffInDays($last_visit);
+                    }elseif (count($getAllRegistrations)>1){
+                        $totalRegistrations = count($getAllRegistrations);
+                        $getLastRegistration = $totalRegistrations -1;
+
+                        $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $getAllRegistrations[$getLastRegistration]->created_at);
+
+                        $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                        $noOfDays = $today->diffInDays($last_visit);
+                    }
+
+
+                    if ($noOfDays>=15){ //if difference between today and patient's last visit is > 15
+                        $bill = new Bill(); // create a new bill
                         $bill->registration_id = $request->input('registration_id');
                         $bill->patient_id =$request->input('patient_id');
                         $bill->item = $service_charge->name;
@@ -287,11 +306,26 @@ class ConsultationController extends Controller
                         $bill->save();
                     }
                 }else{
-                    //if the patient was a member of the hospital but no
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($registration->created_at,0,10));
+                    /*
+                     * if patient is new to the system
+                     */
 
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
+                    //get all patient registration
+
+                    $getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
+
+                    if (count($getAllRegistrations) == 1){
+                        $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[0]->created_at,0,10));
+                        $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                        $noOfDays = $today->diffInDays($last_visit);
+                    }elseif (count($getAllRegistrations)>1){
+                        $totalRegistrations = count($getAllRegistrations);
+                        $getLastRegistration = $totalRegistrations -1;
+                        $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[$getLastRegistration]->created_at,0,10));
+                        $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                        $noOfDays = $today->diffInDays($last_visit);
+                    }
+
 
                     if ($noOfDays>=15){
                         $bill = new Bill();
@@ -375,8 +409,13 @@ class ConsultationController extends Controller
         $patientDiagnosis="";
         $medication="";
         $getBills="";
+        $otherMedication ="";
 
-        if (!empty($searchPatient)) {
+        if (count($searchPatient) == 0){
+            return back()->with('error','Sorry! No Record Found');
+        }
+
+        if (count($searchPatient) != 0) {
 
             $recentRegistration = Registration::with('consultation')
                 ->where('patient_id', $id)->latest()->first();
@@ -499,7 +538,8 @@ class ConsultationController extends Controller
             ->with('medication',$medication)
             ->with('getBills',$getBills)
             ->with('detentionBill',$detentionBill)
-            ->with('charges',$charges);
+            ->with('charges',$charges)
+            ->with('otherMedication',$otherMedication);
     }
 
 
@@ -512,6 +552,10 @@ class ConsultationController extends Controller
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
 
+
+        if (count($searchPatient) == 0){
+            return back()->with('error','Sorry! No Record Found');
+        }
         $recentConsultation="";
         $recentVitals ="";
         $recentRegistration="";
@@ -526,6 +570,7 @@ class ConsultationController extends Controller
                 ->latest()->first();
         }
 
+//        return $searchPatient;
         if (!empty($recentRegistration)){
 
 //            return $recentRegistration;
@@ -585,7 +630,8 @@ class ConsultationController extends Controller
             //check if patient is detained Or Admitted
             if ( $recentRegistration->detain == 0){
                 $detentionBill = 0;
-            }elseif ( $recentRegistration->detain == 1){
+            }
+            elseif ( $recentRegistration->detain == 1){
                 //get date admitted
                 $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $recentRegistration->created_at);
 
@@ -621,10 +667,6 @@ class ConsultationController extends Controller
             /*
              * End detention bill calculation
              */
-
-//            return $detentionBill;
-
-
 
             $allRegistrations=0;
             if (count($registration) == 1){

@@ -3,9 +3,14 @@ $(document).ready(function () {
     placeholder: "Nothing Selected",
     allowClear: true,
   });
+
+
   (function($) {
     'use strict';
-
+    $(".year_completed").select2({
+      placeholder: "Nothing Selected",
+      allowClear: true,
+    });
 
     if ($(".js-example-basic-multiple").length) {
       $(".js-example-basic-multiple").select2({

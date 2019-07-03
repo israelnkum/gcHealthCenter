@@ -34,6 +34,7 @@ class CreatePatientsTable extends Migration
             $table->string('religion',199);
             $table->string('name_of_nearest_relative',255)->nullable();
             $table->string('number_of_nearest_relative',50)->nullable();
+            $table->integer('old_patient')->default(0);
             $table->string('last_visit',25)->nullable();
             $table->integer('user_id');
             $table->timestamps();

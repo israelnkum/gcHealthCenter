@@ -16,6 +16,7 @@ class CreateDrugArrearsTable extends Migration
         Schema::create('drug_arrears', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('registration_id');
+            $table->integer('medication_id');
             $table->integer('patient_id');
             $table->string('dosage',199);
             $table->string('item');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Insurance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InsuranceController extends Controller
 {
@@ -42,7 +43,7 @@ class InsuranceController extends Controller
         $ins = new Insurance();
         $ins->name = $request->input('name');
         $ins->amount = $request->input('amount');
-
+        $ins->user_id = Auth::user()->id;
         $ins->save();
 
         return redirect('/preferences');

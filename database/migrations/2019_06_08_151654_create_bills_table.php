@@ -21,6 +21,7 @@ class CreateBillsTable extends Migration
             $table->integer('item_id')->nullable();
             $table->string('type')->nullable();
             $table->integer('qty')->default(0);
+            $table->integer('qty_dispensed')->default(0);
             $table->decimal('amount')->default(0);
             $table->decimal('insurance_amount')->default(0);
             $table->decimal('total_amount_to_pay')->default(0);

@@ -21,7 +21,7 @@ class CreateVitalsTable extends Migration
             $table->decimal('weight')->nullable()->default(0);
             $table->decimal('temperature')->nullable()->default(0);
             $table->decimal('pulse')->nullable()->default(0);
-            $table->decimal('RDT')->nullable()->default(0);
+            $table->string('RDT',20)->nullable()->default('-');
             $table->decimal('glucose')->nullable()->default(0);
             $table->integer('user_id')->nullable();
             $table->timestamps();

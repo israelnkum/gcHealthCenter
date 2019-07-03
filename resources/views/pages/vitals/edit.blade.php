@@ -158,7 +158,7 @@
                                                                 <div class="form-group row sugar{!! $i !!}" style="display: none">
                                                                     <label for="rdt" class="col-sm-2 col-form-label">RDT (Malaria)</label>
                                                                     <div class="col-sm-3">
-                                                                        <input type="number" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif" class="form-control" id="rdt" name="rdt">
+                                                                        <input type="text" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif" class="form-control" id="rdt" name="rdt">
                                                                         <div class="invalid-feedback">
                                                                             RDT (Malaria) is required
                                                                         </div>

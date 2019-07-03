@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 
+use App\Drug;
 use App\Patient;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -26,18 +28,27 @@ class HomeController extends Controller
     public function index()
     {
 
-        $lastVisit=\Carbon\Carbon::createFromTimeStamp(strtotime(@\Auth::user()->updated_at))->diffForHumans();
-        $totalPatient = Patient::all()->where('status',0)->count();
-        $totalStaff = User::where('role','Doctor')
-            ->orWhere('role','Nurse')
-            ->orWhere('role','Admin')
-            ->orWhere('role','Pharmacist')->count();
+        if (Auth::user()->updated == 0) {
+
+            return view('change-password');
+        } else {
+//        $lastVisit=\Carbon\Carbon::createFromTimeStamp(strtotime(@\Auth::user()->updated_at))->diffForHumans();
+            $totalPatient = Patient::all()->where('status', 0)->count();
+            $totalDetained = Patient::all()->where('detain', 1)->count();
+            $totalDrugs = Drug::all()->where('status', 0)->count();
+            $totalStaff = User::where('role', 'Doctor')
+                ->orWhere('role', 'Nurse')
+                ->orWhere('role', 'Admin')
+                ->orWhere('role', 'Pharmacist')->count();
 
 
-        //return $totalStaff;
-        return view('home')
-            ->with('totalPatient',$totalPatient)
-            ->with('lastVisit',$lastVisit)
-            ->with('totalStaff',$totalStaff);
+            //return $totalStaff;
+            return view('home')
+                ->with('totalPatient', $totalPatient)
+//            ->with('lastVisit',$lastVisit)
+                ->with('totalStaff', $totalStaff)
+                ->with('totalDrugs', $totalDrugs)
+                ->with('totalDetained', $totalDetained);
+        }
     }
 }

@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 offset-md-2 text-right @if(count($searchPatient) == 1 && count($registration)==0) offset-md-2 @endif grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
+                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
@@ -69,11 +69,11 @@
                                             <small class="text-gray">{{$dat->phone_number}}</small>
                                         </div>
                                     </a>
-                                    <div class="d-inline-block">
+                                    {{--<div class="d-inline-block">
                                         <div class=" px-4 py-2 rounded">
                                             <a href="{{route('patients.edit',$dat->id)}}" class="text-dark" style="text-decoration: none;"><i class="icon-note icon-lg"></i></a>
                                         </div>
-                                    </div>
+                                    </div>--}}
                                 </div>
 
                             </div>
@@ -81,11 +81,10 @@
                     </div>
                 @endforeach
             </div>
+
+
         @elseif(count($searchPatient) == 1)
-            {{--
-            Check if patient has registered today
-             if yes then add consultation
-             --}}
+            {{--Check if patient has registered today,if yes then add consultation--}}
 
             @if(count($registration) == 1)
                 <div class="row">
@@ -94,6 +93,11 @@
                             <div class="card-body">
                                 <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
                                     @foreach($registration as $registered)
+                                        <div class="row">
+                                            <div class="col-md-12 text-right mb-1">
+                                                <a href="{{route('view-old-records',$registered->patient->id)}}" class="badge badge-pill badge-dark"><i class="icon icon-folder-alt"></i> View Old Record</a>
+                                            </div>
+                                        </div>
                                         <div class="card-header" role="tab" id="heading-4">
                                             <a data-toggle="collapse" style="text-decoration: none" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
                                                 <div class="row">
@@ -213,29 +217,44 @@
                                                         <div class="col-md-6" >
                                                             <label for="" class="text-info">Drugs</label>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-3">
                                                             <label for="" class="text-info">Dosage</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label for="" class="text-info">Days</label>
                                                         </div>
                                                     </div>
                                                     <div class="repeater">
-                                                        <div data-repeater-list="group-a">
+                                                        <div data-repeater-list="medications">
                                                             <div data-repeater-item class="mb-2">
                                                                 <div class="row">
                                                                     <div class="col-md-6">
                                                                         <select  class="selectMedicine col-12 form-control mr-1" required   name="drug_id" id="drug_id">
+                                                                            <option value=""></option>
                                                                             @foreach($drugs as $drug)
-                                                                                <option value="{{$drug->id}}">{{$drug->name}}</option>
+                                                                                <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                                             @endforeach
                                                                         </select>
                                                                         <div class="invalid-feedback">
                                                                             Drug is required
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-5">
-                                                                        <input type="text" name="dosage" id="dosage" required class="form-control col-12 ml-1">
+                                                                    <div class="col-md-3">
+                                                                        {{-- <input type="text" name="dosage" id="dosage" required class="form-control col-12 ml-1">--}}
+                                                                        <select  class="selectMedicine col-12 form-control mr-1" required   name="dosage" id="dosage">
+                                                                            <option value=""></option>
+                                                                            <option value="3tid">tid</option>
+                                                                            <option value="2bd">bd</option>
+                                                                            <option value="1nocte">nocte</option>
+                                                                            <option value="1stat">stat</option>
+                                                                            <option value="1dly">dly</option>
+                                                                        </select>
                                                                         <div class="invalid-feedback">
                                                                             Dosage is required
                                                                         </div>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <input type="number" required name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
                                                                     </div>
                                                                     <div class="col-md-1">
                                                                         <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
@@ -252,22 +271,34 @@
                                                         </div>
                                                     </div>
 
-
-
                                                     <div class="row">
                                                         <div class="col-md-6" >
                                                             <label for="" class="text-info">Other Medication(s)</label>
                                                         </div>
                                                     </div>
                                                     <div class="other-repeater">
-                                                        <div data-repeater-list="group-b">
+                                                        <div data-repeater-list="other-medications">
                                                             <div data-repeater-item class="mb-2">
                                                                 <div class="row">
                                                                     <div class="col-md-6">
                                                                         <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                                     </div>
-                                                                    <div class="col-md-5">
-                                                                        <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">
+                                                                    <div class="col-md-3">
+                                                                        {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
+                                                                        <select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
+                                                                            <option value=""></option>
+                                                                            <option value="3tid">tid</option>
+                                                                            <option value="2bd">bd</option>
+                                                                            <option value="1nocte">nocte</option>
+                                                                            <option value="1stat">stat</option>
+                                                                            <option value="1dly">dly</option>
+                                                                        </select>
+                                                                        <div class="invalid-feedback">
+                                                                            Dosage is required
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
                                                                     </div>
                                                                     <div class="col-md-1">
                                                                         <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
@@ -299,14 +330,29 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <label class="text-info">Select <u><b>Service</b></u></label>
-                                                            <select  class="col-12 form-control mr-1 js-example-basic-multiple" multiple  name="service[]" id="service">
-                                                                @foreach($charges as $charge)
-                                                                    @if($charge->name != "Insured" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
-                                                                        <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
+                                                            <div class="row">
+                                                                <div class="col-md-12 mb-3">
+                                                                    <label class="text-info">Select <u><b>Service</b></u></label>
+                                                                    <select  class="col-12 form-control mr-1 selectMedicine p-3" multiple   name="service[]" id="service">
+                                                                        <option value=""></option>
+                                                                        @foreach($charges as $charge)
+                                                                            @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
+                                                                                <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <blockquote class="blockquote">
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" name="detain_admit" class="form-check-input">
+                                                                                Detain/Admit Patient
+                                                                            </label>
+                                                                        </div>
+                                                                    </blockquote>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -316,6 +362,7 @@
                                                         </div>
                                                     </div>
                                                 </form>
+
 
 
                                                 {{--End New Consultaion Form--}}
@@ -499,17 +546,43 @@
                         </h4>
                         <div class="card">
                             <div class="card-body">
-
                                 @if(!empty($recentVitals))
                                     <div class="row">
-                                        <div class="col-md-6 offset-md-4 text-right mb-3">
-                                            @if($recentRegistration->detain == 1)
-                                                {{--                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-info">Add Record</a>--}}
-                                                <form action="">
-                                                    <button class="btn btn-success">Discharge</button>
-                                                </form>
-                                            @endif
-                                        </div>
+                                        @if($recentRegistration->detain == 1)
+                                            <div class="col-md-10 offset-md-2 text-right mb-3">
+                                                <div class="row">
+                                                    <div class="col-md-6 offset-md-4">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary pt-1 pb-1 pr-1 pl-1">
+                                                                    <i class="icon icon-plus"></i> Add Record
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-12 mt-1">
+                                                                <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}?{{Hash::make(time())}}" class="btn btn-info pt-1 pb-1 pr-1 pl-1">
+                                                                    <i class="icon icon-notebook"></i>View Record
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <form onsubmit="return confirm('Confirm Discharge')" action="{{route('discharge-patient',$recentRegistration->id)}}" method="post">
+                                                            @csrf
+                                                            <button class="btn btn-success">
+                                                                <i class="icon icon-arrow-right-circle"></i>
+                                                                Discharge
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @elseif($recentRegistration->detain == 2)
+                                            <div class="col-md-10 offset-md-2 text-right mb-3">
+                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary">
+                                                    <i class="icon icon-notebook"></i> View Record
+                                                </a>
+                                            </div>
+                                        @endif
 
                                         <div class="col-md-6">
                                             <h5 class=" text-uppercase mb-0"><i class="icon icon-user"></i> {{$recentRegistration->patient->first_name." ".$recentRegistration->patient->other_name." ".$recentRegistration->patient->last_name}}</h5>
@@ -523,7 +596,7 @@
                                                 </div>
                                                 <div class="d-inline-block">
                                                     <div class=" px-4 py-2 rounded">
-                                                        {{--if patient has no vitals, hide the details form--}}
+                                                        if patient has no vitals, hide the details form
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <form action="{{route('patientRecord')}}" method="post">
@@ -542,7 +615,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{--                                        {{$recentRegistration->id}}--}}
+                                                {{$recentRegistration->id}}
                                             </div>
                                         </div>
 
@@ -637,7 +710,7 @@
                                                 ?>
                                                 <div id="lightgallery-without-thumb" class="row lightGallery">
                                                     @foreach($labs as $lab)
-                                                        {{--                                                    {{$lab}}--}}
+                                                        {{$lab}}
                                                         <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
                                                     @endforeach
                                                 </div>
@@ -646,16 +719,43 @@
                                         <div class="col-md-6">
                                             <label for="med" class="text-info">Medication</label>
                                             <blockquote class="blockquote">
-                                                <ul>
+                                                <table class="table-borderless table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Drug</th>
+                                                        <th>Dosage</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
                                                     @foreach($medication as $med)
-                                                        <li>{{$med->drugs->name}}</li>
+                                                        <tr>
+                                                            <td>{{$med->drugs->name}}</td>
+                                                            <td>{{$med->dosage}}</td>
+                                                        </tr>
                                                     @endforeach
-                                                </ul>
+                                                    </tbody>
+                                                </table>
                                             </blockquote>
 
-                                            <label class="text-info">Bill</label>
+                                            <label class="text-info">Other Medication</label>
                                             <blockquote class="blockquote">
                                                 <div class="row">
+                                                    <table class="table-borderless table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Drug</th>
+                                                            <th>Dosage</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @foreach($otherMedication as $med)
+                                                            <tr>
+                                                                <td>{{$med->drug}}</td>
+                                                                <td>{{$med->dosage}}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                        </tbody>
+                                                    </table>
                                                     <table class="table table-borderless">
                                                         <thead>
                                                         <tr>
@@ -672,23 +772,30 @@
                                                             </tr>
                                                             @php($total +=$bill->total_amount_to_pay)
                                                         @endforeach
+                                                        @if($detentionBill)
+                                                            <tr>
+                                                                <td>Detention</td>
+                                                                <td>{{$detentionBill}}.00</td>
+                                                            </tr>
+                                                        @endif
                                                         <tr class="bg-primary text-white">
                                                             <td class="p-2 text-right">
                                                                 Total
                                                             </td>
-                                                            <td class="p-2">GH₵ {!! $total !!}.00</td>
+                                                            <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
                                                         </tr>
                                                         </tbody>
                                                     </table>
 
-                                                    {{-- <div class="col-md-12 text-right mt-3">
-                                                         <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
-                                                     </div>--}}
+                                                    <div class="col-md-12 text-right mt-3">
+                                                        {{--                                                         <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>--}}
+                                                    </div>
                                                 </div>
                                             </blockquote>
                                         </div>
                                     </div>
                                 @endif
+                                <h4>Patient Has No registration today</h4>
                             </div>
                         </div>
                     </div>

@@ -34,60 +34,60 @@
                   </button>
               </div>--}}
         </div>
-        <div class="row">
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">₵{{$totalCashSales}}</h2>
+        {{--    <div class="row">
+                <div class="col-md-4 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-inline-block pt-3">
+                                    <div class="d-md-flex">
+                                        <h2 class="mb-0">₵{{$totalCashSales}}</h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (Cash)</h4>
-                                <small class="text-gray">Today</small>
+                                <div class="d-inline-block">
+                                    <h4 class="card-title mb-0">Total Sales (Cash)</h4>
+                                    <small class="text-gray">Today</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">₵{{$totalNhisSale}}</h2>
+                <div class="col-md-4 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-inline-block pt-3">
+                                    <div class="d-md-flex">
+                                        <h2 class="mb-0">₵{{$totalNhisSale}}</h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (NHIS)</h4>
-                                <small class="text-gray">Today</small>
+                                <div class="d-inline-block">
+                                    <h4 class="card-title mb-0">Total Sales (NHIS)</h4>
+                                    <small class="text-gray">Today</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">₵{{$totalSales}}</h2>
+                <div class="col-md-4 grid-margin">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-inline-block pt-3">
+                                    <div class="d-md-flex">
+                                        <h2 class="mb-0">₵{{$totalSales}}</h2>
+                                    </div>
+                                    --}}{{--                                <small class="text-gray">Raised from 89 orders.</small>--}}{{--
                                 </div>
-                                {{--                                <small class="text-gray">Raised from 89 orders.</small>--}}
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
-                                <small class="text-gray">Today</small>
+                                <div class="d-inline-block">
+                                    <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
+                                    <small class="text-gray">Today</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div>--}}
         @if(!empty($registration))
             <form action="{{route('payment.store')}}" method="post" class="needs-validation" novalidate>
                 @csrf
@@ -137,7 +137,7 @@
                                     </div>
 
                                     <div class="col-md-6 text-right">
-                                        <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}} bpm</span></small>
+                                        <small style="font-size: 13px">RDT - <span class="text-danger">{{$vitals->RDT}}</span></small>
                                     </div>
                                 </div>
                                 <input type="hidden" value="{{$registration->patient->id}}" name="patient_id">
@@ -165,13 +165,25 @@
                                                     @php($total +=$bill->total_amount_to_pay)
                                                 @endif
                                             @endforeach
+                                            {{--If patient is discharged, then add detention bill to other bills--}}
+                                            @if($registration->detain == 2 && $detentionBill)
+                                                <tr>
+                                                    <td>Detention</td>
+                                                    <td>{{$detentionBill}}.00</td>
+                                                </tr>
+                                            @endif
                                             <tr class="bg-primary text-white">
                                                 <td class="p-2 text-right">
                                                     Total
                                                 </td>
-                                                <td class="p-2">GH₵ {!! $total !!}</td>
+                                                @if($registration->detain == 2 && $detentionBill)
+                                                    <td class="p-2">GH₵ {!! $serviceTotal= $detentionBill+ $total !!}</td>
+                                                @else
+                                                    <td class="p-2">GH₵ {!! $serviceTotal= $total !!}</td>
+                                                @endif
                                             </tr>
-                                            @if($detentionBill)
+                                            {{--if patient is still detained, then don't add detention bill--}}
+                                            @if($registration->detain == 1 && $detentionBill)
                                                 <tr>
                                                     <td>Detention</td>
                                                     <td>{{$detentionBill}}.00</td>
@@ -253,8 +265,8 @@
                                                 <ul class="list-group list-group-flush">
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                                         Service Total:
-                                                        <span class="badge  badge-pill" id="serviceText">GH₵ {!! $total !!}.00</span>
-                                                        <input type="hidden" value="{!! $total !!}" id="service" name="service_total">
+                                                        <span class="badge  badge-pill" id="serviceText">GH₵ {!! $serviceTotal !!}.00</span>
+                                                        <input type="hidden" value="{!! $serviceTotal !!}" id="service" name="service_total">
                                                     </li>
                                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                                         Drugs Total:

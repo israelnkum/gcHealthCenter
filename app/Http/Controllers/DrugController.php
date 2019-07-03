@@ -135,7 +135,7 @@ class DrugController extends Controller
 
         $drugs = Drug::all()->count();
 
-        return view('pages.pharmacy.drug-dispense')
+        return view('pages.pharmacy.drug_dispense')
             ->with('registration',$registration)
             ->with('drugs',$drugs)
             ->with('vitals',$vitals)

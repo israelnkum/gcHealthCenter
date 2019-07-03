@@ -17,11 +17,11 @@
 
     <link rel="stylesheet" href="{{asset('public/vendors/lightgallery/css/lightgallery.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
-{{--    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">--}}
+    {{--    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">--}}
     <link rel="stylesheet" href="{{asset('public/css/buttons.dataTables.min.css')}}">
 
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{asset('public/public/images/favicon.png')}}" />
+    <link rel="shortcut icon" href="{{asset('public/images/logo.jpeg')}}" />
 
 </head>
 <body onload=display_ct();>
@@ -32,7 +32,7 @@
             <div class="container d-flex flex-row h-100 align-items-center">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center">
                     <a class="navbar-brand brand-logo" href="{{route('home')}}"><img src="{{asset('public/images/logo.jpeg')}}" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="public/images/logo-mini.svg" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="{{asset('public/images/logo.jpeg')}}" alt="logo"/></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
                     <form class="search-field d-none d-md-flex" action="#">
@@ -177,28 +177,33 @@
                         </li>--}}
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                                {{--                                <img src="public/images/faces/face4.jpg" alt="profile"/>--}}
-                                {{--                                <span class="nav-profile-name text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>--}}
-                                <span class="text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>
+                                {{--<img src="public/images/faces/face4.jpg" alt="profile"/>--}}
+                                {{--<span class="nav-profile-name text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>--}}
+                                @if(Auth::user()->updated == 1 && Auth::user()->first_name != "")
+                                    <span class="text-capitalize">Hi {{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>
+                                @else
+                                    <span class="text-capitalize">Hi {{Auth::user()->username}}</span>
+                                @endif
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                                <a class="dropdown-item">
-                                    <i class="icon-user text-primary mr-2"></i>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{route('users.edit',Auth::user()->id)}}?{{Hash::make(time())}}">
+                                    <i class="icon-user text-dark mr-2"></i>
                                     My Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                {{-- <a class="dropdown-item">
-                                     <i class="icon-logout text-primary mr-2"></i>
-                                     Logout
-                                 </a>--}}
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                   onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                    <i class="icon-logout text-primary mr-2"></i>
+                                <a class="dropdown-item" href="{{route('change-password')}}?{{Hash::make(time())}}">
+                                    <i class="icon-lock text-dark mr-2"></i>
+                                    Change Password
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ route('logout') }}?{{Hash::make(time())}}"
+                                   onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                    <i class="icon-arrow-left-circle text-dark mr-2"></i>
                                     {{ __('Logout') }}
                                 </a>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                <form id="logout-form" action="{{ route('logout') }}?{{Hash::make(time())}}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
                             </div>
@@ -210,63 +215,65 @@
                 </div>
             </div>
         </div>
-        <div class="nav-bottom">
-            <div class="container">
-                <ul class="nav page-navigation">
-                    <li class="nav-item">
-                        <a href="{{route('home')}}" class="nav-link"><i class="link-icon icon-screen-desktop"></i><span class="menu-title">Home</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
-                        <div class="submenu">
-                            <ul class="submenu-item">
-                                <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}?{{Hash::make(time())}}">Patients</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}">All Patients</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}">Vitals</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('consultation.index')}}?{{Hash::make(time())}}" class="nav-link">
-                            <i class="link-icon icon-energy"></i>
-                            <span class="menu-title">Consulting</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="link-icon icon-drop">
-                            </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
-                        </a>
-                        <div class="submenu">
-                            <ul class="submenu-item">
-                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Drugs</a></li>
-                            </ul>
-                        </div>
-                    </li>
+        @if(Auth::user()->updated == 1)
+            <div class="nav-bottom">
+                <div class="container">
+                    <ul class="nav page-navigation">
+                        <li class="nav-item">
+                            <a href="{{route('home')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-screen-desktop"></i><span class="menu-title">Home</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
+                            <div class="submenu">
+                                <ul class="submenu-item">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}?{{Hash::make(time())}}">Patients</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}?{{Hash::make(time())}}">All Patients</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}?{{Hash::make(time())}}">Vitals</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('consultation.index')}}?{{Hash::make(time())}}" class="nav-link">
+                                <i class="link-icon icon-energy"></i>
+                                <span class="menu-title">Consulting</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-drop">
+                                </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
+                            </a>
+                            <div class="submenu">
+                                <ul class="submenu-item">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Drugs</a></li>
+                                </ul>
+                            </div>
+                        </li>
 
 
-                    <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
+                        </li>
 
-                    <li class="nav-item">
-                        <a href="{{route('users.index')}}" class="nav-link">
-                            <i class="link-icon icon-user"></i>
-                            <span class="menu-title">Staff</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('preferences.index')}}" class="nav-link">
-                            <i class="link-icon icon-docs"></i>
-                            <span class="menu-title">Preferences</span>
-                        </a>
-                    </li>
-                </ul>
+                        <li class="nav-item">
+                            <a href="{{route('users.index')}}?{{Hash::make(time())}}" class="nav-link">
+                                <i class="link-icon icon-user"></i>
+                                <span class="menu-title">Staff</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('preferences.index')}}?{{Hash::make(time())}}" class="nav-link">
+                                <i class="link-icon icon-docs"></i>
+                                <span class="menu-title">Preferences</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        @endif
     </nav>
     <div class="container-fluid page-body-wrapper">
         <div class="main-panel">

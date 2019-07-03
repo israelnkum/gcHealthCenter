@@ -149,7 +149,69 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Dispense Drugs</h4>
-                        <div class="table-responsive">
+                        {{--<div class="accordion accordion-bordered" id="accordion-2" role="tablist">
+                            @foreach($getBills as $getBill => $date)
+                                <div>
+                                    <div class="card-header" role="tab" id="heading-4">
+                                        <a style="text-decoration: none" data-toggle="collapse" href="#{{$getBill}}" aria-expanded="false" aria-controls="collapse-4">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
+                                                        <i class="icon-folder mr-1"></i> {{$getBill}}
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                    <div id="{{$getBill}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
+                                        <div class="card-body">
+                                            <h4></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+--}}
+                        <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
+
+                            @php($i =1)
+                            @foreach($getBills as $getBill => $bills)
+                                <div>
+                                    <div class="card-header" role="tab" id="heading-4">
+                                        <a style="text-decoration: none; font-size: 20px;" data-toggle="collapse" href="#date{{str_replace(':','',str_replace(' ','',$getBill))}}" aria-expanded="false" aria-controls="collapse-4">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    {{--                                                    GC{{$registered->patient->registration_number}}--}}
+                                                    <h6 style="font-weight: 500">
+                                                        <i class="icon-calendar mr-1"></i> {{$getBill}}
+                                                    </h6>
+
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+
+                                    <div id="date{{str_replace(':','',str_replace(' ','',$getBill))}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
+                                        <div class="card-body">
+                                            <h4></h4>
+                                            <ul class="list-group-flush list-group">
+                                                @foreach($bills as $bill)
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        {{$bill->item}}
+                                                        <span>{{$bill->total_amount_to_pay}}</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                @php($i++)
+                            @endforeach
+
+                        </div>
+                        {{--<div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
                                 <tr>
@@ -159,13 +221,7 @@
                                 </thead>
                                 <tbody>
                                 @php($total = 0)
-                                @foreach($getBills as $bill)
-                                    <tr>
-                                        <td>{{$bill->item}}</td>
-                                        <td>{{$bill->total_amount_to_pay}}</td>
-                                    </tr>
-                                    @php($total +=$bill->total_amount_to_pay)
-                                @endforeach
+
                                 @if($detentionBill)
                                     <tr>
                                         <td>Detention</td>
@@ -193,7 +249,7 @@
                                 </div>
                             </div>
 
-                        </div>
+                        </div>--}}
                         {{--
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                --}}

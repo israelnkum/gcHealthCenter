@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
+                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
@@ -60,16 +60,19 @@
                 <h6 class="display-4 text-info">Relax! No Patient in Queue</h6>
             </div>
         @elseif(count($registration)  == 1)
-
             <div class="row">
                 <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-8 offset-md-2 @endif grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
-
                                 @foreach($registration as $registered)
+                                    <div class="row">
+                                        <div class="col-md-12 text-right mb-1">
+                                            <a href="{{route('view-old-records',$registered->patient_id)}}" class="badge badge-pill badge-dark"><i class="icon icon-folder-alt"></i> View Old Record</a>
+                                        </div>
+                                    </div>
                                     <div class="card-header" role="tab" id="heading-4">
-                                        <a data-toggle="collapse" style="text-decoration: none" href="#GC{{$registered->patient->registration_number}}" aria-expanded="false" aria-controls="collapse-4">
+                                        <a data-toggle="collapse" style="text-decoration: none" href="javascript:void(0)" aria-expanded="false" aria-controls="collapse-4">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <h2 class="mb-1 text-primary" style="font-size: 25px; font-weight: 600">
@@ -120,7 +123,7 @@
 
                                                 <div class="col-md-6 text-right">
                                                     <div class="form-group">
-                                                        <h6>RDT - <span class="text-danger">{{$getVitals[0]->RDT}} bpm</span></h6>
+                                                        <h6>RDT - <span class="text-danger">{{$getVitals[0]->RDT}}</span></h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -202,7 +205,7 @@
                                                                     <select  class="selectMedicine col-12 form-control mr-1" required   name="drug_id" id="drug_id">
                                                                         <option value=""></option>
                                                                         @foreach($drugs as $drug)
-                                                                            <option value="{{$drug->id}}">{{$drug->name}}</option>
+                                                                            <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                                         @endforeach
                                                                     </select>
                                                                     <div class="invalid-feedback">
@@ -254,7 +257,7 @@
                                                                     <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                                 </div>
                                                                 <div class="col-md-3">
-{{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
+                                                                    {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
                                                                     <select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
                                                                         <option value=""></option>
                                                                         <option value="3tid">tid</option>
@@ -382,7 +385,7 @@
 
                                         <div class="col-md-6 text-right">
                                             <div class="form-group">
-                                                <h6 style="font-size: 13px;">RDT - <span class="text-danger">{{$vital->RDT}} bpm</span></h6>
+                                                <h6 style="font-size: 13px;">RDT - <span class="text-danger">{{$vital->RDT}}</span></h6>
                                             </div>
                                         </div>
                                     </div>

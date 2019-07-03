@@ -11,17 +11,17 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="d-flex justify-content-between border-right card-statistics-item">
                                     <div>
-                                        <h1>{{$lastVisit}}</h1>
-                                        <p class="text-muted mb-0">Total invoices</p>
+                                        <h1>{{$totalPatient}}</h1>
+                                        <p class="text-muted mb-0">Total Patients</p>
                                     </div>
-                                    <i class="icon-layers text-primary icon-lg"></i>
+                                    <i class="icon-people text-primary icon-lg"></i>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-3">
                                 <div class="d-flex justify-content-between border-right card-statistics-item">
                                     <div>
-                                        <h1>{{$totalPatient}}</h1>
-                                        <p class="text-muted mb-0">Total Patient</p>
+                                        <h1>{{$totalDetained}}</h1>
+                                        <p class="text-muted mb-0">Detained Patients</p>
                                     </div>
                                     <i class="icon-people text-primary icon-lg"></i>
                                 </div>
@@ -38,10 +38,10 @@
                             <div class="col-md-6 col-lg-3">
                                 <div class="d-flex justify-content-between card-statistics-item">
                                     <div>
-                                        <h1>45596</h1>
-                                        <p class="text-muted mb-0">Sales</p>
+                                        <h1>{{$totalDrugs}}</h1>
+                                        <p class="text-muted mb-0">Drugs</p>
                                     </div>
-                                    <i class="icon-refresh text-primary icon-lg"></i>
+                                    <i class="icon-drop text-primary icon-lg"></i>
                                 </div>
                             </div>
                         </div>
