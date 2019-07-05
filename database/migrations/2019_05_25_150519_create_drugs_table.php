@@ -19,7 +19,7 @@ class CreateDrugsTable extends Migration
             $table->integer('drug_type_id');
             $table->integer('qty_in_stock')->default(0)->nullable();
             $table->string('unit_of_pricing')->default(0)->nullable();
-            $table->integer('no_of_blisters')->default(0)->nullable();
+            $table->integer('no_of_tablet')->default(0)->nullable();
             $table->integer('qty_in_tablet')->default(0)->nullable();
             $table->integer('supplier_id');
             $table->decimal('cost_price');

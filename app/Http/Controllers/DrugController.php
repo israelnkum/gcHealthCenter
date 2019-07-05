@@ -165,10 +165,10 @@ class DrugController extends Controller
             $drug->name = $request->input('name');
             $drug->drug_type_id = $request->input('type_id');
             $drug->qty_in_stock = $request->input('receiving_stock');
-            $drug->unit_of_pricing = $request->input('receiving_stock');
-            if (\Request::has('no_of_blisters')){
-//                $drug->no_of_blisters = $request->input('no_of_blisters');
-                $drug->no_of_blisters = $request->input('no_of_blisters');
+            $drug->unit_of_pricing = $request->input('unit_of_pricing');
+            if (\Request::has('no_of_tablet')){
+//                $drug->no_of_tablet = $request->input('no_of_tablet');
+                $drug->no_of_tablet = $request->input('no_of_tablet');
                 $drug->qty_in_tablet = $request->input('receiving_stock')*10;
             }
 
@@ -239,7 +239,7 @@ class DrugController extends Controller
                         $retail_price = $row->retail_price;
                         $receiving_stock=$row->receiving_stock;
                         $nhis_amount=$row->nhis_amount;
-                        $blister_per_pack =$row->blister_per_pack;
+                        $tablet_per_blister =$row->tablet_per_blister;
                         if ($row->unit_of_pricing == ""){
                             $unit_of_pricing ="-";
                         }else{
@@ -251,27 +251,14 @@ class DrugController extends Controller
                         $testQuery = Drug::where('name', $name)
                             ->where('drug_type_id',$request->input('drug_type_id'))->first();
                         if(empty($testQuery)){
-                          /*  $drug = new Drug();
-                            $drug->name = $name;
-                            $drug->drug_type_id = $request->input('drug_type_id');
-                            $drug->cost_price = $cost_price;
-                            $drug->unit_of_pricing = $unit_of_pricing;
-                            $drug->nhis_amount = $nhis_amount;
-                            $drug->expiry_date = str_replace('/','-',$expiry_date);
-                            $drug->quantity_in_stock = $receiving_stock;
-                            $drug->supplier_id = $request->input('supplier_id');
-                            $drug->retail_price = $retail_price;
-                            $drug->user_id = Auth::user()->id;
-                            $drug->save();*/
-
                             $drug = new Drug();
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
                             $drug->qty_in_stock = $receiving_stock;
                             $drug->unit_of_pricing = $unit_of_pricing;
                             if ($unit_of_pricing == "Blister (x10tabs)"){
-                                $drug->no_of_blisters = $blister_per_pack;
-                                $drug->qty_in_tablet = $receiving_stock*10;
+                                $drug->no_of_tablet = $tablet_per_blister;
+                                $drug->qty_in_tablet = $receiving_stock*$tablet_per_blister;
                             }
 
                             $drug->retail_price = $retail_price;
@@ -291,8 +278,8 @@ class DrugController extends Controller
                             $drug->qty_in_stock = $receiving_stock;
                             $drug->unit_of_pricing = $unit_of_pricing;
                             if ($unit_of_pricing == "Blister (x10tabs)"){
-                                $drug->no_of_blisters = $blister_per_pack;
-                                $drug->qty_in_tablet = $receiving_stock*10;
+                                $drug->no_of_tablet = $tablet_per_blister;
+                                $drug->qty_in_tablet = $receiving_stock*$tablet_per_blister;
                             }
 
                             $drug->retail_price = $retail_price;
@@ -307,7 +294,6 @@ class DrugController extends Controller
                     }
                 }
             } else {
-                // return redirect('/upload/courses')->with("error", " <span style='font-weight:bold;font-size:13px;'></span> ");
                 return redirect('/drugs')->with("error", "Only excel file is accepted!");
             }
         } else {

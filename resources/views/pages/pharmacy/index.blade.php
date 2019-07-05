@@ -1,61 +1,61 @@
 @extends('layouts.app')
 @section('content')
     <div class="content-wrapper">
-       {{-- <div class="row">
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">$10,200</h2>
-                                </div>
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (Cash)</h4>
-                                <small class="text-gray">Today</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">$10,200</h2>
-                                </div>
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (NHIS)</h4>
-                                <small class="text-gray">Today</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 grid-margin">
-                <div class="card">
-                    <div class="card-body">
+        {{-- <div class="row">
+             <div class="col-md-4 grid-margin">
+                 <div class="card">
+                     <div class="card-body">
+                         <div class="d-flex justify-content-between align-items-center">
+                             <div class="d-inline-block pt-3">
+                                 <div class="d-md-flex">
+                                     <h2 class="mb-0">$10,200</h2>
+                                 </div>
+                             </div>
+                             <div class="d-inline-block">
+                                 <h4 class="card-title mb-0">Total Sales (Cash)</h4>
+                                 <small class="text-gray">Today</small>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             <div class="col-md-4 grid-margin">
+                 <div class="card">
+                     <div class="card-body">
+                         <div class="d-flex justify-content-between align-items-center">
+                             <div class="d-inline-block pt-3">
+                                 <div class="d-md-flex">
+                                     <h2 class="mb-0">$10,200</h2>
+                                 </div>
+                             </div>
+                             <div class="d-inline-block">
+                                 <h4 class="card-title mb-0">Total Sales (NHIS)</h4>
+                                 <small class="text-gray">Today</small>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             <div class="col-md-4 grid-margin">
+                 <div class="card">
+                     <div class="card-body">
 
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-inline-block pt-3">
-                                <div class="d-md-flex">
-                                    <h2 class="mb-0">$10,200</h2>
-                                </div>
-                                --}}{{--                                <small class="text-gray">Raised from 89 orders.</small>--}}{{--
-                            </div>
-                            <div class="d-inline-block">
-                                <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
-                                <small class="text-gray">Today</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>--}}
+                         <div class="d-flex justify-content-between align-items-center">
+                             <div class="d-inline-block pt-3">
+                                 <div class="d-md-flex">
+                                     <h2 class="mb-0">$10,200</h2>
+                                 </div>
+                                 --}}{{--                                <small class="text-gray">Raised from 89 orders.</small>--}}{{--
+                             </div>
+                             <div class="d-inline-block">
+                                 <h4 class="card-title mb-0">Total Sales (Nationwide)</h4>
+                                 <small class="text-gray">Today</small>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>--}}
         {{--<div class="row">
             <div class="col-md-1 grid-margin">
                 <div class="card">
@@ -197,7 +197,11 @@
                                                                     <td>{{$drug->name}}</td>
                                                                     <td>{{$drug->supplier->name}}</td>
                                                                     <td>{{$drug->drug_type->name}}</td>
-                                                                    <td>{{$drug->qty_in_stock}}</td>
+                                                                    @if($drug->unit_of_pricing == "Blister (x10tabs)")
+                                                                        <td>{{$drug->qty_in_tablet}}</td>
+                                                                    @else
+                                                                        <td>{{$drug->qty_in_stock}}</td>
+                                                                    @endif
                                                                     <td>{{$drug->cost_price}}</td>
                                                                     <td>{{$drug->retail_price}}</td>
                                                                     <td>{{$drug->supplier_id}}</td>
@@ -612,8 +616,8 @@
                                 </div>
                             </div>
                             <div class="col-md-2" style="display: none;" id="blisters">
-                                <label for="number_blisters">Blister Per Box</label>
-                                <input name="no_of_blisters" id="number_blisters" type="number" class="form-control">
+                                <label for="number_of_tablet">Tablets Per Blister</label>
+                                <input name="no_of_tablet" id="number_of_tablet" type="number" value="10" class="form-control">
                                 <div class="invalid-feedback">
                                     N<u>o</u> Blisters is required.
                                 </div>

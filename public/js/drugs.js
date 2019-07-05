@@ -31,11 +31,11 @@ $(document).ready(function () {
     $("#unit_of_pricing").change(function () {
         if ($("#unit_of_pricing").val() == "Blister (x10tabs)"){
             $('#blisters').fadeIn(1000).slideDown(1000);
-            $('#number_blisters').attr('required', true);
+            $('#number_of_tablet').attr('required', true);
 
         }else {
             $('#blisters').fadeOut(1000).slideUp(1000);
-            $('#number_blisters').removeAttr('required');
+            $('#number_of_tablet').removeAttr('required');
         }
     });
 

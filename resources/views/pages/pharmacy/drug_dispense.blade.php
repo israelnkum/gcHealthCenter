@@ -189,8 +189,17 @@
                                                     <td>{{$detentionBill}}.00</td>
                                                 </tr>
                                             @endif
+
+                                            <tr>
+                                                <td colspan="2" class="text-center">
+                                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
+                                                        <i class="icon icon-trash"></i> Overall Total
+                                                    </button>
+                                                </td>
+                                            </tr>
                                             </tbody>
                                         </table>
+
                                     </div>
                                 </div>
                             </div>
@@ -281,6 +290,33 @@
                                                 </ul>
                                             </blockquote>
                                         </div>
+
+                                        {{--display dentention overall bill(detiontion+service total)--}}
+                                        <div class="modal fade" id="display_detention_bill" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Detention + All Services + Medication</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body pt-0">
+                                                        <h4 class="display-4">{{$total+$detentionBill}}</h4>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                            <i class="icon icon-close"></i> Close
+                                                        </button>
+                                                        <button type="submit" id="btn_bulk_delete_drug" class="btn btn-primary">
+                                                            <i class="icon icon-trash"></i> Yes! Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{--End display dentention overall bill(detiontion+service total)--}}
+
                                         <div class="col-md-6">
                                             <blockquote class="blockquote" style="border: dashed 1px;">
                                                 <ul class="list-group list-group-flush">

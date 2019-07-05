@@ -53,8 +53,21 @@ class PaymentController extends Controller
                 $med->qty_dispensed = $request->input('qty_dispensed')[$i];
                 $med->save();
 
-                $findMed = Medication::find($med->id);
 
+                //start drug stock update
+                $update_drug_stock = Drug::find($med->drugs_id);
+                if ($update_drug_stock->unit_of_pricing == "Blister (x10tabs)"){
+                    $update_drug_stock->qty_in_tablet = $update_drug_stock->qty_in_tablet -$request->input('qty_dispensed')[$i];
+                    $update_drug_stock->save();
+
+                }else{
+                    $update_drug_stock->qty_in_stock = $update_drug_stock->qty_in_stock -$request->input('qty_dispensed')[$i];
+                    $update_drug_stock->save();
+                }
+                //End drug stock update
+
+
+                $findMed = Medication::find($med->id);
 
                 //update dispensed to 1 if qty equal to qty_dispensed
                 if ($findMed->qty ==  $findMed->qty_dispensed){
@@ -86,33 +99,12 @@ class PaymentController extends Controller
                     $drugArrears->insurance_amount = $request->input('insurance')[$i];
                     $drugArrears->total_amount_to_pay = ($check->qty-$request->input('qty_dispensed')[$i])*floatval($request->input('price')[$i]);
 
-                    /* if ($register->insured != 1){
-                         //check if unit of pricing is blister
-                         //then divide the retail price and by 10
-                         if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                             $drugArrears->amount = $request->input('qty_dispensed')[$i]/10;
-                             $drugArrears->total_amount_to_pay = ($request->input('qty_dispensed')[$i]/10) * (floatval($check->qty_dispensed)*floatval($check->days));
-                         }else{
-                             $drugArrears->amount = $findDrug->retail_price;
-                             $drugArrears->total_amount_to_pay = ($request->input('qty_dispensed')[$i]) * (floatval($check->qty)*floatval($check->days));
-                         }
-                     }else{
-                         //check if unit of pricing is blister
-                         //then divide the retail price and by 10
-                         if ($check->unit_of_pricing == "Blister (x10tabs)"){
-                             $drugArrears->amount = ($findDrug->retail_price-$findDrug->nhis_amount)/10;
-                             $drugArrears->insurance_amount = $request->input('insurance')[$i]/10;
-                             $drugArrears->total_amount_to_pay = (($request->input('qty_dispensed')[$i]-$request->input('insurance')[$i])/10)*(floatval($check->qty)*floatval($check->days));
-                         }else{
-                             $drugArrears->amount = $findDrug->retail_price-$findDrug->nhis_amount;
-                             $drugArrears->insurance_amount = $findDrug->nhis_amount;
-                             $drugArrears->total_amount_to_pay = (($findDrug->retail_price) - ($findDrug->nhis_amount))*(floatval($check->qty)*floatval($check->days));
-                         }
-                     }*/
-
                     $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                     $drugArrears->save();
                 }
+
+
+
 
 
                 $getDrug = Drug::find($findMed->drugs_id);
@@ -214,8 +206,22 @@ class PaymentController extends Controller
                 $med->qty_dispensed = $med->qty_dispensed+$request->input('qty_dispensed')[$i];
                 $med->save();
 
-                $findMed = Medication::find($med->id);
 
+
+                //start drug stock update
+                $update_drug_stock = Drug::find($med->drugs_id);
+                if ($update_drug_stock->unit_of_pricing == "Blister (x10tabs)"){
+                    $update_drug_stock->qty_in_tablet = $update_drug_stock->qty_in_tablet -$request->input('qty_dispensed')[$i];
+                    $update_drug_stock->save();
+
+                }else{
+                    $update_drug_stock->qty_in_stock = $update_drug_stock->qty_in_stock -$request->input('qty_dispensed')[$i];
+                    $update_drug_stock->save();
+                }
+                //End drug stock update
+
+
+                $findMed = Medication::find($med->id);
 
                 //update dispensed to 1 if qty equal to qty_dispensed
                 if ($findMed->qty ==  $findMed->qty_dispensed){
