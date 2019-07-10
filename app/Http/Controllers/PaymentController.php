@@ -147,7 +147,7 @@ class PaymentController extends Controller
         $payment->drugs_total = $request->input('drugs_total');
         $payment->grand_total = $request->input('grand_total');
         $payment->amount_paid = $request->input('amount_paid');
-        $payment->arrears = $request->input('amount_paid')-$request->input('grand_total');
+        $payment->arrears = floatval($request->input('amount_paid'))-floatval($request->input('grand_total'));
         $payment->user_id = Auth::user()->id;
         $payment->save();
 
@@ -159,7 +159,7 @@ class PaymentController extends Controller
         $paymentLogs->drugs_total = $request->input('drugs_total');
         $paymentLogs->grand_total = $request->input('grand_total');
         $paymentLogs->amount_paid = $request->input('amount_paid');
-        $paymentLogs->arrears = $request->input('amount_paid')-$request->input('grand_total');
+        $paymentLogs->arrears = floatval($request->input('amount_paid'))-floatval($request->input('grand_total'));
         $paymentLogs->user_id = Auth::user()->id;
 
         $paymentLogs->save();

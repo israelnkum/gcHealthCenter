@@ -56,9 +56,8 @@ class DetainedRecordsController extends Controller
      */
     public function store(Request $request)
     {
+//        return $request;
         $registration = Registration::find($request->input('registration_id'));
-
-
 
         //Upload labs
         $labFileNames = [];
@@ -583,7 +582,7 @@ class DetainedRecordsController extends Controller
                 ->where('patient_id',$registration->patient_id)
                 ->get();
 
-            return view('pages.pharmacy.drug-dispense')
+            return view('pages.pharmacy.drug_dispense')
                 ->with('registration',$registration)
                 ->with('drugs',$drugs)
                 ->with('vitals',$vitals)
@@ -658,7 +657,7 @@ class DetainedRecordsController extends Controller
     public function edit($id)
     { $charges = Charge::all();
         $diagnosis = Diagnose::all();
-        $drugs = Drug::all();
+        $drugs = Drug::with('drug_type')->get();
         $registration = Registration::with('patient')->find($id);
 //        return $registration;
         $getVitals = Vital::where('registration_id',$registration->id)

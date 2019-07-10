@@ -131,7 +131,6 @@ class DrugController extends Controller
                 ->latest()->get();
         }
 
-//        return $medication;
 
         $drugs = Drug::all()->count();
 

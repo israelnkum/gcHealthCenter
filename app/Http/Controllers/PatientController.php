@@ -94,6 +94,12 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->input('last_visit') >= date('Y-m-d')){
+            return back()
+                ->withInput()
+                ->with('error','Last Visit cannot be greater than or Equal to today\'s date');
+        }
+
         $this->validate($request, [
             'folder_number' => ['unique:patients'],
             'registration_number' => ['unique:patients'],

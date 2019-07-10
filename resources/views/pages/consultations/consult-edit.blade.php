@@ -116,41 +116,48 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-12">
-                                                <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis">{{$consultation->other_diagnosis}}</textarea>
-                                                <div class="invalid-feedback">
-                                                    Diagnosis is
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="col-md-6" >
                                                 <label for="" class="text-info">Drugs</label>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-3">
                                                 <label for="" class="text-info">Dosage</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="" class="text-info">Days</label>
                                             </div>
                                         </div>
                                         <div class="repeater">
-                                            <div data-repeater-list="group-a">
+                                            <div data-repeater-list="medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <select  class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                                <option value=""></option>
                                                                 @foreach($drugs as $drug)
-                                                                    <option value="{{$drug->id}}">{{$drug->name}}</option>
+                                                                    <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                                 @endforeach
                                                             </select>
                                                             <div class="invalid-feedback">
                                                                 Drug is
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-5">
-                                                            <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">
+                                                        <div class="col-md-3">
+                                                            {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
+                                                            <select  class="selectMedicine col-12 form-control mr-1"    name="dosage" id="dosage">
+                                                                <option value=""></option>
+                                                                <option value="3tid">tid</option>
+                                                                <option value="2bd">bd</option>
+                                                                <option value="1nocte">nocte</option>
+                                                                <option value="1stat">stat</option>
+                                                                <option value="1dly">dly</option>
+                                                            </select>
                                                             <div class="invalid-feedback">
                                                                 Dosage is
                                                             </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="number"  name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
                                                         </div>
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
@@ -167,22 +174,34 @@
                                             </div>
                                         </div>
 
-
-
                                         <div class="row">
                                             <div class="col-md-6" >
                                                 <label for="" class="text-info">Other Medication(s)</label>
                                             </div>
                                         </div>
                                         <div class="other-repeater">
-                                            <div data-repeater-list="group-b">
+                                            <div data-repeater-list="other-medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                         </div>
-                                                        <div class="col-md-5">
-                                                            <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">
+                                                        <div class="col-md-3">
+                                                            {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
+                                                            <select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
+                                                                <option value=""></option>
+                                                                <option value="3tid">tid</option>
+                                                                <option value="2bd">bd</option>
+                                                                <option value="1nocte">nocte</option>
+                                                                <option value="1stat">stat</option>
+                                                                <option value="1dly">dly</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Dosage is
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
                                                         </div>
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
@@ -257,19 +276,24 @@
                                 @foreach($medications as $medicine)
                                     <tr>
                                         <td><small>{{$medicine->drugs->name}}</small></td>
-                                        <td><small>{{$medicine->dosage}}</small></td>
+                                        <td><small>{{$medicine->dosage}} x {{$medicine->days}}</small></td>
                                         <td>
                                             <div class="row">
                                                 <div class="col-md-6 text-right">
-                                                    <a href="{{route('editMedication',[$medicine->drugs->id,$medicine->id])}}?{{Hash::make(time())}}">
+                                                    @if($medicine->dispensed ==1)
                                                         <i class="icon icon-note"></i>
-                                                    </a>
+                                                        @else
+                                                        <a  href="{{route('editMedication',[$medicine->drugs->id,$medicine->id])}}?{{Hash::make(time())}}">
+                                                            <i class="icon icon-note"></i>
+                                                        </a>
+                                                    @endif
+
                                                 </div>
                                                 <div class="col-md-6 text-left">
                                                     <form action="{{route('drugs.destroy',$medicine->id)}}" method="post" onsubmit="return confirm('Do you really want to delete this medication')">
                                                         @csrf
                                                         {!! method_field('delete') !!}
-                                                        <button class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
+                                                        <button @if($medicine->dispensed ==1) disabled @endif class="btn btn-primary bg-transparent text-danger border-0 ml-0 p-0">
                                                             <i class="icon icon-trash"></i>
                                                         </button>
                                                     </form>

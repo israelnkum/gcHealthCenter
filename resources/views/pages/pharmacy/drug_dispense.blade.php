@@ -172,7 +172,7 @@
                                                     <td>{{$detentionBill}}.00</td>
                                                 </tr>
                                             @endif
-                                            <tr class="bg-primary text-white">
+                                            {{--<tr class="bg-primary text-white">
                                                 <td class="p-2 text-right">
                                                     Total
                                                 </td>
@@ -181,7 +181,15 @@
                                                 @else
                                                     <td class="p-2">GH₵ {!! $serviceTotal= $total !!}</td>
                                                 @endif
-                                            </tr>
+                                            </tr>--}}
+
+                                            @if($registration->detain == 2 && $detentionBill)
+                                                <td class="p-2">
+                                                    @php($serviceTotal= $detentionBill+ $total)
+                                                </td>
+                                            @else
+                                                @php( $serviceTotal= $total)
+                                            @endif
                                             {{--if patient is still detained, then don't add detention bill--}}
                                             @if($registration->detain == 1 && $detentionBill)
                                                 <tr>
@@ -190,16 +198,15 @@
                                                 </tr>
                                             @endif
 
-                                            <tr>
+                                            {{--<tr style="border: dashed">
                                                 <td colspan="2" class="text-center">
                                                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
-                                                        <i class="icon icon-trash"></i> Overall Total
+                                                        + Detention
                                                     </button>
                                                 </td>
-                                            </tr>
+                                            </tr>--}}
                                             </tbody>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -223,6 +230,7 @@
                                         </thead>
                                         <tbody>
                                         @php( $i =1)
+                                        @php($total_d_total =0)
                                         @foreach($medication as $med)
                                             <tr class="txtMult">
                                                 <td>{{$med->drugs->name}}</td>
@@ -230,23 +238,27 @@
                                                 <td>
                                                     @if($registration->isInsured ==0)
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
-                                                            <span class="val1">{{$med->drugs->retail_price/10}}</span>
+                                                            <span class="val1">{{$dPrice =$med->drugs->retail_price/10}}</span>
                                                             <input name="price[]" type="number" hidden value="{{$med->drugs->retail_price/10}}">
                                                             <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount/10}}">
+                                                            @php($dTotal = $dPrice * $med->qty)
                                                         @else
-                                                            <span class="val1">{{$med->drugs->retail_price}}</span>
+                                                            <span class="val1">{{$dPrice =$med->drugs->retail_price}}</span>
                                                             <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price)}}">
                                                             <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount}}">
+                                                            @php($dTotal = $dPrice * $med->qty)
                                                         @endif
                                                     @else
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
-                                                            <span class="val1">{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}</span>
+                                                            <span class="val1">{{$dPrice =($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}</span>
                                                             <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)/10}}">
                                                             <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount/10}}">
+                                                            @php($dTotal = $dPrice * $med->qty)
                                                         @else
-                                                            <span class="val1">{{$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
+                                                            <span class="val1">{{$dPrice =$med->drugs->retail_price-$med->drugs->nhis_amount}}</span>
                                                             <input name="price[]" type="number" hidden value="{{($med->drugs->retail_price-$med->drugs->nhis_amount)}}">
                                                             <input type="hidden" name="insurance[]" value="{{$med->drugs->nhis_amount}}">
+                                                            @php($dTotal = $dPrice * $med->qty)
                                                         @endif
                                                     @endif
                                                 </td>
@@ -266,6 +278,7 @@
                                                     <input name="qty_dispensed[]" value="0" min="0" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 80px;" class="val3 form-control">
                                                 </td>
                                             </tr>
+                                        @php($total_d_total +=$dTotal)
                                         @endforeach
                                     </table>
                                     <div class="row mt-3">
@@ -301,15 +314,12 @@
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <div class="modal-body pt-0">
-                                                        <h4 class="display-4">{{$total+$detentionBill}}</h4>
+                                                    <div class="modal-body pt-0 text-center">
+                                                        <h4 class="display-3">GH₵ {{$total+$detentionBill+$total_d_total}}</h4>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                                             <i class="icon icon-close"></i> Close
-                                                        </button>
-                                                        <button type="submit" id="btn_bulk_delete_drug" class="btn btn-primary">
-                                                            <i class="icon icon-trash"></i> Yes! Delete
                                                         </button>
                                                     </div>
                                                 </div>
@@ -347,11 +357,7 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-                                {{--
-                                <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                       --}}
                             </div>
                         </div>
                     </div>

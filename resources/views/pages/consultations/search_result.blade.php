@@ -565,7 +565,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <form action="">
+                                                        <form action="{{route('discharge-patient',$recentRegistration->id)}}" method="post">
+                                                            @csrf
                                                             <button class="btn btn-success">
                                                                 <i class="icon icon-arrow-right-circle"></i>
                                                                 Discharge
@@ -576,7 +577,7 @@
                                             </div>
                                         @elseif($recentRegistration->detain == 2)
                                             <div class="col-md-10 offset-md-2 text-right mb-3">
-                                                <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary">
+                                                <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}" class="btn btn-primary">
                                                     <i class="icon icon-notebook"></i> View Record
                                                 </a>
                                             </div>
@@ -596,18 +597,16 @@
                                                     <div class=" px-4 py-2 rounded">
                                                         {{--if patient has no vitals, hide the details form--}}
                                                         <div class="row">
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-12">
                                                                 <form action="{{route('patientRecord')}}" method="post">
                                                                     @csrf
                                                                     <input type="hidden" name="fromSearchPage" value="fromSearchPage">
-                                                                    <button name="data" value="{{substr($previous->created_at,0,10).",".$previous->patient_id}}" class="btn btn-link" style="text-decoration: none;">
-                                                                        <i class="icon-info icon-md"></i>
+                                                                    <button name="data" title="Detailed Info" value="{{substr($previous->created_at,0,10).",".$previous->patient_id}}" class="btn btn-link text-small" style="text-decoration: none;">
+                                                                        <i class="icon-info icon-md"></i> Detailed Info
                                                                     </button>
                                                                 </form>
-                                                            </div>
-                                                            <div class="col-md-6 mt-2">
-                                                                <a href="{{route('consultation.edit',$recentRegistration->id)}}" style="text-decoration: none">
-                                                                    <i class="icon icon-note icon-md text-info"></i>
+                                                                <a title="Edit Record" class="ml-4 text-small" href="{{route('consultation.edit',$recentRegistration->id)}}" style="text-decoration: none">
+                                                                    <i class="icon icon-note icon-md text-info"></i> Edit Record
                                                                 </a>
                                                             </div>
                                                         </div>
@@ -727,7 +726,7 @@
                                                     @foreach($medication as $med)
                                                         <tr>
                                                             <td>{{$med->drugs->name}}</td>
-                                                            <td>{{$med->dosage}}</td>
+                                                            <td>{{$med->dosage}} x {{$med->days}} days</td>
                                                         </tr>
                                                     @endforeach
                                                     </tbody>

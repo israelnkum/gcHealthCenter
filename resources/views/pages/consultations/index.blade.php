@@ -10,7 +10,7 @@
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
-                                <input type="text"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
+                                <input required type="text"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
                                     <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
                                 </div>
@@ -28,7 +28,7 @@
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-6 offset-md-5">
-                            <select  name="data" class="js-example-basic-single w-100 form-control">
+                            <select required name="data" class="js-example-basic-single w-100 form-control">
                                 <option value="">Select Record Date</option>
                                 @if(count($registration)  == 1)
                                     @foreach($allRegistrations as $userRegistration)
@@ -134,33 +134,33 @@
                                             {{--  New Consultaion Form --}}
                                             <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.store')}}">
                                                 @csrf
-                                                <input  type="hidden" name="registration_id" value="{{$registered->id}}">
-                                                <input  type="hidden" name="patient_id" value="{{$registered->patient->id}}">
-                                                <input  type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
+                                                <input required type="hidden" name="registration_id" value="{{$registered->id}}">
+                                                <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
+                                                <input required type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
                                                 <div class="form-group row">
                                                     <label for="complains" class="text-info">Complains</label>
                                                     <div class="col-sm-12">
-                                                        <textarea  name="complains" class="form-control" id="complains" rows="10"></textarea>
+                                                        <textarea required  name="complains" class="form-control" id="complains" rows="10"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Complains is
+                                                            Complains is required
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <label for="physical_examination" class="text-info">Physical Examination</label>
                                                     <div class="col-sm-12">
-                                                        <textarea   name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
+                                                        <textarea required  name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Physical Examination is
+                                                            Physical Examination is required
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <div class="col-sm-12">
                                                         <label for="findings" class="text-info">Findings</label>
-                                                        <textarea  name="findings" class="form-control" id="findings" rows="10"></textarea>
+                                                        <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Finding is
+                                                            Finding is required
                                                         </div>
                                                     </div>
                                                 </div>
@@ -174,7 +174,7 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is
+                                                            Diagnosis is required
                                                         </div>
                                                     </div>
                                                 </div>
@@ -182,7 +182,7 @@
                                                     <div class="col-sm-12">
                                                         <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                         <div class="invalid-feedback">
-                                                            Diagnosis is
+                                                            Diagnosis is required
                                                         </div>
                                                     </div>
                                                 </div>
@@ -202,19 +202,19 @@
                                                         <div data-repeater-item class="mb-2">
                                                             <div class="row">
                                                                 <div class="col-md-6">
-                                                                    <select  class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                                    <select required class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
                                                                         <option value=""></option>
                                                                         @foreach($drugs as $drug)
                                                                             <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                                         @endforeach
                                                                     </select>
                                                                     <div class="invalid-feedback">
-                                                                        Drug is
+                                                                        Drug is required
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
-                                                                    <select  class="selectMedicine col-12 form-control mr-1"    name="dosage" id="dosage">
+                                                                    <select required class="selectMedicine col-12 form-control mr-1"    name="dosage" id="dosage">
                                                                         <option value=""></option>
                                                                         <option value="3tid">tid</option>
                                                                         <option value="2bd">bd</option>
@@ -223,11 +223,11 @@
                                                                         <option value="1dly">dly</option>
                                                                     </select>
                                                                     <div class="invalid-feedback">
-                                                                        Dosage is
+                                                                        Dosage is required
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-2">
-                                                                    <input type="number"  name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
+                                                                    <input type="number" required name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
                                                                 </div>
                                                                 <div class="col-md-1">
                                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
@@ -305,8 +305,8 @@
                                                     <div class="col-sm-6">
                                                         <div class="row">
                                                             <div class="col-md-12 mb-3">
-                                                                <label class="text-info">Select <u><b>Service</b></u></label>
-                                                                <select  class="col-12 form-control mr-1 selectMedicine p-3" multiple   name="service[]" id="service">
+                                                                <label class="text-info">Select Service</label>
+                                                                <select  class="col-12 form-control mr-1 selectMedicine" multiple   name="service[]" id="service">
                                                                     <option value=""></option>
                                                                     @foreach($charges as $charge)
                                                                         @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")

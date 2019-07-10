@@ -4,7 +4,12 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class ="col-md-4 offset-md-4 grid-margin stretch-card">
+            <div class="col-md-4 offset-md-4 mb-2">
+                <a href="{{route('consultation.edit',[$patient_service->registration_id])}}" class="btn btn-danger">
+                    <i class="icon icon-arrow-left-circle"></i>Back
+                </a>
+            </div>
+            <div class ="col-md-4 offset-md-2 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Edit Service</h4>
@@ -13,14 +18,15 @@
                             <input type="hidden" value="{{$patient_service->id}}" name="p_service_id">
                             <div class="form-group row mb-0">
                                 <div class="col-md-12 mb-2">
-                                    <label for="drug">Drug</label>
+                                    <label for="drug">Service</label>
                                     <select  name="charge_id" id="charge_id" class="js-example-basic-single w-100 form-control">
                                         <option value="{{$service->id}}">{{$service->name}}</option>
                                         @foreach($allServices as $services)
                                             @if($services->name != "Insured" && $services->name != "Non-Insured" && $services->name != "Consultation")
-                                                <option value="{{$services->id}}">{{$services->name}}</option>
+                                                @if($service->id != $services->id)
+                                                    <option value="{{$services->id}}">{{$services->name}}</option>
+                                                @endif
                                             @endif
-{{--                                            <option value="{{$services->id}}">{{$services->name}}</option>--}}
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">
@@ -35,6 +41,19 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4">
+                <ul class="list-group list-group-flush">
+                    @php($i =1)
+                    @foreach($getAllServices as $allService)
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{">> ".$allService->charge->name}}
+
+                            <span>{{$allService->created_at}}</span>
+                        </li>
+                        @php($i++)
+                    @endforeach
+                </ul>
             </div>
         </div>
     </div>

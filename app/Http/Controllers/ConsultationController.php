@@ -746,6 +746,16 @@ class ConsultationController extends Controller
 
     }
 
+    public function discharge($id){
+        $registration = Registration::find($id);
+
+        $registration->detain = 2;
+        $registration->discharged_date =date('Y-m-d H:i:s');
+
+        $registration->save();
+
+        return back()->with('success','Patient Discharged');
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -770,8 +780,10 @@ class ConsultationController extends Controller
         $vitals = Vital::where('registration_id',$registration->id)
             ->where('patient_id',$patient->id)->first();
 
-        $medications = Medication::with('drugs')->where('patient_id', $patient->id)
-            ->where('registration_id', $registration->id)->latest()->get();
+        $medications = Medication::with('drugs')
+            ->where('patient_id', $patient->id)
+            ->where('registration_id', $registration->id)
+            ->latest()->get();
         $patientDiagnosis = PatientDiagnosis::with('diagnoses')->where('patient_id',$patient->id)
             ->where('registration_id',$registration->id)->latest()->get();
 
@@ -863,39 +875,27 @@ class ConsultationController extends Controller
 
 
         //Add medications
-        foreach ($request->input('group-a') as $med) {
-            //check request has no drug id
-            if (!empty($med['drug_id']) && !empty($med['dosage'])){
+        foreach ($request->input('medications') as $med) {
+            if (!empty($med['drug_id']) && !empty($med['dosage'])) {
+
                 //check if medication already exist
                 $check = Medication::where('drugs_id', $med['drug_id'])
                     ->where('patient_id', $request->input('patient_id'))
                     ->where('registration_id', $request->input('registration_id'))
                     ->whereDate('created_at', date('Y-m-d'))
                     ->first();
-
-                //if medication does not exist then insert
                 if (empty($check)){
-                    $medication = new Medication();
-                    $medication->patient_id = $request->input('patient_id');
-                    $medication->registration_id = $request->input('registration_id');
-                    $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
-                    $medication->user_id =Auth::user()->id;
-                    $medication->save();
 
+                    /*$drugs = Drug::find($med['drug_id']);
 
-                    //create a new bill for patient if drug does not exist
-                    $drugs = Drug::find($med['drug_id']);
-
-
-
-                    //if patient is NOT Insured then insert
+                    //if patient is NOT Insured then insert the drug selling price
                     if ($registration->isInsured != 1) {
                         $bill = new Bill();
                         $bill->registration_id = $request->input('registration_id');
                         $bill->patient_id = $request->input('patient_id');
                         $bill->item = $drugs->name;
                         $bill->item_id = $drugs->id;
+                        $bill->type="Drug";
                         $bill->amount = $drugs->retail_price;
                         $bill->insurance_amount = $drugs->nhis_amount;
                         $bill->total_amount_to_pay = $drugs->retail_price;
@@ -903,18 +903,33 @@ class ConsultationController extends Controller
                         $bill->save();
                     }
                     else {
-                        //if patient is Insured
+                        //if patient is Insured the total amount to pay is sellingPrice - NHIS Price
                         $bill = new Bill();
                         $bill->registration_id = $request->input('registration_id');
                         $bill->patient_id = $request->input('patient_id');
                         $bill->item = $drugs->name;
                         $bill->item_id = $drugs->id;
+                        $bill->type="Drug";
                         $bill->amount = $drugs->retail_price;
                         $bill->insurance_amount = $drugs->nhis_amount;
                         $bill->total_amount_to_pay = $drugs->retail_price - $drugs->nhis_amount;
                         $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $bill->save();
-                    }
+                    }*/
+
+                    $medication = new Medication();
+//                    $medication->bill_id = $bill->id;
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+
+
                 }else{
 
                     //update
@@ -922,30 +937,31 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = $med['dosage'];
-                    $medication->user_id =Auth::user()->id;
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
                     $medication->save();
                 }
             }
-
         }
 
 
         //Add other  medications
-
-        if (\Request::has('group-b')) {
-            foreach ($request->input('group-b') as $other) {
+        if (\Request::has('other-medications')) {
+            foreach ($request->input('other-medications') as $other) {
                 if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
                     $medication = new OtherMedication();
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
-                    $medication->dosage = $other['other_dosage'];
+                    $medication->dosage = substr($other['other_dosage'],1)." x ".$other['other_days']." days";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
             }
         }
+
 
 
         //add diagnosis
@@ -1019,7 +1035,7 @@ class ConsultationController extends Controller
         $registration->consult = 1;
         $registration->save();
 
-        return back()->with('success','Consultation Updated');
+        return back()->with('success','Record Updated');
     }
 
     public function patientRecord(Request $request){
@@ -1082,8 +1098,8 @@ class ConsultationController extends Controller
 
 //        return $registration;
         /*
-             * Calculate detention bill
-             */
+         * Calculate detention bill
+         */
         //check if patient is detained Or Admitted
         if ( $registration[0]->detain == 0){
             $detentionBill = 0;
@@ -1161,11 +1177,12 @@ class ConsultationController extends Controller
 
     //return view
     public function editMedication($drug_id, $med_id){
-        $drug = Drug::find($drug_id);
+        $drug = Drug::with('drug_type')->find($drug_id);
+
         $drugs = Drug::all();
         $medication = Medication::find($med_id);
-
-        return view('pages.consultations.consult-edit-medication')
+//        return $medication;
+        return view('pages.consultations.edit-medication')
             ->with('drug',$drug)
             ->with('drugs',$drugs)
             ->with('medication',$medication);
@@ -1173,12 +1190,11 @@ class ConsultationController extends Controller
 
     //update medication
     public function edit_med(Request $request){
-
         $medication = Medication::find($request->input('med_id'));
-
         $medication->drugs_id = $request->input('drug_id');
-        $medication->dosage=$request->input('dosage');
-
+        $medication->dosage = substr($request->input('dosage'),1);
+        $medication->days = $request->input('days');
+        $medication->qty = substr($request->input('dosage'),0,1)*$request->input('days');
         $medication->save();
 
         return redirect()->route('consultation.edit',[$medication->registration_id])
@@ -1195,7 +1211,7 @@ class ConsultationController extends Controller
         $diagnosis = Diagnose::find($patient_diagnosis->diagnoses_id);
 
         $allDiagnosis = Diagnose::all();
-        return view('pages.consultations.consult-edit-diagnosis')
+        return view('pages.consultations.edit-diagnosis')
             ->with('diagnosis',$diagnosis)
             ->with('allDiagnosis',$allDiagnosis)
             ->with('patient_diagnosis',$patient_diagnosis);
@@ -1219,11 +1235,14 @@ class ConsultationController extends Controller
         $service = Charge::find($patient_service->charge_id);
         $allServices = Charge::all();
 
+        $getAllServices = Service::with('charge')->where('registration_id',$patient_service->registration_id)
+            ->where('patient_id',$patient_service->patient_id)->get();
 
-        return view('pages.consultations.consult-edit-charge')
+        return view('pages.consultations.edit-charge')
             ->with('allServices',$allServices)
             ->with('service',$service)
-            ->with('patient_service',$patient_service);
+            ->with('patient_service',$patient_service)
+            ->with('getAllServices',$getAllServices);
     }
 
     public function edit_service_charge(Request $request){
