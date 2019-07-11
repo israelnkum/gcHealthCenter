@@ -86,13 +86,28 @@
                                 <div class="col-md-6">
                                     <label for="">Lab Result(s)</label>
                                     <blockquote class="blockquote">
-                                        {{$recentRecord->labs}}
+                                        <?php
+                                        $labs=explode(',',$recentRecord->labs)
+                                        ?>
+                                        <div id="lightgallery-without-thumb" class="row lightGallery">
+                                            @foreach($labs as $lab)
+                                                {{--                                                    {{$lab}}--}}
+                                                <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                            @endforeach
+                                        </div>
                                     </blockquote>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">Scan Result(s)</label>
                                     <blockquote class="blockquote">
-                                        {{$recentRecord->ultra_sound_scan}}
+                                        <?php
+                                        $scans=explode(',',$recentRecord->ultra_sound_scan)
+                                        ?>
+                                        <div id="lightgallery" class="row lightGallery">
+                                            @foreach($scans as $scan)
+                                                <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                            @endforeach
+                                        </div>
                                     </blockquote>
                                 </div>
                             </div>
@@ -110,7 +125,7 @@
             <div class="row">
                 <div class ="col-md-12 text-center">
                     <h6 class="display-4">Sorry! No record Found</h6>
-                    <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="post">
+                    <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
                         @csrf
                         <div class="form-group row mb-0">
                             <div class="col-md-12 ">

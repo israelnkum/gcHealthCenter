@@ -182,7 +182,6 @@
                                                     <td class="p-2">GH₵ {!! $serviceTotal= $total !!}</td>
                                                 @endif
                                             </tr>--}}
-
                                             @if($registration->detain == 2 && $detentionBill)
                                                 <td class="p-2">
                                                     @php($serviceTotal= $detentionBill+ $total)

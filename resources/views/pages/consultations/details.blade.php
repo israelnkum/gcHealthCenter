@@ -59,6 +59,7 @@
                     <div class="card">
                         <div class="card-body">
                             @foreach($registration as $registered)
+                                {{--Display patient's info --}}
                                 <label class="text-info">Patient Info</label>
                                 <blockquote class="blockquote">
                                     <div class="row">
@@ -80,6 +81,9 @@
                                         </div>
                                     </div>
                                 </blockquote>
+                                {{--End patient's info --}}
+
+                                {{--Display patient's registration --}}
                                 <label class="text-info">Registration</label>
                                 <blockquote class="blockquote">
                                     <div class="row">
@@ -95,6 +99,9 @@
                                         </div>
                                     </div>
                                 </blockquote>
+                                {{--End patient's info --}}
+
+                                {{--Display patient's vital signs --}}
                                 <label class="text-info">Vital Signs</label>
                                 <blockquote class="blockquote">
                                     <div class="row">
@@ -116,6 +123,7 @@
                                         </div>
                                     </div>
                                 </blockquote>
+                                {{--End patient's info --}}
                             @endforeach
 
                             {{--<label class="text-info">Total Bill</label>
@@ -156,50 +164,50 @@
                                     </div>
                                 </div>
                             </blockquote>--}}
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="text-info">Medications</label>
-                                        <blockquote class="blockquote">
-                                            <ul>
-                                                @foreach($medication as $med)
-                                                    <li>{{$med->drugs->name}}</li>
-                                                @endforeach
-                                            </ul>
-                                        </blockquote>
-                                    </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="text-info">Medications</label>
+                                    <blockquote class="blockquote">
+                                        <ul>
+                                            @foreach($medication as $med)
+                                                <li>{{$med->drugs->name}}</li>
+                                            @endforeach
+                                        </ul>
+                                    </blockquote>
                                 </div>
-                                @if($consultation[0]->ultra_sound_scan)
-                                    <h4>Scan Result(s)</h4>
-                                    <div class="col-sm-12">
-                                        <?php
-                                        $scans=explode(',',$consultation[0]->ultra_sound_scan)
-                                        ?>
-                                        <div id="lightgallery" class="row lightGallery">
-                                            @foreach($scans as $scan)
+                            </div>
+                            @if($consultation[0]->ultra_sound_scan)
+                                <h4>Scan Result(s)</h4>
+                                <div class="col-sm-12">
+                                    <?php
+                                    $scans=explode(',',$consultation[0]->ultra_sound_scan)
+                                    ?>
+                                    <div id="lightgallery" class="row lightGallery">
+                                        @foreach($scans as $scan)
 
-                                                <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
-                                            @endforeach
-                                        </div>
-
+                                            <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                        @endforeach
                                     </div>
-                                @endif
-                                @if($consultation[0]->labs)
-                                    <h4>Lab Result(s)</h4>
-                                    <div class="col-sm-12">
 
-                                        <?php
-                                        $labs=explode(',',$consultation[0]->labs)
-                                        ?>
-                                        <div id="lightgallery-without-thumb" class="row lightGallery">
-                                            @foreach($labs as $lab)
-                                                {{--                                                    {{$lab}}--}}
-                                                <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
-                                            @endforeach
-                                        </div>
+                                </div>
+                            @endif
+                            @if($consultation[0]->labs)
+                                <h4>Lab Result(s)</h4>
+                                <div class="col-sm-12">
 
+                                    <?php
+                                    $labs=explode(',',$consultation[0]->labs)
+                                    ?>
+                                    <div id="lightgallery-without-thumb" class="row lightGallery">
+                                        @foreach($labs as $lab)
+                                            {{--                                                    {{$lab}}--}}
+                                            <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                        @endforeach
                                     </div>
-                                @endif
+
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

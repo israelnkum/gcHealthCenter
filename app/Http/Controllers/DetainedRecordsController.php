@@ -89,7 +89,6 @@ class DetainedRecordsController extends Controller
             }
         }
 
-
         $records = new DetentionRecord();
         $records->patient_id = $request->input('patient_id');
         $records->registration_id = $request->input('registration_id');
@@ -631,6 +630,7 @@ class DetainedRecordsController extends Controller
 
             $registration = "";
 
+
             return view('pages.pharmacy.dispense-drug-arrears')
                 ->with('registration', $registration)
                 ->with('drugs', $drugs)
@@ -641,7 +641,8 @@ class DetainedRecordsController extends Controller
                 ->with('totalNhisSale', $totalNhisSale)
                 ->with('totalSales', $totalSales)
                 ->with('arrears', $arrears)
-                ->with('recordMedication',$recordMedication);
+                ->with('recordMedication',$recordMedication)
+                ->with('detentionBill',$detentionBill);
         }
 
 

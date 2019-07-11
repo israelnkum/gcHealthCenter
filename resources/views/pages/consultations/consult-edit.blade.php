@@ -4,6 +4,15 @@
 
     <div class="content-wrapper">
         <div class="row">
+            <div class="col-md-12 text-right mb-3">
+                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                    @csrf
+                    <input required type="hidden"  value="{{$patient->folder_number}}" class="form-control" name="search">
+                    <button type="submit" class="btn-danger btn text-small"><i class="icon icon-close"></i> Cancel</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
             <div class ="col-md-7 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">

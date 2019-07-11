@@ -378,12 +378,21 @@
             });
         }, false);
     })();
+
+    //auto dismiss alert
     $(document).ready(function () {
         window.setTimeout(function () {
             $('.alert').fadeTo(1000,0).slideUp(1000, function () {
                 $(this).remove();
             });
         },3000);
+    });
+
+    //print div
+    $("#btn_print").click(function () {
+        // window.print("#pri");
+        $("#print_div").print()
+        // $("#print_div").print();
     });
 </script>
 @if(\Request::is('searchConsultation') || \Request::is('consultation/*'))

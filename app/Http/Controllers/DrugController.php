@@ -87,7 +87,8 @@ class DrugController extends Controller
             //check if patient is detained Or Admitted
             if ( $registration->detain == 0){
                 $detentionBill = 0;
-            }elseif ( $registration->detain == 1){
+            }
+            elseif ( $registration->detain == 1){
                 //get date admitted
                 $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->created_at);
 

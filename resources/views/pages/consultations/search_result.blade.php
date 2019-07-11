@@ -44,9 +44,7 @@
                                 <button type="submit" class="btn-light btn btn-sm btn-rounded p-1 text-center"><i class="icon-magnifier"></i></button>
                             </div>
                         </div>
-
                     </form>
-
                 </div>
             @endif
         </div>
@@ -577,8 +575,8 @@
                                             </div>
                                         @elseif($recentRegistration->detain == 2)
                                             <div class="col-md-10 offset-md-2 text-right mb-3">
-                                                <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}" class="btn btn-primary">
-                                                    <i class="icon icon-notebook"></i> View Record
+                                                <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}" class="btn btn-primary p-2">
+                                                    <i class="icon icon-notebook"></i> View detention Records
                                                 </a>
                                             </div>
                                         @endif

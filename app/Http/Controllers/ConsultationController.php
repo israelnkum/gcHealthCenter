@@ -11,6 +11,7 @@ use App\Medication;
 use App\OtherMedication;
 use App\Patient;
 use App\PatientDiagnosis;
+use App\Payment;
 use App\Registration;
 use App\Service;
 use App\Vital;
@@ -754,6 +755,58 @@ class ConsultationController extends Controller
 
         $registration->save();
 
+
+
+        /*
+         * Start Detention Bill Calculation
+         */
+        //check if patient is detained Or Admitted
+        if ( $registration->detain == 0){
+            $detentionBill = 0;
+        }
+        elseif ( $registration->detain == 1){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:s:i'));
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        //if patient is discharged, then use discharged_date instead of today
+        elseif ($registration->detain == 2){
+            //get date admitted
+            $dateAdmitted = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->created_at);
+
+            $today = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $registration->discharged_date);
+            $detentionDays = $today->diffInDays($dateAdmitted);
+
+            if ($detentionDays < 3){
+                $detentionBill = 20;
+            }else{
+                $additionalDays = $detentionDays - 2;
+                $calAdditionalCharges = $additionalDays*5;
+
+                $detentionBill = $calAdditionalCharges+20;
+            }
+        }
+        /*
+         * End Detention Bill Calculation
+         */
+        $payment = Payment::where('registration_id',$id)
+            ->where('patient_id',$registration->patient_id)
+            ->first();
+        $payment->grand_total = $payment->grand_total+$detentionBill;
+        $payment->arrears = floatval(str_replace('-','',$payment->arrears))+$detentionBill;
+        $payment->save();
+
         return back()->with('success','Patient Discharged');
     }
     /**
@@ -1040,7 +1093,9 @@ class ConsultationController extends Controller
 
     public function patientRecord(Request $request){
 
+        //data contains patient id and the date of registration
         $data= explode(',',$request->input('data'));
+
 
         $getRegistration = Registration::where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
@@ -1056,7 +1111,7 @@ class ConsultationController extends Controller
             ->whereDate('created_at', $data[0])->get();
 
 
-//        return $getBills;
+//        return $medication;
 
         $count_registration = Registration::with('patient')
             ->where('patient_id',$data[1])
