@@ -84,31 +84,35 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label for="">Lab Result(s)</label>
-                                    <blockquote class="blockquote">
-                                        <?php
-                                        $labs=explode(',',$recentRecord->labs)
-                                        ?>
-                                        <div id="lightgallery-without-thumb" class="row lightGallery">
-                                            @foreach($labs as $lab)
-                                                {{--                                                    {{$lab}}--}}
-                                                <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
-                                            @endforeach
-                                        </div>
-                                    </blockquote>
+                                    <?php
+                                    $labs=explode(',',$recentRecord->labs)
+                                    ?>
+                                    @if(count($labs)>1)
+                                        <label for="">Lab Result(s)</label>
+                                        <blockquote class="blockquote">
+                                            <div id="lightgallery-without-thumb" class="row lightGallery">
+                                                @foreach($labs as $lab)
+                                                    {{--                                                    {{$lab}}--}}
+                                                    <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                                @endforeach
+                                            </div>
+                                        </blockquote>
+                                    @endif
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="">Scan Result(s)</label>
-                                    <blockquote class="blockquote">
-                                        <?php
-                                        $scans=explode(',',$recentRecord->ultra_sound_scan)
-                                        ?>
-                                        <div id="lightgallery" class="row lightGallery">
-                                            @foreach($scans as $scan)
-                                                <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
-                                            @endforeach
-                                        </div>
-                                    </blockquote>
+                                    <?php
+                                    $scans=explode(',',$recentRecord->ultra_sound_scan)
+                                    ?>
+                                    @if(count($scans) > 1)
+                                        <label for="">Scan Result(s)</label>
+                                        <blockquote class="blockquote">
+                                            <div id="lightgallery" class="row lightGallery">
+                                                @foreach($scans as $scan)
+                                                    <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                                @endforeach
+                                            </div>
+                                        </blockquote>
+                                    @endif
                                 </div>
                             </div>
                             <div class="row">

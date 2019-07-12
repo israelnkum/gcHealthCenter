@@ -182,6 +182,13 @@
                                                 <td>{{$detentionBill}}.00</td>
                                             </tr>
                                         @endif
+                                        <tr>
+                                            <td colspan="2" class="text-center">
+                                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
+                                                    Overall Total
+                                                </button>
+                                            </td>
+                                        </tr>
                                         {{--<tr class="bg-primary text-white">
                                             <td class="p-2 text-right">
                                                 Total
@@ -211,6 +218,32 @@
                                 </div>
                             </div>
                             {{--End Bill--}}
+
+
+                            {{--display dentention overall bill(detiontion+service total)--}}
+                            <div class="modal fade" id="display_detention_bill" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Detention + All Services + Medication</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body pt-0 text-center">
+                                            <h4 class="display-4">Total : GH₵ {{$arrears->grand_total+$detentionBill}}</h4>
+                                            <h5>Amount Paid:  GH₵ {{$arrears->amount_paid}}</h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                <i class="icon icon-close"></i> Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{--End display dentention overall bill(detiontion+service total)--}}
+
                         </div>
                     </div>
                 </div>
@@ -220,8 +253,7 @@
                             {{--check if patient has no drug to take--}}
                             @if(count($medication) !=0)
                                 <h4 class="card-title">Dispense Drugs</h4>
-                                <a href="javascript:void(0)" id="btn_print">Print</a>
-                             <div id="print_div">
+                             <div>
                                  <form action="{{route('payment.update',2)}}" method="post" class="needs-validation" novalidate>
                                      @csrf
                                      {!! method_field('put') !!}

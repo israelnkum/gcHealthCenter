@@ -16,6 +16,12 @@ $(document).ready(function () {
         dropdownParent: $('#newPatient .modal-content')
     });
 
+    $("#service_only").select2({
+        dropdownParent: $('#add_service .modal-content')
+    });
+
+
+
 
 
     let table = $('#patients_table').DataTable({

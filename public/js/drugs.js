@@ -1,5 +1,14 @@
 $(document).ready(function () {
 
+
+    $("#select_drug_only").select2({
+        dropdownParent: $('#add_drug .modal-content')
+    });
+
+    $("#select_dosage_only").select2({
+        dropdownParent: $('#add_drug .modal-content')
+    });
+
     /*
     Start Suppliers
      */

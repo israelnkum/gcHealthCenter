@@ -92,6 +92,14 @@ Route::get('search-detained','DetainedRecordsController@searchPatientForDrugDisp
 Route::get('view-record/{patient_id}/{registration_id}','DetainedRecordsController@view_detention_record')->name('view_detention_record');
 Route::post('view-record','DetainedRecordsController@view_detention')->name('view_detention');
 
+Route::post('add-medication-only','DetainedRecordsController@addMedicationOnly')->name('add-medication-only');
+Route::post('add-service-only','DetainedRecordsController@addServiceOnly')->name('add-service-only');
+
+
+
+
+
+
 Route::post('change-password','UserController@change_password')->name('password-change');
 Route::get('password-change','UserController@password_change')->name('change-password');
 

@@ -390,9 +390,7 @@
 
     //print div
     $("#btn_print").click(function () {
-        // window.print("#pri");
-        $("#print_div").print()
-        // $("#print_div").print();
+
     });
 </script>
 @if(\Request::is('searchConsultation') || \Request::is('consultation/*'))

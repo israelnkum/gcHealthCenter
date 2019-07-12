@@ -38,6 +38,210 @@ class DetainedRecordsController extends Controller
         //
     }
 
+    public function addMedicationOnly(Request $request){
+        $registration = Registration::find($request->input('registration_id'));
+
+//        return $request;
+        $total_drug_bill =0;
+        $total_insurance_bill =0;
+        //Add medications
+        foreach ($request->input('medications') as $med) {
+            if (!empty($med['drug_id']) && !empty($med['dosage'])) {
+
+                //check if medication already exist
+                $check = Medication::where('drugs_id', $med['drug_id'])
+                    ->where('patient_id', $request->input('patient_id'))
+                    ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at', date('Y-m-d H:m:i'))
+                    ->first();
+                if (empty($check)) {
+                    $medication = new Medication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+
+                    $drugs = Drug::find($med['drug_id']);
+                    //if patient is NOT Insured then insert the drug selling price
+                    if ($registration->isInsured != 1)
+                    {
+                        $drugArrears = new DrugArrears();
+                        $drugArrears->registration_id = $request->input('registration_id');
+                        $drugArrears->patient_id = $request->input('patient_id');
+                        $drugArrears->item = $drugs->name;
+                        $drugArrears->medication_id = $medication->id;
+                        $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
+                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->days=$med['days'];
+                        $drugArrears->qty_dispensed =0;
+
+                        //check if unit of pricing is blister
+                        //then divide the retail price and by 10
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = $drugs->retail_price/10;
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price;
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                        }
+                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+
+                        $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $drugArrears->save();
+                    }else{
+
+                        //if patient is Insured the total amount to pay is sellingPrice - NHIS Price
+                        $drugArrears = new DrugArrears();
+                        $drugArrears->registration_id = $request->input('registration_id');
+                        $drugArrears->patient_id = $request->input('patient_id');
+                        $drugArrears->item = $drugs->name;
+                        $drugArrears->medication_id = $medication->id;
+                        $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
+                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->days=$med['days'];
+
+                        //check if unit of pricing is blister
+                        //then divide the retail price and by 10
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = ($drugs->retail_price-$drugs->nhis_amount)/10;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*(substr($med['dosage'],0,1)*$med['days']);
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price-$drugs->nhis_amount;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount;
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*(substr($med['dosage'],0,1)*$med['days']);
+                        }
+                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+
+                        $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                        $drugArrears->save();
+
+
+                    }
+
+                    $total_drug_bill += $drugArrears->total_amount_to_pay;
+                    $total_insurance_bill  += $drugArrears->insurance_amount;
+
+                }
+                /*else {
+                    //update
+                    $medication = Medication::find($check->id);
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->bill_id =$bill->id;
+                    $medication->drugs_id = $med['drug_id'];
+                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->days = $med['days'];
+                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty_dispensed =0;
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+                }*/
+            }
+        }
+
+
+        //Add other  medications
+        if (\Request::has('other_medications')) {
+            foreach ($request->input('other_medications') as $other) {
+                if ($other['other_medication'] != "" && $other['other_dosage'] != "") {
+                    $medication = new OtherMedication();
+                    $medication->patient_id = $request->input('patient_id');
+                    $medication->registration_id = $request->input('registration_id');
+                    $medication->drug = $other['other_medication'];
+                    $medication->dosage = $other['other_dosage'];
+                    $medication->user_id = Auth::user()->id;
+                    $medication->save();
+                }
+            }
+        }
+
+
+
+        /*
+         * Add Drug bill to the patient'bil
+         */
+
+        //find payment
+        $payment = Payment::where('registration_id',$request->input('registration_id'))
+            ->where('patient_id',$request->input('patient_id'))
+            ->first();
+
+        $payment->grand_total = $payment->grand_total+$total_drug_bill;
+        $payment->arrears = str_replace('-','',$payment->arrears)+$total_drug_bill;
+        $payment->save();
+
+
+        //update registration, set medication = 2
+        $registration->medication =2;
+        $registration->hasArrears =1;
+        $registration->save();
+
+        return back()->with('success','Medication Added Successfully');
+    }
+
+
+    public function addServiceOnly(Request $request){
+        $registration = Registration::find($request->input('registration_id'));
+        $total_service_bill =0;
+        if (\Request::has('service')) {
+            //insert selected service charge
+            foreach ($request->input('service') as $key) {
+                $data = explode(',', $key);
+                $check = Service::where('charge_id', $data[0])
+                    ->where('patient_id', $request->input('patient_id'))
+                    ->where('registration_id', $request->input('registration_id'))
+                    ->whereDate('created_at', date('Y-m-d H:m:i'))
+                    ->first();
+                if (empty($check)) {
+                    $service = new Service();
+                    $service->patient_id = $request->input('patient_id');
+                    $service->registration_id = $request->input('registration_id');
+                    $service->charge_id = $data[0];
+                    $service->user_id = Auth::user()->id;
+                    $service->save();
+
+                    $service_charge = Charge::where('name', $data[1])->first();
+
+                    //create a bill for selected service charges
+                    $serviceArrears = new ServiceArrears();
+                    $serviceArrears->registration_id = $request->input('registration_id');
+                    $serviceArrears->patient_id = $request->input('patient_id');
+                    $serviceArrears->service_id = $service->id;
+                    $serviceArrears->item = $service_charge->name;
+                    $serviceArrears->amount = $service_charge->amount;
+                    $serviceArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                    $serviceArrears->save();
+
+                    $total_service_bill += $serviceArrears->amount;
+                }
+            }
+
+        }
+
+        $payment = Payment::where('registration_id',$request->input('registration_id'))
+            ->where('patient_id',$request->input('patient_id'))
+            ->first();
+
+        $payment->grand_total = $payment->grand_total+$total_service_bill;
+        $payment->arrears = str_replace('-','',$payment->arrears)+$total_service_bill;
+        $payment->save();
+
+
+        $registration->medication =2;
+        $registration->hasArrears =1;
+        $registration->save();
+
+        return back()->with('success','Service Added Successfully');
+    }
+
     /**
      * Show the form for creating a new resource.
      *

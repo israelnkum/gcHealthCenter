@@ -14507,6 +14507,14 @@ button.close {
   }
 }
 
+
+
+@media (min-width: 992px) {
+  .modal-lgg {
+    max-width: 50%;
+  }
+}
+
 .tooltip {
   position: absolute;
   z-index: 1070;
@@ -19707,6 +19715,10 @@ pre {
 }
 
 .demo-modal .modal-dialog.modal-lg {
+  max-width: 100%;
+}
+
+.demo-modal .modal-dialog.modal-lgg {
   max-width: 100%;
 }
 

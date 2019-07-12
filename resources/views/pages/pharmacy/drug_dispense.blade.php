@@ -172,16 +172,6 @@
                                                     <td>{{$detentionBill}}.00</td>
                                                 </tr>
                                             @endif
-                                            {{--<tr class="bg-primary text-white">
-                                                <td class="p-2 text-right">
-                                                    Total
-                                                </td>
-                                                @if($registration->detain == 2 && $detentionBill)
-                                                    <td class="p-2">GH₵ {!! $serviceTotal= $detentionBill+ $total !!}</td>
-                                                @else
-                                                    <td class="p-2">GH₵ {!! $serviceTotal= $total !!}</td>
-                                                @endif
-                                            </tr>--}}
                                             @if($registration->detain == 2 && $detentionBill)
                                                 <td class="p-2">
                                                     @php($serviceTotal= $detentionBill+ $total)
@@ -196,14 +186,13 @@
                                                     <td>{{$detentionBill}}.00</td>
                                                 </tr>
                                             @endif
-
-                                            {{--<tr style="border: dashed">
+                                            <tr>
                                                 <td colspan="2" class="text-center">
                                                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
-                                                        + Detention
+                                                        Overall Total
                                                     </button>
                                                 </td>
-                                            </tr>--}}
+                                            </tr>
                                             </tbody>
                                         </table>
                                     </div>
