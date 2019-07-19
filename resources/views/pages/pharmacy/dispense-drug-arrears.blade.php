@@ -4,6 +4,8 @@
 
     <div class="content-wrapper">
         {{--Search form--}}
+
+{{--        <button onclick="printContent('div1')">Print</button>--}}
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
@@ -97,7 +99,7 @@
 
         @if(!empty($recentRegistration))
             <div class="row">
-                <div class="col-md-4 grid-margin stretch-card">
+                <div class="col-md-4 grid-margin stretch-card" id="div1">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Patient's Information</h4>
@@ -155,7 +157,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="">Bill</h4>
-                                    <table class="table table-borderless">
+                                    <table class="table table-borderless d-none">
                                         <thead>
                                         <tr>
                                             <th>Item</th>
@@ -189,32 +191,91 @@
                                                 </button>
                                             </td>
                                         </tr>
-                                        {{--<tr class="bg-primary text-white">
-                                            <td class="p-2 text-right">
-                                                Total
-                                            </td>
-                                            @if($recentRegistration->detain == 2 && $detentionBill)
-                                                <td class="p-2">GH₵ {!! $serviceTotal= $detentionBill+ floatval(substr($arrears->arrears,1)) !!}</td>
-                                            @else
-                                                <td class="p-2">GH₵ {!! $serviceTotal= floatval(substr($arrears->arrears,1)) !!}</td>
-                                            @endif
-                                        </tr>
-                                        @if($recentRegistration->detain == 2 && $detentionBill)
-                                            <td class="p-2">
-                                                @php($serviceTotal= $detentionBill+ floatval(substr($arrears->arrears,1)))
-                                            </td>
-                                        @else
-                                            @php( $serviceTotal= floatval(substr($arrears->arrears,1)))
-                                        @endif
-                                        if patient is still detained, then don't add detention bill
-                                        @if($recentRegistration->detain == 1 && $detentionBill)
-                                            <tr>
-                                                <td>Detention</td>
-                                                <td>{{$detentionBill}}.00</td>
-                                            </tr>
-                                        @endif--}}
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+
+                            <div class="row content-print">
+                                <div class="col-md-12">
+                                    <div class="text-center">
+                                        {{--                                            <img src="{{asset('public/images/logo.jpeg')}}" height="auto" width="70" alt="" class="img-fluid p-0">--}}
+                                        <h6 style="border-bottom: dashed 1px" class="text-uppercase">GC Health Centre</h6>
+                                    </div>
+                                    <div class="mt-3">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="text-small p-0 list-group-item d-flex justify-content-between align-items-center">
+                                                Patient:
+                                                <span>{{$recentRegistration->patient->title." ".$recentRegistration->patient->first_name." ".$recentRegistration->patient->other_name." ".$recentRegistration->patient->last_name}} </span>
+                                            </li>
+                                            <li class="text-small p-0 list-group-item d-flex justify-content-between align-items-center">
+                                                Folder Number:
+                                                <span>{{$recentRegistration->patient->folder_number}} </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        @php($total = 0)
+                                        {{--@foreach($getBills as $bill)
+                                            --}}{{--                                                {{$bill}}--}}{{--
+                                            @if($bill->type == "" || $bill->type=="Service")
+                                                <li class="text-small p-0 list-group-item d-flex justify-content-between align-items-center">
+                                                    {{$bill->item}}:
+                                                    <span>{{$bill->total_amount_to_pay}}</span>
+                                                </li>
+                                                @php($total +=$bill->total_amount_to_pay)
+                                            @endif
+                                        @endforeach--}}
+                                        {{--If patient is discharged, then add detention bill to other bills--}}
+                                        @if($recentRegistration->detain == 2 && $detentionBill)
+                                            <li class="p-0 text-small list-group-item d-flex justify-content-between align-items-center">
+                                                Detention
+                                                <span>{{$detentionBill}}.00</span>
+                                            </li>
+                                        @endif
+
+                                        {{--if patient is still detained, then don't add detention bill--}}
+                                        @if($recentRegistration->detain == 1 && $detentionBill)
+                                            <li class="p-0 text-small list-group-item d-flex justify-content-between align-items-center">
+                                                Detention
+                                                <span>{{$detentionBill}}.00</span>
+                                            </li>
+                                        @endif
+                                        <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
+                                            {{--                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
+{{--                                            <span>Drug Total: GH₵ {{$total_d_total}}</span>--}}
+                                        </li>
+                                        <li class="p-0 text-small bg-warning text-right list-group-item  justify-content-between align-items-center">
+{{--                                            <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
+                                            <span>Grand Total: GH₵ {{$arrears->grand_total}}</span>
+                                        </li>
+                                        <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
+                                            <span> Amount Paid: GH₵ {{$arrears->amount_paid}}</span>
+                                        </li>
+                                        <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
+                                            <span>Arrears: GH₵{{$arrears->arrears}}</span>
+                                        </li>
+
+                                        <li class="p-0 mt-3 text-small list-group-item d-flex justify-content-between align-items-center">
+                                            Pharmacist:
+                                            <span>{{Auth::user()->first_name." ".Auth::user()->other_name." ".Auth::user()->last_name}}</span>
+                                        </li>
+                                    </ul>
+                                    <div class="text-center" style="border-top: dashed 1px">
+                                        <p class="mt-3 mb-3" style="font-size: 10px; line-height: 2px">Powered By -  ANA Technologies</p>
+                                        <p class="" style="font-size: 10px; line-height: 2px">+233 544 513 074 | +233 249 051 415</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {{--<button type="button" class=" btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
+                                Overall Total
+                            </button>--}}
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button type="button" class="print btn btn-dark">
+                                        <i class="icon icon-printer"></i>
+                                        Print
+                                    </button>
                                 </div>
                             </div>
                             {{--End Bill--}}

@@ -18,6 +18,7 @@ class CreatePatientDiagnosesTable extends Migration
             $table->integer('registration_id');
             $table->integer('patient_id');
             $table->integer('diagnoses_id')->nullable();
+            $table->string('type',20)->nullable();
             $table->integer('user_id')->nullable();
             $table->timestamps();
         });

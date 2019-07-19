@@ -1,17 +1,17 @@
 $(document).ready(function () {
     window.onload = function() {
-        multInputs
+        multInputs();
     };
 
     $(".txtMult input").keyup(multInputs);
     $(".txtMult input").click(multInputs);
     $(".txtMult input").hover(multInputs);
 
-  // let table=  $("#dispenseTable").DataTable({
-  //       // dom:'t'
-  //   });
-  //
-  //   table.column(2).visible(false);
+    // let table=  $("#dispenseTable").DataTable({
+    //       // dom:'t'
+    //   });
+    //
+    //   table.column(2).visible(false);
     function multInputs() {
         let mult = 0;
         let addDispense =0;
@@ -29,11 +29,14 @@ $(document).ready(function () {
             addDispense += dispenseTotal;
 
         });
-         $("#drugsText").text(mult.toFixed(2));
+        $("#drugsText").text(mult.toFixed(2));
         $("#drugs").val(mult);
 
         let  ser =Number($('#service').val());
         $("#grandText").text(Number(mult+ser).toFixed(2));
+
+        /*     let me = parseFloat($("#detention_input").val())+mult+ser;
+             $("#bill_grandText").text(me);*/
 
         $("#grand").val(mult+Number($('#service').val()));
 
@@ -68,17 +71,25 @@ $(document).ready(function () {
         $("#grand").val(addition+Number($('#arrears').val()));
 
     }
-    
+
+    $('#amount_paid_input').keyup(calculateArrears);
+    function calculateArrears() {
+        let amount_paid = parseFloat($('#amount_paid_input').val());
+        let grand_total = parseFloat($('#detention_input').val());
+        $("#bill_amt_txt").text($('#amount_paid_input').val());
+
+        $("#bill_arrears_text").text(Number((grand_total) - (amount_paid)).toFixed(2));
+    }
 
 
 
-    $('#add_detention').click(function () {
-        if (!$(this).is(':checked')) {
-            let result =parseFloat($("#grand").val())-parseFloat($('#detention_value').val());
-            $("#grand").val(result)
-        }else{
-            let result =parseFloat($('#detention_value').val())+parseFloat($("#grand").val());
-            $("#grand").val(result)
+    $('.dosage').change(function () {
+        for(let i=0; i<10; i++) {
+            let days = $('.days')[i].val();
+            let qty = $('.qty')[i].val();
+            $('.qty')[i].val(5);
         }
+
+
     });
 });

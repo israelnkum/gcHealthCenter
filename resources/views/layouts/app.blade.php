@@ -252,7 +252,7 @@
 
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
+                            <a href="{{route('reports.index')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
@@ -340,7 +340,7 @@
 <script src="{{asset('public/js/dataTables/vfs_fonts.js')}}"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
 <script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
-
+<script src="{{asset('public/js/jquery.print.js')}}"></script>
 <!-- endinject -->
 
 
@@ -388,8 +388,10 @@
         },3000);
     });
 
-    //print div
-    $("#btn_print").click(function () {
+    $('.print').on('click', function() { // select print button with class "print," then on click run callback function
+       // window.open();
+        $('.cont').append($('#d_name').text());
+        $('.content-print').print();
 
     });
 </script>

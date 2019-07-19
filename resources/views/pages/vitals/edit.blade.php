@@ -140,7 +140,7 @@
                                                                 <div class="form-group row">
                                                                     <label for="temperature" class="col-sm-2 col-form-label">Temperature</label>
                                                                     <div class="col-sm-3">
-                                                                        <input required value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->temperature !!}@endif" type="number" class="form-control" id="temperature" name="temperature">
+                                                                        <input required value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->temperature !!}@endif" type="text" class="form-control" id="temperature" name="temperature">
                                                                         <div class="invalid-feedback">
                                                                             Temperature is required
                                                                         </div>

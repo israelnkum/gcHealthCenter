@@ -8,6 +8,7 @@ use App\Consultation;
 use App\Insurance;
 use App\OldRecord;
 use App\Patient;
+use App\Payment;
 use App\Registration;
 use App\Vital;
 use Illuminate\Http\Request;
@@ -196,6 +197,20 @@ class PatientController extends Controller
                         $consultation->registration_id =$register->id;
                         $consultation->save();
 
+                        $payment = new Payment();
+
+                        $payment->patient_id =$patient->id;
+                        $payment->registration_id =$register->id;
+                        $payment->drugs_total = 0;
+                        $payment->service_total = 0;
+                        $payment->grand_total = 0;
+                        $payment->amount_paid = 0;
+                        $payment->arrears = 0;
+                        $payment->change = 0;
+                        $payment->user_id = Auth::user()->id;
+
+                        $payment->save();
+
                         //check if patient is old patient
                         if (!\Request::has('old_patient')) {
                             $bill = new Bill();
@@ -244,6 +259,18 @@ class PatientController extends Controller
                     $consultation->registration_id = $register->id;
                     $consultation->save();
 
+                    $payment = new Payment();
+                    $payment->patient_id =$patient->id;
+                    $payment->registration_id =$register->id;
+                    $payment->drugs_total = 0;
+                    $payment->service_total = 0;
+                    $payment->grand_total = 0;
+                    $payment->amount_paid = 0;
+                    $payment->arrears = 0;
+                    $payment->change = 0;
+                    $payment->user_id = Auth::user()->id;
+
+                    $payment->save();
 
                     if (\Request::has('old_patient')) {
                         $bill = new Bill();

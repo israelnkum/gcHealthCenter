@@ -574,8 +574,8 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body pt-0 text-left">
-                                                                <input type="hidden" value="{{$recentRegistration->patient_id}}" name="registration_id">
-                                                                <input type="hidden" value="{{$recentRegistration->id}}" name="patient_id">
+                                                                <input type="hidden" value="{{$recentRegistration->patient_id}}" name="patient_id">
+                                                                <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
 
                                                                 <div class="row">
                                                                     <div class="col-md-12 mb-3">
@@ -623,26 +623,29 @@
                                                         <form method="post" novalidate class="needs-validation" action="{{route('add-medication-only')}}">
                                                             @csrf
                                                             <div class="modal-body pt-0">
-                                                                <input type="hidden" value="{{$recentRegistration->patient_id}}" name="registration_id">
-                                                                <input type="hidden" value="{{$recentRegistration->id}}" name="patient_id">
+                                                                <input type="hidden" value="{{$recentRegistration->patient_id}}" name="patient_id">
+                                                                <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
                                                                 <div class="row">
-                                                                    <div class="col-md-6 text-left" >
+                                                                    <div class="col-md-7 text-left" >
                                                                         <label for="" class="text-info">Drugs</label>
                                                                     </div>
-                                                                    <div class="col-md-3 text-left">
+                                                                    <div class="col-md-2 text-left">
                                                                         <label for="" class="text-info">Dosage</label>
                                                                     </div>
-                                                                    <div class="col-md-3 text-left">
+                                                                    <div class="col-md-1 text-left">
                                                                         <label for="" class="text-info">Days</label>
+                                                                    </div>
+                                                                    <div class="col-md-1 text-left">
+                                                                        <label for="" class="text-info">Qty</label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="repeater">
                                                                     <div data-repeater-list="medications">
                                                                         <div data-repeater-item class="mb-2">
                                                                             <div class="row">
-                                                                                <div class="col-md-6">
-                                                                                    <select required class="selectMedicine col-12 form-control mr-1" style="width: 100%"   name="drug_id" id="select_drug_only">
-                                                                                        <option value="">Nothing Selected</option>
+                                                                                <div class="col-md-7">
+                                                                                    <select required style="width: 100% " class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                                                        <option value=""></option>
                                                                                         @foreach($drugs as $drug)
                                                                                             <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                                                         @endforeach
@@ -651,25 +654,35 @@
                                                                                         Drug is required
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="col-md-3">
+                                                                                <div class="col-md-2">
                                                                                     {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
-                                                                                    <select required style="width: 100%" class="selectMedicine col-12 form-control mr-1"    name="dosage" id="select_dosage_only">
-                                                                                        <option value="">Nothing Selected</option>
+                                                                                    {{--<select required class="selectMedicine col-12 form-control mr-1 dosage"    name="dosage" id="dosage">
+                                                                                        <option value=""></option>
                                                                                         <option value="3tid">tid</option>
                                                                                         <option value="2bd">bd</option>
                                                                                         <option value="1nocte">nocte</option>
                                                                                         <option value="1stat">stat</option>
                                                                                         <option value="1dly">dly</option>
-                                                                                    </select>
+                                                                                    </select>--}}
+                                                                                    <input required list="dosage" class="form-control" placeholder="Dosage" name="dosage">
+                                                                                    <datalist id="dosage">
+                                                                                        <option value="tid">
+                                                                                        <option value="bd">
+                                                                                        <option value="nocte">
+                                                                                        <option value="stat">
+                                                                                        <option value="dly">
+                                                                                        <option value="btl">
+                                                                                        <option value="course">
+                                                                                    </datalist>
                                                                                     <div class="invalid-feedback">
                                                                                         Dosage is required
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="col-md-2">
-                                                                                    <input type="number" required name="days" style="width: 70px;" min="1" placeholder="Days"  class="form-control">
-                                                                                    <div class="invalid-feedback">
-                                                                                        Days required
-                                                                                    </div>
+                                                                                <div class="col-md-1">
+                                                                                    <input type="number" required name="days" value="0" style="width: 70px;" min="1" placeholder="Days"  class="form-control days">
+                                                                                </div>
+                                                                                <div class="col-md-1">
+                                                                                    <input type="number" required name="qty" value="0" style="width: 70px;" min="1" placeholder="Qty"  class="form-control qty">
                                                                                 </div>
                                                                                 <div class="col-md-1">
                                                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
@@ -700,14 +713,24 @@
                                                                                 </div>
                                                                                 <div class="col-md-3">
                                                                                     {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
-                                                                                    <select style="width: 100%" class="selectMedicine col-12 form-control mr-1"    name="dosage" id="dosage">
+                                                                                    {{--<select style="width: 100%" class="selectMedicine col-12 form-control mr-1"    name="dosage" id="dosage">
                                                                                         <option value=""></option>
                                                                                         <option value="3tid">tid</option>
                                                                                         <option value="2bd">bd</option>
                                                                                         <option value="1nocte">nocte</option>
                                                                                         <option value="1stat">stat</option>
                                                                                         <option value="1dly">dly</option>
-                                                                                    </select>
+                                                                                    </select>--}}
+                                                                                    <input required list="other_dosage" class="form-control" placeholder="Dosage" name="other_dosage">
+                                                                                    <datalist id="other_dosage">
+                                                                                        <option value="tid">
+                                                                                        <option value="bd">
+                                                                                        <option value="nocte">
+                                                                                        <option value="stat">
+                                                                                        <option value="dly">
+                                                                                        <option value="btl">
+                                                                                        <option value="course">
+                                                                                    </datalist>
                                                                                     <div class="invalid-feedback">
                                                                                         Dosage is required
                                                                                     </div>

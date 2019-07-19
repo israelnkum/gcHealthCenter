@@ -19,6 +19,7 @@ class CreateOtherMedicationsTable extends Migration
             $table->integer('patient_id');
             $table->string('drug');
             $table->string('dosage');
+            $table->string('type',20)->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

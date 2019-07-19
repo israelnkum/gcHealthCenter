@@ -84,6 +84,7 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
+//        return $request;
         /*foreach ($request->input('medications') as $med) {
             $qty = substr($med['dosage'],0,1)*$med['days'];
             $remainder = $qty % $med['days'];
@@ -155,7 +156,6 @@ class ConsultationController extends Controller
                     ->whereDate('created_at', date('Y-m-d'))
                     ->first();
                 if (empty($check)){
-
                     /*$drugs = Drug::find($med['drug_id']);
 
                     //if patient is NOT Insured then insert the drug selling price
@@ -192,9 +192,9 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage =$med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
@@ -207,9 +207,9 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage =$med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->save();
                 }
@@ -225,14 +225,12 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
-                    $medication->dosage = substr($other['other_dosage'],1)." x ".$other['other_days']." days";
+                    $medication->dosage =$other['other_dosage']." x ".$other['other_days']." days";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
             }
         }
-
-
         //add diagnosis
         if (\Request::has('diagnosis')) {
 
@@ -975,9 +973,9 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage = $med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
@@ -990,9 +988,9 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage = $med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->save();
                 }
@@ -1008,7 +1006,7 @@ class ConsultationController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
-                    $medication->dosage = substr($other['other_dosage'],1)." x ".$other['other_days']." days";
+                    $medication->dosage = $other['other_dosage']." x ".$other['days']." days";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }

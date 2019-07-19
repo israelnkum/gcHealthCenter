@@ -7,6 +7,7 @@ use App\Charge;
 use App\Consultation;
 use App\Medication;
 use App\PatientDiagnosis;
+use App\Payment;
 use App\Registration;
 use App\Vital;
 use Illuminate\Http\Request;
@@ -47,8 +48,6 @@ class OpdRegistrationController extends Controller
      */
     public function store(Request $request)
     {
-
-
         //check if the incoming request has register patient
         if (\Request::has('register_patient')){
 
@@ -95,6 +94,21 @@ class OpdRegistrationController extends Controller
                         $consultation->patient_id =$request->input('patient_id');
                         $consultation->registration_id =$register->id;
                         $consultation->save();
+
+
+                        $payment = new Payment();
+
+                        $payment->patient_id =$request->input('patient_id');
+                        $payment->registration_id =$register->id;
+                        $payment->drugs_total = 0;
+                        $payment->service_total = 0;
+                        $payment->grand_total = 0;
+                        $payment->amount_paid = 0;
+                        $payment->arrears = 0;
+                        $payment->change = 0;
+                        $payment->user_id = Auth::user()->id;
+
+                        $payment->save();
 
                         /*
                          * Create a new bill for insured
@@ -144,6 +158,20 @@ class OpdRegistrationController extends Controller
                     $vital->registration_id = $register->id;
                     $vital->save();
 
+
+                    $payment = new Payment();
+
+                    $payment->patient_id =$request->input('patient_id');
+                    $payment->registration_id =$register->id;
+                    $payment->drugs_total = 0;
+                    $payment->service_total = 0;
+                    $payment->grand_total = 0;
+                    $payment->amount_paid = 0;
+                    $payment->arrears = 0;
+                    $payment->change = 0;
+                    $payment->user_id = Auth::user()->id;
+
+                    $payment->save();
 
                     /*
                      * Create a new consultation for non-insured

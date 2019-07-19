@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('/test', function () {
+    return view('print-test');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -38,9 +42,14 @@ Route::get('/view-old-records/{id}','PatientController@viewOldRecord')->name('vi
 Route::resource('registration','OpdRegistrationController');
 
 
+
 /*
- * Registration Route
+ * Registration reports
  */
+
+Route::resource('reports','ReportsController');
+
+
 
 Route::resource('vitals','VitalsController');
 Route::post('/search-registration-for-vitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');

@@ -41,7 +41,6 @@ class DetainedRecordsController extends Controller
     public function addMedicationOnly(Request $request){
         $registration = Registration::find($request->input('registration_id'));
 
-//        return $request;
         $total_drug_bill =0;
         $total_insurance_bill =0;
         //Add medications
@@ -59,9 +58,9 @@ class DetainedRecordsController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage = $med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty =$med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
@@ -76,7 +75,7 @@ class DetainedRecordsController extends Controller
                         $drugArrears->item = $drugs->name;
                         $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->dosage=$med['dosage'];
                         $drugArrears->days=$med['days'];
                         $drugArrears->qty_dispensed =0;
 
@@ -91,7 +90,7 @@ class DetainedRecordsController extends Controller
                             $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }
-                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+                        $drugArrears->qty = $med['qty'];
 
                         $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $drugArrears->save();
@@ -104,7 +103,7 @@ class DetainedRecordsController extends Controller
                         $drugArrears->item = $drugs->name;
                         $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->dosage=$med['dosage'];
                         $drugArrears->days=$med['days'];
 
                         //check if unit of pricing is blister
@@ -112,13 +111,13 @@ class DetainedRecordsController extends Controller
                         if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
                             $drugArrears->amount = ($drugs->retail_price-$drugs->nhis_amount)/10;
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
-                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*(substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*($med['qty']);
                         }else{
                             $drugArrears->amount = $drugs->retail_price-$drugs->nhis_amount;
                             $drugArrears->insurance_amount = $drugs->nhis_amount;
-                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*(substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*($med['qty']);
                         }
-                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+                        $drugArrears->qty = $med['qty'];
 
                         $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $drugArrears->save();
@@ -174,6 +173,8 @@ class DetainedRecordsController extends Controller
             ->where('patient_id',$request->input('patient_id'))
             ->first();
 
+
+//        return $payment;
         $payment->grand_total = $payment->grand_total+$total_drug_bill;
         $payment->arrears = str_replace('-','',$payment->arrears)+$total_drug_bill;
         $payment->save();
@@ -326,9 +327,9 @@ class DetainedRecordsController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drugs_id = $med['drug_id'];
-                    $medication->dosage = substr($med['dosage'],1);
+                    $medication->dosage = $med['dosage'];
                     $medication->days = $med['days'];
-                    $medication->qty = substr($med['dosage'],0,1)*$med['days'];
+                    $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
@@ -343,7 +344,7 @@ class DetainedRecordsController extends Controller
                         $drugArrears->item = $drugs->name;
                         $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->dosage=$med['dosage'];
                         $drugArrears->days=$med['days'];
                         $drugArrears->qty_dispensed =0;
 
@@ -351,14 +352,14 @@ class DetainedRecordsController extends Controller
                         //then divide the retail price and by 10
                         if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
                             $drugArrears->amount = $drugs->retail_price/10;
-                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * ($med['qty']);
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }else{
                             $drugArrears->amount = $drugs->retail_price;
-                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * ($med['qty']);
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }
-                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+                        $drugArrears->qty = $med['qty'];
 
                         $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $drugArrears->save();
@@ -371,7 +372,7 @@ class DetainedRecordsController extends Controller
                         $drugArrears->item = $drugs->name;
                         $drugArrears->medication_id = $medication->id;
                         $drugArrears->unit_of_pricing = $drugs->unit_of_pricing;
-                        $drugArrears->dosage=substr($med['dosage'],1);
+                        $drugArrears->dosage=$med['dosage'];
                         $drugArrears->days=$med['days'];
 
                         //check if unit of pricing is blister
@@ -379,13 +380,13 @@ class DetainedRecordsController extends Controller
                         if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
                             $drugArrears->amount = ($drugs->retail_price-$drugs->nhis_amount)/10;
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
-                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*(substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*($med['qty']);
                         }else{
                             $drugArrears->amount = $drugs->retail_price-$drugs->nhis_amount;
                             $drugArrears->insurance_amount = $drugs->nhis_amount;
-                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*(substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*($med['qty']);
                         }
-                        $drugArrears->qty = $med['days']* substr($med['dosage'],0,1);
+                        $drugArrears->qty = $med['qty'];
 
                         $drugArrears->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
                         $drugArrears->save();
@@ -423,7 +424,7 @@ class DetainedRecordsController extends Controller
                     $medication->patient_id = $request->input('patient_id');
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
-                    $medication->dosage = $other['other_dosage'];
+                    $medication->dosage = $other['other_dosage']."x".$other['other_days']." days";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
@@ -845,6 +846,7 @@ class DetainedRecordsController extends Controller
                 ->with('totalNhisSale', $totalNhisSale)
                 ->with('totalSales', $totalSales)
                 ->with('arrears', $arrears)
+                ->with('getBills',$getBills)
                 ->with('recordMedication',$recordMedication)
                 ->with('detentionBill',$detentionBill);
         }
@@ -897,21 +899,35 @@ class DetainedRecordsController extends Controller
     }
 
     public function view_detention_record($patient_id, $registration_id){
+
         $patient =Patient::find($patient_id);
 
-        // $patient;
-        $recentRecord = DetentionRecord::where('patient_id',$patient_id)
-            ->where('registration_id',$registration_id)
-            ->latest()->first();
 
-//        return $recentRecord;
+        $getAllRecordDate = [];
         $allRecords=DetentionRecord::where('patient_id',$patient_id)
             ->where('registration_id',$registration_id)
             ->get();
 
+        // $patient;
+        $recentRecord = DetentionRecord::where('patient_id',$patient_id)
+            ->where('registration_id',$registration_id)
+            ->get();
+
+//        return $recentRecord;
+
+
+
+
+        foreach ($allRecords as $record)
+        {
+            array_push($getAllRecordDate,substr($record->created_at,0,10));
+        }
+
+        $allDateRecords= array_unique($getAllRecordDate);
+
         return view('pages.detention_records.view_detention_record')
             ->with('recentRecord',$recentRecord)
-            ->with('allRecords',$allRecords)
+            ->with('allDateRecords', $allDateRecords)
             ->with('patient',$patient);
     }
 
@@ -920,20 +936,31 @@ class DetainedRecordsController extends Controller
         $data = explode(',',$request->input('info'));
         $recentRecord = DetentionRecord::where('patient_id',$data[0])
             ->where('registration_id',$data[1])
-            ->latest()->first();
+            ->whereDate('created_at',$data[2])
+            ->get();
 
         $allRecords=DetentionRecord::where('patient_id',$data[0])
             ->where('registration_id',$data[1])
             ->get();
+
+
+        $getAllRecordDate = [];
+        foreach ($allRecords as $record)
+        {
+            array_push($getAllRecordDate,substr($record->created_at,0,10));
+        }
 
         $patient =Patient::find($data[0]);
 
 
         $charges = Charge::all();
         $diagnosis = Diagnose::all();
+
+        $allDateRecords= array_unique($getAllRecordDate);
+
         return view('pages.detention_records.view_detention_record')
             ->with('recentRecord',$recentRecord)
-            ->with('allRecords',$allRecords)
+            ->with('allDateRecords', $allDateRecords)
             ->with('patient',$patient)
             ->with('charges',$charges)
             ->with('diagnosis',$diagnosis);

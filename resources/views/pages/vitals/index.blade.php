@@ -87,14 +87,14 @@
                                                             <div class="col-sm-3">
                                                                 <div class="row">
                                                                     <div class="col-md-6">
-                                                                        <input required type="number" name="systolic" class="form-control" id="systolic{!! $i !!}">
+                                                                        <input required type="number" name="systolic" value="0" class="form-control" id="systolic{!! $i !!}">
                                                                         <small class="text-danger">Systolic</small>
                                                                         <div class="invalid-feedback">
                                                                             is required
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-6">
-                                                                        <input required type="number" name="diastolic" class="form-control" id="diastolic{!! $i !!}">
+                                                                        <input required type="number" value="0" name="diastolic" class="form-control" id="diastolic{!! $i !!}">
                                                                         <small class="text-danger">Diastolic</small>
                                                                         <div class="invalid-feedback">
                                                                             is required
@@ -114,7 +114,7 @@
                                                         <div class="form-group row">
                                                             <label for="temperature" class="col-sm-2 col-form-label">Temperature</label>
                                                             <div class="col-sm-3">
-                                                                <input required type="number" class="form-control" id="temperature{{$i}}" name="temperature">
+                                                                <input required type="text" class="form-control" id="temperature{{$i}}" name="temperature">
                                                                 {{--                                                        temperature{{$i}}--}}
                                                                 <div class="invalid-feedback">
                                                                     Temperature is required

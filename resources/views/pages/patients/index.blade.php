@@ -81,13 +81,13 @@
                                                         </a>
                                                     </li>
                                                     <li class="d-inline-block">
-                                                        <form method="post" action="{{route('patients.destroy',$data[0]->id)}}">
+                                                      {{--  <form method="post" action="{{route('patients.destroy',$data[0]->id)}}">
                                                             {!! method_field('delete') !!}
                                                             @csrf
                                                             <button class="btn bg-transparent text-dark p-1">
                                                                 <i class="icon icon-trash" style="font-size: 20px"></i>
                                                             </button>
-                                                        </form>
+                                                        </form>--}}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -290,7 +290,7 @@
                                             @else
                                                 @foreach($registration as $key => $registered)
                                                     @if($key == count( $registration ) -1 )
-                                                        @if(substr($registered->created_at,0,10) != date('Y-m-d'))
+                                                        @if(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain != 1)
                                                             <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
                                                                 <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
                                                                     @csrf
@@ -357,6 +357,10 @@
                                                                         </div>
                                                                     </div>
                                                                 </form>
+                                                            </div>
+                                                            @else
+                                                            <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
+                                                                <h4 class="display-4">Patient is Detained</h4>
                                                             </div>
                                                         @endif
                                                     @endif

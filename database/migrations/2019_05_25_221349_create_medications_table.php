@@ -24,6 +24,7 @@ class CreateMedicationsTable extends Migration
             $table->integer('qty')->default(0);
             $table->integer('qty_dispensed')->default(0);
             $table->boolean('dispensed')->default(0);
+            $table->string('type',20)->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });
