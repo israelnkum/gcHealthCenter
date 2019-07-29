@@ -328,7 +328,6 @@
                                                     <div class="col-md-12">
                                                         <label class="text-info">Upload <u><b>SCAN</b></u> Result(s)</label>
                                                         <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
-
                                                     </div>
                                                 </div>
                                             </div>

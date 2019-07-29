@@ -7,6 +7,7 @@ use App\Drug;
 use App\DrugType;
 use App\Medication;
 use App\OtherMedication;
+use App\Payment;
 use App\Registration;
 use App\Supplier;
 use App\Vital;
@@ -46,7 +47,7 @@ class DrugController extends Controller
      */
     public function create()
     {
-        $recentRegistration ="";
+        $allPatientRegistration ="";
         $vitals="";
         $other_medication="";
         $detentionBill ="";
@@ -55,6 +56,8 @@ class DrugController extends Controller
         $totalCashSales = Bill::sum('total_amount_to_pay');
         $totalSales = Bill::sum('amount');
         $totalNhisSale = Bill::sum('insurance_amount');
+
+
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
@@ -64,8 +67,9 @@ class DrugController extends Controller
             ->orderBy('created_at','asc')
             ->first();
 
-
         if (!empty($registration)){
+            $allPatientRegistration = Registration::where('patient_id',$registration->patient_id)->get();
+
             $vitals = Vital::where('registration_id',$registration->id)
                 ->where('patient_id',$registration->patient_id)
                 ->latest()->first();
@@ -82,7 +86,12 @@ class DrugController extends Controller
 //                ->where('type','!=','Drug')
                 ->get();
 
-//            return $getBills;
+     /*       $checkForArrears = Payment::where('patient_id',$registration->patient_id)
+//                ->where('arrears','<=','grand_total')
+                ->where('arrears','!=',0)
+                ->get();
+
+            return $checkForArrears;*/
 
             //check if patient is detained Or Admitted
             if ( $registration->detain == 0){
@@ -145,7 +154,8 @@ class DrugController extends Controller
             ->with('totalSales',$totalSales)
             ->with('getBills',$getBills)
             ->with('detentionBill',$detentionBill)
-            ->with('other_medication',$other_medication);
+            ->with('other_medication',$other_medication)
+            ->with('allPatientRegistration',$allPatientRegistration);
     }
 
     /**
@@ -182,6 +192,7 @@ class DrugController extends Controller
             $drug->user_id = Auth::user()->id;
 
             $drug->save();
+
             return redirect('/drugs')
                 ->with('success','Drug Added');
         }
@@ -229,7 +240,6 @@ class DrugController extends Controller
                 $path = $request->file('file')->getRealPath();
                 $data = Excel::load($path, function($reader) {})->get();
                 $total=count($data);
-
                 if(!empty($data) && $data->count()){
                     // $user = \Auth::user()->id;
                     foreach($data as $value=>$row)
@@ -275,11 +285,11 @@ class DrugController extends Controller
                             $drug = Drug::where('name', $name)->first();
                             $drug->name = $name;
                             $drug->drug_type_id = $request->input('drug_type_id');
-                            $drug->qty_in_stock = $receiving_stock;
+                            $drug->qty_in_stock =$drug->qty_in_stock+ $receiving_stock;
                             $drug->unit_of_pricing = $unit_of_pricing;
                             if ($unit_of_pricing == "Blister (x10tabs)"){
                                 $drug->no_of_tablet = $tablet_per_blister;
-                                $drug->qty_in_tablet = $receiving_stock*$tablet_per_blister;
+                                $drug->qty_in_tablet =$drug->qty_in_tablet+($receiving_stock*$tablet_per_blister);
                             }
 
                             $drug->retail_price = $retail_price;
@@ -330,11 +340,22 @@ class DrugController extends Controller
 
         $drug->name = $request->input('name');
         $drug->drug_type_id = $request->input('type_id');
-        $drug->cost_price = $request->input('cost_price');
+        $drug->qty_in_stock = $request->input('receiving_stock');
+        $drug->unit_of_pricing = $request->input('unit_of_pricing');
+        if (\Request::has('no_of_tablet')){
+//                $drug->no_of_tablet = $request->input('no_of_tablet');
+            $drug->no_of_tablet = $request->input('no_of_tablet');
+            $drug->qty_in_tablet = $request->input('receiving_stock')*10;
+        }
+
         $drug->retail_price = $request->input('retail_price');
-        $drug->quantity_in_stock =$drug->quantity_in_stock+ $request->input('receiving_stock');
-        $drug->user_id = Auth::user()->id;
+
         $drug->supplier_id = $request->input('supplier_id');
+        $drug->cost_price = $request->input('cost_price');
+
+        $drug->nhis_amount = $request->input('nhis_amount');
+        $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
+        $drug->user_id = Auth::user()->id;
 
         $drug->save();
         return redirect('/drugs')

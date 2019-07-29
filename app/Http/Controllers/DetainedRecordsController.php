@@ -83,11 +83,11 @@ class DetainedRecordsController extends Controller
                         //then divide the retail price and by 10
                         if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
                             $drugArrears->amount = $drugs->retail_price/10;
-                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * ($med['qty']);
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }else{
                             $drugArrears->amount = $drugs->retail_price;
-                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * (substr($med['dosage'],0,1)*$med['days']);
+                            $drugArrears->total_amount_to_pay = ($drugs->retail_price) * ($med['qty']);
                             $drugArrears->insurance_amount = $drugs->nhis_amount/10;
                         }
                         $drugArrears->qty = $med['qty'];
@@ -434,7 +434,6 @@ class DetainedRecordsController extends Controller
 
         //add diagnosis
         if (\Request::has('diagnosis')) {
-
             foreach ($request->input('diagnosis') as $key) {
                 $check = PatientDiagnosis::where('diagnoses_id', $key)
                     ->where('patient_id', $request->input('patient_id'))
@@ -779,6 +778,8 @@ class DetainedRecordsController extends Controller
         }
         if ($recentRegistration->medication == 0){
 
+            $allPatientRegistration = Registration::where('patient_id',$searchPatient[0]->id)->get();
+
             $registration = $recentRegistration;
             $medication= Medication::with('bill','drugs')
                 ->where('dispensed',0)
@@ -795,7 +796,8 @@ class DetainedRecordsController extends Controller
                 ->with('totalNhisSale',$totalNhisSale)
                 ->with('totalSales',$totalSales)
                 ->with('getBills',$getBills)
-                ->with('detentionBill',$detentionBill);
+                ->with('detentionBill',$detentionBill)
+                ->with('allPatientRegistration',$allPatientRegistration);
         }
         elseif($recentRegistration->medication == 1){
 
@@ -854,6 +856,62 @@ class DetainedRecordsController extends Controller
 
 
 
+    }
+
+
+
+
+    public function outStandingMedications(Request $request)
+    {
+        $totalCashSales = Bill::sum('total_amount_to_pay');
+        $totalSales = Bill::sum('amount');
+        $totalNhisSale = Bill::sum('insurance_amount');
+        $drugs = Drug::all()->count();
+
+
+        //get patient recent registration
+        $recentRegistration = Registration::with('patient')
+            ->where('id', $request->input('registration_id'))->latest()->first();
+
+        //get patient vitals
+        $vitals = Vital::where('registration_id', $recentRegistration->id)
+            ->where('patient_id', $recentRegistration->patient_id)
+            ->latest()->first();
+
+
+
+        $getBills = Bill::where('patient_id',$recentRegistration->patient_id)
+            ->where('registration_id',$recentRegistration->id)
+//                ->where('type','!=','Drug')
+            ->get();
+
+        $recordMedication = DrugArrears::where('registration_id', $recentRegistration->id)
+            ->where('patient_id', $recentRegistration->patient_id)
+            ->latest()->get();
+
+        $medication = DrugArrears::where('registration_id', $recentRegistration->id)
+            ->where('patient_id', $recentRegistration->patient_id)->get();
+
+//            return $medication;
+        $arrears = Payment::where('registration_id', $recentRegistration->id)
+            ->where('patient_id', $recentRegistration->patient_id)
+            ->first();
+
+        $registration = "";
+
+
+        return view('pages.pharmacy.out-standing')
+            ->with('registration', $registration)
+            ->with('drugs', $drugs)
+            ->with('vitals', $vitals)
+            ->with('medication', $medication)
+            ->with('recentRegistration', $recentRegistration)
+            ->with('totalCashSales', $totalCashSales)
+            ->with('totalNhisSale', $totalNhisSale)
+            ->with('totalSales', $totalSales)
+            ->with('arrears', $arrears)
+            ->with('getBills',$getBills)
+            ->with('recordMedication',$recordMedication);
     }
     /**
      * Show the form for editing the specified resource.

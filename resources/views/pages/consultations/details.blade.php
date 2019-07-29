@@ -177,32 +177,23 @@
                                     </blockquote>
                                 </div>
                             </div>
-                            @if($consultation[0]->ultra_sound_scan)
+                            @if(count($scanned_results)>0)
                                 <h4>Scan Result(s)</h4>
                                 <div class="col-sm-12">
-                                    <?php
-                                    $scans=explode(',',$consultation[0]->ultra_sound_scan)
-                                    ?>
                                     <div id="lightgallery" class="row lightGallery">
-                                        @foreach($scans as $scan)
-
-                                            <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
+                                        @foreach($scanned_results as $scan)
+                                            <a href="{{asset('public/scan/'.$scan->file_name)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan->file_name)}}" alt="{{$scan->file_name}}"></a>
                                         @endforeach
                                     </div>
 
                                 </div>
                             @endif
-                            @if($consultation[0]->labs)
+                            @if(count($lab_results)>0)
                                 <h4>Lab Result(s)</h4>
                                 <div class="col-sm-12">
-
-                                    <?php
-                                    $labs=explode(',',$consultation[0]->labs)
-                                    ?>
                                     <div id="lightgallery-without-thumb" class="row lightGallery">
-                                        @foreach($labs as $lab)
-                                            {{--                                                    {{$lab}}--}}
-                                            <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
+                                        @foreach($lab_results as $lab)
+                                            <a href="{{asset('public/labs/'.$lab->file_name)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab->file_name)}}" alt="{{$lab->file_name}}"></a>
                                         @endforeach
                                     </div>
 
@@ -231,32 +222,30 @@
                                     </label>
                                 </div>
                             </div>
-                            @foreach($consultation as $consult)
-                                <h6 class="card-title text-danger">Consultation</h6>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label class="text-info">Complains</label>
-                                        <blockquote class="blockquote">
-                                            <p class="mb-0">{{$consult->complains}}</p>
-                                        </blockquote>
-                                    </div>
-                                    <div class="col-md-12 p-1">
-                                        <label class="text-info">Findings</label>
-                                        <blockquote class="blockquote">
-                                            <p class="mb-0">{{$consult->findings}}</p>
-                                        </blockquote>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="text-info">Physical Examination</label>
-                                        <blockquote class="blockquote">
-                                            <p class="mb-0">{{$consult->physical_examination}}</p>
-                                        </blockquote>
-                                    </div>
-                                    <?php
-                                    $other_diagnosis =$consult->other_diagnosis;
-                                    ?>
+                            <h6 class="card-title text-danger">Consultation</h6>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="text-info">Complains</label>
+                                    <blockquote class="blockquote">
+                                        <p class="mb-0">{{$consultation->complains}}</p>
+                                    </blockquote>
                                 </div>
-                            @endforeach
+                                <div class="col-md-12 p-1">
+                                    <label class="text-info">Findings</label>
+                                    <blockquote class="blockquote">
+                                        <p class="mb-0">{{$consultation->findings}}</p>
+                                    </blockquote>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="text-info">Physical Examination</label>
+                                    <blockquote class="blockquote">
+                                        <p class="mb-0">{{$consultation->physical_examination}}</p>
+                                    </blockquote>
+                                </div>
+                                <?php
+                                $other_diagnosis =$consultation->other_diagnosis;
+                                ?>
+                            </div>
                             {{--End consulation--}}
 
                             {{--Diagnosis--}}

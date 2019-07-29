@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
     {{--    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">--}}
     <link rel="stylesheet" href="{{asset('public/css/buttons.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{asset('public/css/toastr.min.css')}}">
 
     <!-- endinject -->
     <link rel="shortcut icon" href="{{asset('public/images/logo.jpeg')}}" />
@@ -222,33 +223,43 @@
                         <li class="nav-item">
                             <a href="{{route('home')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-screen-desktop"></i><span class="menu-title">Home</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
-                            <div class="submenu">
-                                <ul class="submenu-item">
-                                    <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}?{{Hash::make(time())}}">Patients</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}?{{Hash::make(time())}}">All Patients</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}?{{Hash::make(time())}}">Vitals</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('consultation.index')}}?{{Hash::make(time())}}" class="nav-link">
-                                <i class="link-icon icon-energy"></i>
-                                <span class="menu-title">Consulting</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-drop">
-                                </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
-                            </a>
-                            <div class="submenu">
-                                <ul class="submenu-item">
-                                    <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Drugs</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Nurse")
+                            <li class="nav-item">
+                                <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
+                                <div class="submenu">
+                                    <ul class="submenu-item">
+                                        <li class="nav-item"><a class="nav-link" href="{{route('patients.index')}}?{{Hash::make(time())}}">Patients</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{route('patients.create')}}?{{Hash::make(time())}}">All Patients</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{route('vitals.index')}}?{{Hash::make(time())}}">Vitals</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
+                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Doctor")
+                            <li class="nav-item">
+                                <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-energy"></i><span class="menu-title">Consultation/Review</span><i class="menu-arrow"></i></a>
+                                <div class="submenu">
+                                    <ul class="submenu-item">
+                                        <li class="nav-item"><a class="nav-link" href="{{route('consultation.index')}}?{{Hash::make(time())}}">Consulting</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{route('review.index')}}?{{Hash::make(time())}}">Review</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
+
+                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Pharmacist")
+                            <li class="nav-item">
+                                <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-drop">
+                                    </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
+                                </a>
+                                <div class="submenu">
+                                    <ul class="submenu-item">
+                                        <li class="nav-item"><a class="nav-link" href="{{route('drugs.create')}}?{{Hash::make(time())}}">Dispense</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Drugs</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
 
 
                         <li class="nav-item">
@@ -258,18 +269,20 @@
                             <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="{{route('users.index')}}?{{Hash::make(time())}}" class="nav-link">
-                                <i class="link-icon icon-user"></i>
-                                <span class="menu-title">Staff</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('preferences.index')}}?{{Hash::make(time())}}" class="nav-link">
-                                <i class="link-icon icon-docs"></i>
-                                <span class="menu-title">Preferences</span>
-                            </a>
-                        </li>
+                        @if(Auth::user()->role == "Admin")
+                            <li class="nav-item">
+                                <a href="{{route('users.index')}}?{{Hash::make(time())}}" class="nav-link">
+                                    <i class="link-icon icon-user"></i>
+                                    <span class="menu-title">Staff</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{route('preferences.index')}}?{{Hash::make(time())}}" class="nav-link">
+                                    <i class="link-icon icon-docs"></i>
+                                    <span class="menu-title">Preferences</span>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -296,22 +309,22 @@
 
 <script src="{{asset('public/vendors/js/vendor.bundle.base.js')}}"></script>
 <script src="{{asset('public/vendors/js/vendor.bundle.addons.js')}}"></script>
-{{--<script src="https://code.jquery.com/jquery-3.3.1.js"></script>--}}
 <!-- endinject -->
-<script src="{{asset('public/js/dashboard.js')}}"></script>
+{{--<script src="{{asset('public/js/dashboard.js')}}"></script>--}}
 <!-- inject:js -->
-
+@if(!\Request::is('reports'))
+    <script src="{{asset('public/js/mask.init.js')}}"></script>
+@endif
+<script src="{{asset('public/js/template.js')}}"></script>
 <script src="{{asset('public/js/formpickers.js')}}"></script>
 <script src="{{asset('public/js/form-addons.js')}}"></script>
-
-<script src="{{asset('public/js/template.js')}}"></script>
 <script src="{{asset('public/js/todolist.js')}}"></script>
 <script src="{{asset('public/js/file-upload.js')}}"></script>
 <script src="{{asset('public/js/select2.js')}}"></script>
 
 <script src="{{asset('public/js/form-repeater.js')}}"></script>
 <script src="{{asset('public/js/repeater.js')}}"></script>
-<script src="{{asset('public/js/mask.init.js')}}"></script>
+
 <script src="{{asset('public/js/users.js')}}"></script>
 <script src="{{asset('public/js/preferences.js')}}"></script>
 <script src="{{asset('public/js/patients.js')}}"></script>
@@ -324,7 +337,6 @@
 <script src="{{asset('public/js/bt-maxLength.js')}}"></script>
 <script src="{{asset('public/vendors/lightgallery/js/lightgallery-all.min.js')}}"></script>
 <script src="{{asset('public/js/light-gallery.js')}}"></script>
-
 
 <script>
     /* Create Repeater */
@@ -341,6 +353,8 @@
 <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
 <script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
 <script src="{{asset('public/js/jquery.print.js')}}"></script>
+<script src="{{asset('public/js/todolist.js')}}"></script>
+<script src="{{asset('public/js/toastr.min.js')}}"></script>
 <!-- endinject -->
 
 
@@ -389,7 +403,7 @@
     });
 
     $('.print').on('click', function() { // select print button with class "print," then on click run callback function
-       // window.open();
+        // window.open();
         $('.cont').append($('#d_name').text());
         $('.content-print').print();
 
@@ -415,5 +429,6 @@
 
     </script>
 @endif
+@toastr_render
 </body>
 </html>

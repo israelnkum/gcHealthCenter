@@ -3,9 +3,6 @@
     <!-- partial -->
 
     <div class="content-wrapper">
-        {{--Search form--}}
-
-{{--        <button onclick="printContent('div1')">Print</button>--}}
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
@@ -171,20 +168,8 @@
                                             <td class="p-2 text-right"></td>
                                             <td class="p-2" colspan="2">Arrears:  GH₵ {{$arrears->arrears}}</td>
                                         </tr>
-                                        {{--If patient is discharged, then add detention bill to other bills--}}
-                                        @if($recentRegistration->detain == 1 && $detentionBill)
-                                            <tr>
-                                                <td>Detention</td>
-                                                <td>{{$detentionBill}}.00</td>
-                                            </tr>
-                                        @endif
-                                        <tr>
-                                            <td colspan="2" class="text-center">
-                                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
-                                                    Overall Total
-                                                </button>
-                                            </td>
-                                        </tr>
+
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -221,37 +206,13 @@
                                     </div>
                                     <ul class="list-group list-group-flush">
                                         @php($total = 0)
-                                        {{--@foreach($getBills as $bill)
-                                            --}}{{--                                                {{$bill}}--}}{{--
-                                            @if($bill->type == "" || $bill->type=="Service")
-                                                <li class="text-small p-0 list-group-item d-flex justify-content-between align-items-center">
-                                                    {{$bill->item}}:
-                                                    <span>{{$bill->total_amount_to_pay}}</span>
-                                                </li>
-                                                @php($total +=$bill->total_amount_to_pay)
-                                            @endif
-                                        @endforeach--}}
-                                        {{--If patient is discharged, then add detention bill to other bills--}}
-                                        @if($recentRegistration->detain == 2 && $detentionBill)
-                                            <li class="p-0 text-small list-group-item d-flex justify-content-between align-items-center">
-                                                Detention
-                                                <span>{{$detentionBill}}.00</span>
-                                            </li>
-                                        @endif
 
-                                        {{--if patient is still detained, then don't add detention bill--}}
-                                        @if($recentRegistration->detain == 1 && $detentionBill)
-                                            <li class="p-0 text-small list-group-item d-flex justify-content-between align-items-center">
-                                                Detention
-                                                <span>{{$detentionBill}}.00</span>
-                                            </li>
-                                        @endif
+
                                         <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
                                             {{--                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
 {{--                                            <span>Drug Total: GH₵ {{$total_d_total}}</span>--}}
                                         </li>
                                         <li class="p-0 text-small bg-warning text-right list-group-item  justify-content-between align-items-center">
-{{--                                            <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
                                             <span>Grand Total: GH₵ {{$arrears->grand_total}}</span>
                                         </li>
                                         <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
@@ -272,9 +233,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{--<button type="button" class=" btn btn-success" data-toggle="modal" data-target="#display_detention_bill">
-                                Overall Total
-                            </button>--}}
                             <div class="row">
                                 <div class="col-md-12 text-center">
                                     <button type="button" class="print btn btn-dark">
@@ -284,32 +242,6 @@
                                 </div>
                             </div>
                             {{--End Bill--}}
-
-
-                            {{--display dentention overall bill(detiontion+service total)--}}
-                            <div class="modal fade" id="display_detention_bill" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Detention + All Services + Medication</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body pt-0 text-center">
-                                            <h4 class="display-4">Total : GH₵ {{$arrears->grand_total+$detentionBill}}</h4>
-                                            <h5>Amount Paid:  GH₵ {{$arrears->amount_paid}}</h5>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                <i class="icon icon-close"></i> Close
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {{--End display dentention overall bill(detiontion+service total)--}}
-
                         </div>
                     </div>
                 </div>

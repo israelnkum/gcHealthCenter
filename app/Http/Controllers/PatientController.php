@@ -6,10 +6,12 @@ use App\Bill;
 use App\Charge;
 use App\Consultation;
 use App\Insurance;
+use App\LabResult;
 use App\OldRecord;
 use App\Patient;
 use App\Payment;
 use App\Registration;
+use App\ScannedResult;
 use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -32,12 +34,13 @@ class PatientController extends Controller
         $data="none";
         $insuranceType = Insurance::all();
 
-
+        $patient_registrations =0;
         $charges = Charge::all();
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
-            ->with('charges',$charges);
+            ->with('charges',$charges)
+            ->with('patient_registrations',$patient_registrations);
     }
 
     public function upload_old_files(Request $request){
@@ -55,16 +58,17 @@ class PatientController extends Controller
             }
             $file->move('public/old_records/'.$patient->registration_number.'', $fileName);
 
-            array_push($old_file_names,$fileName);
+            $record = new OldRecord();
+            $record->patient_id = $request->input('patient_id');
+            $record->files =$fileName;
+            $record->date=$request->input('record_date');
+            $record->user_id = Auth::user()->id;
+            $record->save();
+//            array_push($old_file_names,$fileName);
         }
 
 
-        $record = new OldRecord();
-        $record->patient_id = $request->input('patient_id');
-        $record->files =implode($old_file_names,',');
-        $record->date=$request->input('record_date');
-        $record->user_id = Auth::user()->id;
-        $record->save();
+
 
         return back()->with('success','Record Uploaded');
     }
@@ -318,12 +322,18 @@ class PatientController extends Controller
             ->get();
 //      return $data;
 
+        $patient_registrations =0;
+        if (count($data) == 1){
+            $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
+        }
+
         $insuranceType = Insurance::all();
         $charges = Charge::all();
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
-            ->with('charges',$charges);
+            ->with('charges',$charges)
+            ->with('patient_registrations',$patient_registrations);;
     }
 
     /**
@@ -381,12 +391,17 @@ class PatientController extends Controller
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
             ->get();
 
+        $patient_registrations =0;
+        if (count($data) == 1){
+            $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
+        }
         $insuranceType = Insurance::all();
         $charges = Charge::all();
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('charges',$charges)
-            ->with('insuranceType',$insuranceType);
+            ->with('insuranceType',$insuranceType)
+            ->with('patient_registrations',$patient_registrations);
     }
 
 
@@ -402,6 +417,57 @@ class PatientController extends Controller
         return view('pages.patients.old-records')
             ->with('patient',$patient)
             ->with('records',$records);
+    }
+
+
+    public function uploadLabScanResult(Request $request,$patient_id){
+
+        $consultation = Consultation::where('registration_id',$request->input('registration_id'))->first();
+
+        if (\Request::has('labs')) {
+            for ($i = 0; $i < count($request->file('labs')); $i++) {
+                $file = $request->file('labs')[$i];
+                $extension = $file->getClientOriginalExtension();
+                $files = substr($file->getClientOriginalName(), 0, strpos($file->getClientOriginalName(), '.'));
+                $fileName = $files . '_' . time() . '.' . $extension;
+
+                $file->move('public/labs', $fileName);
+
+
+                $record = new LabResult();
+                $record->patient_id = $patient_id;
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$fileName;
+                $record->user_id = Auth::user()->id;
+                $record->save();
+            }
+        }
+
+
+        //Upload Scans
+        if (\Request::has('scan')){
+            for ($i = 0; $i < count($request->file('scan')); $i++) {
+                $scannedFile = $request->file('scan')[$i];
+                $scannedExtension = $scannedFile->getClientOriginalExtension();
+                $scannedFiles = substr($scannedFile->getClientOriginalName(), 0, strpos($scannedFile->getClientOriginalName(), '.'));
+                $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
+
+                $scannedFile->move('public/scan', $scannedFileName);
+
+
+                $record = new ScannedResult();
+                $record->patient_id = $patient_id;
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$scannedFileName;
+                $record->user_id = Auth::user()->id;
+                $record->save();
+            }
+        }
+
+        toastr()->success('Upload Successful');
+        return back();
     }
     /**
      * Remove the specified resource from storage.

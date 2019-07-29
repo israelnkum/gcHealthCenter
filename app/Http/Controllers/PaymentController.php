@@ -82,7 +82,6 @@ class PaymentController extends Controller
 
                 //check if qty = qty_dispensed and set drug_arrears
                 if ($check->qty != $check->qty_dispensed){
-
                     $findDrug = Drug::find($check->drugs_id);
 
                     $drugArrears = new DrugArrears();
@@ -140,7 +139,11 @@ class PaymentController extends Controller
         }
 
         $registration->save();
-        $payment = new Payment();
+
+
+        $payment = Payment::where('registration_id', $request->input('registration_id'))
+            ->where('patient_id', $request->input('patient_id'))->first();
+
         $payment->registration_id = $request->input('registration_id');
         $payment->patient_id = $request->input('patient_id');
         $payment->service_total = $request->input('service_total');

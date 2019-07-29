@@ -32,7 +32,8 @@ class UserController extends Controller
                 $user->updated = 1;
 
                 $user->save();
-                return back()->with('success','Password Changed');
+                toastr()->success('Password Changed Successfully');
+                return back();
             }
         }else{
             $user = User::find(Auth::User()->id);
@@ -41,8 +42,8 @@ class UserController extends Controller
             $user->updated = 1;
 
             if ($user->save()){
-                return redirect('/home')
-                    ->with('success','Password Changed Successfully');
+                toastr()->success('Password Changed Successfully');
+                return redirect('/home');
             }
         }
 
@@ -91,8 +92,8 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect('/users')
-            ->with('success','A new '.$user->role.' Added');
+        toastr()->success('A new '.$user->role.' Added');
+        return redirect('/users');
     }
 
 
@@ -109,9 +110,8 @@ class UserController extends Controller
             $level->delete();
         }
 
-        //  toastr()->success('success');
-        return redirect('/users')
-            ->with('success','Selected data deleted');
+        toastr()->success('Deleted Successfully');
+        return redirect('/users');
 
     }
 
@@ -166,8 +166,8 @@ class UserController extends Controller
 
         $user->save();
 
-        return back()
-            ->with('success','Profile Updated');
+        toastr()->success('Profile Updated');
+        return back();
     }
 
     /**

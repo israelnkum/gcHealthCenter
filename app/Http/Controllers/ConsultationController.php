@@ -7,12 +7,14 @@ use App\Charge;
 use App\Consultation;
 use App\Diagnose;
 use App\Drug;
+use App\LabResult;
 use App\Medication;
 use App\OtherMedication;
 use App\Patient;
 use App\PatientDiagnosis;
 use App\Payment;
 use App\Registration;
+use App\ScannedResult;
 use App\Service;
 use App\Vital;
 use Illuminate\Http\Request;
@@ -100,9 +102,18 @@ class ConsultationController extends Controller
         $registration = Registration::find($request->input('registration_id'));
 
 //        return $registration;
+
+        $consultation = Consultation::find($getRegistration->id);
+        $consultation ->patient_id =$request->input('patient_id');
+        $consultation ->complains=$request->input('complains');
+        $consultation ->findings=$request->input('findings');
+        $consultation ->physical_examination=$request->input('physical_examination');
+        $consultation ->other_diagnosis=$request->input('other_diagnosis');
+        $consultation ->user_id=Auth::user()->id;
+        $consultation->save();
+
+
         //Upload labs
-        $labFileNames = [];
-        $scanFileNames =[];
         if (\Request::has('labs')) {
 
             for ($i = 0; $i < count($request->file('labs')); $i++) {
@@ -112,8 +123,13 @@ class ConsultationController extends Controller
                 $fileName = $files . '_' . time() . '.' . $extension;
 
                 $file->move('public/labs', $fileName);
-
-                array_push($labFileNames,$fileName);
+                $record = new LabResult();
+                $record->patient_id = $request->input('patient_id');
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$fileName;
+                $record->user_id = Auth::user()->id;
+                $record->save();
             }
         }
 
@@ -127,22 +143,17 @@ class ConsultationController extends Controller
                 $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
                 $scannedFile->move('public/scan', $scannedFileName);
-                array_push($scanFileNames,$scannedFileName);
+
+
+                $record = new ScannedResult();
+                $record->patient_id = $request->input('patient_id');
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$scannedFileName;
+                $record->user_id = Auth::user()->id;
+                $record->save();
             }
         }
-
-
-        $consultation = Consultation::find($getRegistration->id);
-        $consultation ->patient_id =$request->input('patient_id');
-        $consultation ->complains=$request->input('complains');
-        $consultation ->findings=$request->input('findings');
-        $consultation ->physical_examination=$request->input('physical_examination');
-        $consultation ->other_diagnosis=$request->input('other_diagnosis');
-        $consultation ->labs=implode($labFileNames,',');
-        $consultation ->ultra_sound_scan=implode($scanFileNames,',');
-        $consultation ->user_id=Auth::user()->id;
-        $consultation->save();
-
 
 
         //Add medications
@@ -270,14 +281,13 @@ class ConsultationController extends Controller
 
 
         /*
-         * Start Calculating Consultation
+         * Start Calculating Consultation fee
          */
 
         $service_charge = Charge::where('name','Consultation')->first();
 
         //charge for consultation if only the person is not insured
         if ($registration->isInsured != 1){ //if patient is not insured
-
             /*
              * check if patient is an old patient that is before the system
              * then use the last visit
@@ -562,12 +572,14 @@ class ConsultationController extends Controller
             ->with('getBills',$getBills)
             ->with('detentionBill',$detentionBill)
             ->with('charges',$charges)
-            ->with('otherMedication',$otherMedication);
+            ->with('otherMedication',$otherMedication)
+            ->with('patient_id',$id)
+            ->with('scanned_results',$recentConsultation->scanned_results)
+            ->with('lab_results',$recentConsultation->lab_results);
     }
 
 
     public function searchConsultation(Request $request){
-
         $diagnosis = Diagnose::all();
         $drugs = Drug::all();
         $charges = Charge::all();
@@ -575,9 +587,8 @@ class ConsultationController extends Controller
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
 
-
         if (count($searchPatient) == 0){
-            return back()->with('error','Sorry! No Record Found');
+            toastr()->error('Sorry! No Record Found');
         }
         $recentConsultation="";
         $recentVitals ="";
@@ -593,6 +604,10 @@ class ConsultationController extends Controller
                 ->latest()->first();
         }
 
+        if (empty($recentRegistration)){
+            toastr()->error('Sorry! Patient has no registration');
+            return back();
+        }
 //        return $searchPatient;
         if (!empty($recentRegistration)){
 
@@ -651,6 +666,8 @@ class ConsultationController extends Controller
              * Calculate detention bill
              */
             //check if patient is detained Or Admitted
+
+//            return $recentRegistration;
             if ( $recentRegistration->detain == 0){
                 $detentionBill = 0;
             }
@@ -703,7 +720,6 @@ class ConsultationController extends Controller
                 $getVitals =[];
             }
 
-
             return view('pages.consultations.search_result')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
@@ -722,7 +738,10 @@ class ConsultationController extends Controller
                 ->with('medication',$medication)
                 ->with('getBills',$getBills)
                 ->with('otherMedication',$otherMedication)
-                ->with('detentionBill',$detentionBill);
+                ->with('detentionBill',$detentionBill)
+                ->with('patient_id',$recentRegistration->patient_id)
+                ->with('lab_results',$recentConsultation->lab_results)
+                ->with('scanned_results',$recentConsultation->scanned_results);
         }else{
             return view('pages.consultations.search_result')
                 ->with('searchPatient',$searchPatient)
@@ -737,7 +756,10 @@ class ConsultationController extends Controller
                 ->with('patientDiagnosis',$patientDiagnosis)
                 ->with('medication',$medication)
                 ->with('getBills',$getBills)
-                ->with('otherMedication',$otherMedication);
+                ->with('otherMedication',$otherMedication)
+                ->with('patient_id',$recentRegistration->patient_id)
+                ->with('lab_results',$recentConsultation->lab_results)
+                ->with('scanned_results',$recentConsultation->scanned_results);
         }
 
 
@@ -854,7 +876,9 @@ class ConsultationController extends Controller
             ->with('services',$services)
             ->with('diagnosis',$diagnosis)
             ->with('drugs',$drugs)
-            ->with('allCharges',$allCharges);
+            ->with('allCharges',$allCharges)
+            ->with('lab_results',$consultation->lab_results)
+            ->with('scanned_results',$consultation->scanned_results);
 
     }
 
@@ -869,9 +893,20 @@ class ConsultationController extends Controller
     {
         $registration = Registration::find($request->input('registration_id'));
 
+
+
+        $consultation = Consultation::find($id);
+        $consultation->patient_id =$request->input('patient_id');
+        $consultation->complains=$request->input('complains');
+        $consultation->findings=$request->input('findings');
+        $consultation->physical_examination=$request->input('physical_examination');
+        $consultation->other_diagnosis=$request->input('other_diagnosis');
+        $consultation->user_id=Auth::user()->id;
+
+        $consultation->save();
+
+
         //Upload labs
-        $labFileNames = [];
-        $scanFileNames =[];
         if (\Request::has('labs')) {
 
             for ($i = 0; $i < count($request->file('labs')); $i++) {
@@ -882,12 +917,18 @@ class ConsultationController extends Controller
 
                 $file->move('public/labs', $fileName);
 
-                array_push($labFileNames,$fileName);
+                $record = new LabResult();
+                $record->patient_id = $request->input('patient_id');
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$fileName;
+                $record->user_id = Auth::user()->id;
+                $record->save();
             }
         }
 
 
-//Upload Scans
+        //Upload Scans
         if (\Request::has('scan')){
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $scannedFile = $request->file('scan')[$i];
@@ -896,34 +937,16 @@ class ConsultationController extends Controller
                 $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
 
                 $scannedFile->move('public/scan', $scannedFileName);
-                array_push($scanFileNames,$scannedFileName);
+
+                $record = new LabResult();
+                $record->patient_id = $request->input('patient_id');
+                $record->registration_id = $request->input('registration_id');
+                $record->consultation_id = $consultation->id;
+                $record->file_name =$scannedFile;
+                $record->user_id = Auth::user()->id;
+                $record->save();
             }
         }
-
-
-        $consultation = Consultation::find($id);
-        $consultation->patient_id =$request->input('patient_id');
-        $consultation->complains=$request->input('complains');
-        $consultation->findings=$request->input('findings');
-        $consultation->physical_examination=$request->input('physical_examination');
-        $consultation->other_diagnosis=$request->input('other_diagnosis');
-//        $consultation->detain_admit=$request->input('detain_admit');
-        if (count($labFileNames) == 0){
-            $consultation->labs=$consultation->labs;
-        }else{
-            $consultation->labs=$consultation->labs.",".implode($labFileNames,',');
-        }
-
-        if (count($labFileNames) == 0){
-            $consultation->ultra_sound_scan=$consultation->ultra_sound_scan;
-        }else{
-            $consultation->ultra_sound_scan=$consultation->ultra_sound_scan.",".implode($scanFileNames,',');
-        }
-        $consultation->user_id=Auth::user()->id;
-
-        $consultation->save();
-
-
 
         //Add medications
         foreach ($request->input('medications') as $med) {
@@ -1085,8 +1108,8 @@ class ConsultationController extends Controller
         }
         $registration->consult = 1;
         $registration->save();
-
-        return back()->with('success','Record Updated');
+        toastr()->success('Record Updated');
+        return back();
     }
 
     public function patientRecord(Request $request){
@@ -1100,7 +1123,7 @@ class ConsultationController extends Controller
         $vitals = Vital::with('user')->where('patient_id',$data[1])
             ->whereDate('created_at',$data[0])->get();
         $consultation = Consultation::where('patient_id',$data[1])
-            ->whereDate('created_at', $data[0])->get();
+            ->whereDate('created_at', $data[0])->first();
         $patientDiagnosis = PatientDiagnosis::with('diagnoses')->where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
         $medication = Medication::with('drugs')->where('patient_id',$data[1])
@@ -1194,6 +1217,8 @@ class ConsultationController extends Controller
          * End detention bill calculation
          */
 
+//        return $consultation;
+
         if (\Request::has('fromSearchPage')){
             return view('pages.consultations.details')
                 ->with('registration',$registration)
@@ -1208,7 +1233,9 @@ class ConsultationController extends Controller
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
                 ->with('getBills',$getBills)
-                ->with('detentionBill',$detentionBill);
+                ->with('detentionBill',$detentionBill)
+                ->with('scanned_results',$consultation->scanned_results)
+                ->with('lab_results',$consultation->lab_results);
         }else{
             return view('pages.consultations.index')
                 ->with('registration',$registration)
@@ -1222,8 +1249,8 @@ class ConsultationController extends Controller
                 ->with('medication',$medication)
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
-                ->with('getBills',$getBills)
-                ->with('detentionBill',$detentionBill);
+                ->with('scanned_results',$consultation->scanned_results)
+                ->with('lab_results',$consultation->lab_results);;
         }
 
     }

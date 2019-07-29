@@ -32,7 +32,7 @@ Route::resource('patients','PatientController');
 Route::post('/old-records','PatientController@upload_old_files')->name('upload-records');
 Route::get('/search-patient','PatientController@searchPatient')->name('searchPatient');
 Route::get('/view-old-records/{id}','PatientController@viewOldRecord')->name('view-old-records');
-
+Route::post('/upload-labs-scans/{id}','PatientController@uploadLabScanResult')->name('upload-labs-scans');
 
 
 /*
@@ -98,6 +98,8 @@ Route::post('/bulk_deleteSupplier','SupplierController@bulk_deleteSupplier')->na
  */
 Route::resource('records','DetainedRecordsController');
 Route::get('search-detained','DetainedRecordsController@searchPatientForDrugDispersion')->name('searchPatientForDrugDispersion');
+Route::get('out-standing-medication','DetainedRecordsController@outStandingMedications')->name('out-standing-medication');
+
 Route::get('view-record/{patient_id}/{registration_id}','DetainedRecordsController@view_detention_record')->name('view_detention_record');
 Route::post('view-record','DetainedRecordsController@view_detention')->name('view_detention');
 
@@ -167,3 +169,10 @@ Route::post('/bulk-deleteCharge','ChargeController@bulk_deleteCharge')->name('bu
 
 Route::resource('payment','PaymentController');
 Route::post('pay-arrears','PaymentController@payArrears')->name('payArrears');
+
+
+/*
+ * Review Route
+ */
+
+Route::resource('review','ReviewController');

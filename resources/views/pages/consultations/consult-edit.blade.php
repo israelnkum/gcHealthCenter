@@ -317,7 +317,7 @@
                                                 <div class="col-md-6 text-right">
                                                     @if($medicine->dispensed ==1)
                                                         <i class="icon icon-note"></i>
-                                                        @else
+                                                    @else
                                                         <a  href="{{route('editMedication',[$medicine->drugs->id,$medicine->id])}}?{{Hash::make(time())}}">
                                                             <i class="icon icon-note"></i>
                                                         </a>
@@ -428,15 +428,19 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @php($scans=explode(',',$consultation->ultra_sound_scan))
-                                @if(count($scans)>1)
-                                    @foreach($scans as $scan)
+                                @if(count($scanned_results)>0)
+                                    @php($i =1)
+                                    @foreach($scanned_results as $scan)
                                         <tr>
                                             <td>
-                                                <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}">
+                                                <div id="scan{{$i}}" class="lightGallery">
+                                                    <a href="{{asset('public/scan/'.$scan->file_name)}}" class="image-tile">
+                                                        <img style="height: auto; width: 70px; border-radius: 0 !important;"  class="img-fluid" src="{{asset('public/scan/'.$scan->file_name)}}"  alt="{{$scan->file_name}}">
+                                                    </a>
+                                                </div>
                                             </td>
                                             <td>
-                                                <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
+                                                <small class="text-capitalize">{{substr($scan->file_name,0,strpos($scan->file_name,'_'))}}</small>
                                             </td>
                                             <td>
                                                 <form action="">
@@ -446,6 +450,7 @@
                                                 </form>
                                             </td>
                                         </tr>
+                                        @php($i++)
                                     @endforeach
                                 @endif
                                 </tbody>
@@ -463,15 +468,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @php($scans=explode(',',$consultation->labs))
-                                @if(count($scans)>1)
-                                    @foreach($scans as $scan)
+                                @if(count($lab_results)>0)
+                                    @php($i= 1)
+                                    @foreach($lab_results as $scan)
                                         <tr>
                                             <td>
-                                                <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/labs/'.$scan)}}" alt="{{$scan}}">
+                                                <div id="lab{{$i}}" class="lightGallery" style="width: 100%">
+                                                    <a href="{{asset('public/labs/'.$scan->file_name)}}" class="image-tile">
+                                                        <img style="height: auto; width: 70px; border-radius: 0 !important;" class="img-fluid" src="{{asset('public/labs/'.$scan->file_name)}}"  alt="{{$scan->file_name}}">
+                                                    </a>
+                                                </div>
+                                                {{--                                                <img class="img-fluid" style="border-radius: 0 !important;" src="{{asset('public/labs/'.$scan)}}" alt="{{$scan}}">--}}
                                             </td>
                                             <td>
-                                                <small class="text-capitalize">{{substr($scan,0,strpos($scan,'_'))}}</small>
+                                                <small class="text-capitalize">{{substr($scan->file_name,0,strpos($scan->file_name,'_'))}}</small>
                                             </td>
                                             <td>
                                                 <form action="">
@@ -481,6 +491,7 @@
                                                 </form>
                                             </td>
                                         </tr>
+                                        @php($i++)
                                     @endforeach
                                 @endif
                                 </tbody>

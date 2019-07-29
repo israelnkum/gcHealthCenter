@@ -12,4 +12,12 @@ class Consultation extends Model
     public function registration(){
         return $this->belongsTo('App\Registration');
     }
+
+    public function lab_results(){
+        return $this->hasMany('App\LabResult');
+    }
+
+    public function scanned_results(){
+        return $this->hasMany('App\ScannedResult');
+    }
 }

@@ -32,40 +32,48 @@
                 </a>
             </div>
         </div>
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-md-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title"><span class="text-danger">{{$patient->first_name." ".$patient->last_name."'s"}}</span> Old Records</h4>
-                        <div class="row">
-                            <div class="col-md-12 pl-md-5">
-                                {{--                                <h4 class="mb-3"><span class="text-uppercase text-danger">Folder Number</span> :{{$patient->folder_number}}</h4>--}}
-                                <div class="wrapper mb-4">
-                                    @if(count($records)>0)
-                                        @foreach($records as $record => $images)
-                                            <blockquote class="blockquote">
-                                                <div class="row">
-                                                    <div class="col-md-1 mb-2 text-white bg-dark text-right">
-                                                        <small>{{$record}}</small>
-                                                    </div>
+                        <div class="wrapper">
+                            @if(count($records)>0)
+                                @foreach($records as $date => $record_files)
+                                    <blockquote class="blockquote">
+                                        <div class="row">
+                                            <div class="col-md-1 mb-2 text-white bg-dark text-right">
+                                                <small>{{$date}}</small>
+                                            </div>
+                                        </div>
+                                        <div id="lightgallery-without-thumb" class="row lightGallery">
+                                            @foreach($record_files as $record)
+                                                <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" alt="{{$record->files}}"></a>
+                                            @endforeach
+                                        </div>
+                                    </blockquote>
+                                @endforeach
+
+                                    @foreach($records as $date => $record_files)
+                                        <blockquote class="blockquote">
+                                            <div class="row">
+                                                <div class="col-md-1 mb-2 text-white bg-dark text-right">
+                                                    <small>{{$date}}</small>
                                                 </div>
-                                                <div id="lightgallery-without-thumb" class="row lightGallery">
-                                                    <?php
-                                                    $explode=explode(',',$images[0]->files)
-                                                    ?>
-                                                    @foreach($explode as $exp)
-                                                        <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$exp)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$exp)}}" alt="{{$exp}}"></a>
-                                                    @endforeach
-                                                </div>
-                                            </blockquote>
-                                        @endforeach
-                                    @else
-                                        <h4 class="display-4">No Record Uploaded</h4>
-                                    @endif
+                                            </div>
+                                            <div id="lightgallery-without-thumb" class="row lightGallery">
+                                                @foreach($record_files as $record)
+                                                    <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" alt="{{$record->files}}"></a>
+                                                @endforeach
+                                            </div>
+                                        </blockquote>
+                                    @endforeach
+
+                            @else
+                                <h4 class="display-4">No Record Uploaded</h4>
+                            @endif
 
 
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

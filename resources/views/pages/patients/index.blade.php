@@ -81,13 +81,13 @@
                                                         </a>
                                                     </li>
                                                     <li class="d-inline-block">
-                                                      {{--  <form method="post" action="{{route('patients.destroy',$data[0]->id)}}">
-                                                            {!! method_field('delete') !!}
-                                                            @csrf
-                                                            <button class="btn bg-transparent text-dark p-1">
-                                                                <i class="icon icon-trash" style="font-size: 20px"></i>
-                                                            </button>
-                                                        </form>--}}
+                                                        {{--  <form method="post" action="{{route('patients.destroy',$data[0]->id)}}">
+                                                              {!! method_field('delete') !!}
+                                                              @csrf
+                                                              <button class="btn bg-transparent text-dark p-1">
+                                                                  <i class="icon icon-trash" style="font-size: 20px"></i>
+                                                              </button>
+                                                          </form>--}}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -214,10 +214,14 @@
                                                                 ?>
                                                                 <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"> {!! $last_seen !!}</i>
                                                             </div>
-
                                                         @endif
                                                     @endforeach
+                                                    <div class="text-right">
+                                                        <button class="btn btn-dark p-1" type="button" data-toggle="modal" data-target="#upload_lab_scans">Upload Labs/Scan</button>
+                                                    </div>
                                                 </div>
+
+
                                             </div>
                                             @if(count($registration)  == 0)
                                                 <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
@@ -358,9 +362,9 @@
                                                                     </div>
                                                                 </form>
                                                             </div>
-                                                            @else
-                                                            <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
-                                                                <h4 class="display-4">Patient is Detained</h4>
+                                                        @elseif(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain == 1)
+                                                            <div class="col-md-5 p-3">
+                                                                <p class="display-4">Patient is Detained</p>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -369,12 +373,13 @@
 
                                         </div>
                                     </div>
+
+                                    {{--Upload Records --}}
                                     <div class="tab-pane fade" id="patient-records" role="tabpanel" aria-labelledby="tab-2-2">
                                         <div class="row">
                                             <div class="col-md-12 text-center">
                                                 <blockquote class="blockquote" style="border: dashed 1px;">
                                                     <h5 class="text-uppercase">Upload Old Record(s)</h5>
-
                                                     <form action="{{route('upload-records')}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
                                                         @csrf
                                                         <div class="form-group row">
@@ -417,6 +422,79 @@
                     </div>
                 </div>
             </div>
+            <!-- Upload Labs/Scan modal -->
+            <div class="modal fade" id="upload_lab_scans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editStaffTitle">Upload Labs/Scan</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body pt-0">
+                                <blockquote class="blockquote" style="border: dashed 1px;">
+                                    <div class="form-group row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
+                                            <input style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                            <div class="invalid-feedback text-small">
+                                                File Required
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-info" for="labs_date">Registration Date</label>
+                                            <select  name="registration_id" id="labs_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                @if($patient_registrations)
+                                                    @foreach($patient_registrations as $p_registration)
+                                                        <option value="">~</option>
+                                                        <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback text-small">
+                                                Date Required
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-info">Upload <u><b>Scan</b></u> Result(s)</label>
+                                            <input  style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                            <div class="invalid-feedback text-small">
+                                                File Required
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="text-info" for="scan_date">Registration Date</label>
+                                            <select  name="scan_date" id="scan_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                @if($patient_registrations)
+                                                    @foreach($patient_registrations as $p_registration)
+                                                        <option value="">~</option>
+                                                        <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            <div class="invalid-feedback text-small">
+                                                Date Required
+                                            </div>
+                                        </div>
+                                    </div>
+                                </blockquote>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                    <i class="icon icon-close"></i> Close
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="icon icon-plus"></i> Add Staff
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         @elseif(count($data) > 1)
             <div class="row">
                 @foreach($data as $dat)
@@ -703,71 +781,6 @@
         </div>
     </div>
 
-    <!-- edit Staff modal -->
-    <div class="modal fade" id="editStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form method="post" action="/users" id="editStaffForm" class="needs-validation" novalidate>
-                @csrf
-                {{method_field('put')}}
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editStaffTitle">New Staff</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body pt-0">
-                        <div class="form-row">
-                            <div class="col-md-12 mb-3">
-                                <input title="Enter Username" type="text" name="username" class="form-control" id="edit_username" placeholder="Username"  required>
-                                <div class="invalid-feedback">
-                                    choose a username.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-12 mb-3">
-                                <input title="Enter Email Address" name="email" type="email" class="form-control" id="edit_email" placeholder="Email Address" required>
-                                <div class="invalid-feedback">
-                                    Email is required.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-12 mb-3">
-                                <input required type="text"  class="form-control phone_number"  id="edit_phone_number" minlength="10"   name="phone_number" placeholder="Phone Number">
-                                <div class="invalid-feedback">
-                                    Phone Number is required.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-12">
-                                <select title="Select Role" id="edit_role" name="role" class="js-example-basic-single form-control" style="width: 100%" required>
-                                    <option value="">~Select Role~</option>
-                                    <option value="Doctor">Doctor</option>
-                                    <option value="Nurse">Nurse</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Pharmacist">Pharmacist</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Role is required.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="icon icon-close"></i> Close
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="icon icon-plus"></i> Add Staff
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- Confirm bulk Staff modal -->
     <div class="modal fade" id="deleteStaff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

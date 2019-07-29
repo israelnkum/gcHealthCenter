@@ -4,10 +4,10 @@
     <div class=" content-wrapper">
         <div class=" row">
             <div class=" col-md-8 offset-md-2 text-right grid-margin">
-                <form class=" needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
+                <form class="needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
                     @csrf
-                    <div class=" form-group row mb-0">
-                        <div class=" col-md-12 ">
+                    <div class="form-group row mb-0">
+                        <div class="col-md-12 ">
                             <div class=" input-group">
                                 <input type="text" required class=" form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class=" input-group-prepend">
@@ -82,9 +82,35 @@
                 </div>
             </div>--}}
         @if(!empty($registration))
+            <div class="row">
+                <div class="col-md-8">
+                    <form action="{{route('out-standing-medication')}}" class="needs-validation" novalidate method="get">
+                        @csrf
+                        <label for="" class="text-danger">Outstanding Medication</label>
+                        <div class="form-group row">
+                            <div class="col-md-2">
+                                <select name="registration_id" required id="" class="form-control selectMedicine">
+                                    @foreach($allPatientRegistration as $p_registration)
+                                        <option value=""></option>
+                                        @if($p_registration->medication == 2)
+                                            <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <div class=" invalid-feedback">
+                                    Date Required
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class=" input-group-text btn"><i class=" icon-magnifier"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <form action="{{route('payment.store')}}" method="post" class=" needs-validation" novalidate>
                 @csrf
-                <div class=" row">
+                <div class="row">
                     <table class=" table table-borderless d-none">
                         <thead>
                         <tr>
@@ -343,9 +369,20 @@
 
                                 <div class="row content-print">
                                     <div class="col-md-12">
-                                        <div class="text-center">
+                                        <div class="text-center" style="line-height: 14px; border-bottom: dashed 1px;">
                                             {{--                                            <img src="{{asset('public/images/logo.jpeg')}}" height="auto" width="70" alt="" class="img-fluid p-0">--}}
-                                            <h6 style="border-bottom: dashed 1px" class="text-uppercase">GC Health Centre</h6>
+                                            <h6  class="text-uppercase mb-0">GC Health Centre</h6>
+                                            <small class="mt-0 mb-0 p-0">KWESIMINTIM</small>
+                                            <br>
+                                            <small class="mt-0">+233 247 909 665</small>
+
+                                            <h6 class="p-1 bg-dark text-white mt-2" style="font-size: 15px;" >Official Receipt</h6>
+                                            <ul class="list-unstyled  mb-0">
+                                                <li class="text-small p-0 mb-0 d-flex justify-content-between align-items-center">
+                                                    Date: {{date('Y-m-d')}}
+                                                    <span>{{date('h:m:i A')}} </span>
+                                                </li>
+                                            </ul>
                                         </div>
                                         <div class="mt-3">
                                             <ul class="list-group list-group-flush">
@@ -387,7 +424,7 @@
                                                 </li>
                                             @endif
                                             <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
-{{--                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
+                                                {{--                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
                                                 <span>Drug Total: GH₵ {{$total_d_total}}</span>
                                             </li>
                                             <li class="p-0 text-small bg-warning text-right list-group-item  justify-content-between align-items-center">
@@ -398,7 +435,7 @@
                                                 <span> Amount Paid: <span id="bill_amt_txt"> 0.00</span></span>
                                             </li>
                                             <li class="p-0 text-small text-right list-group-item  justify-content-between align-items-center">
-                                               <span>Arrears: <span id="bill_arrears_text">{{$total+$detentionBill+$total_d_total}}.00</span></span>
+                                                <span>Arrears: <span id="bill_arrears_text">{{$total+$detentionBill+$total_d_total}}.00</span></span>
                                             </li>
 
                                             <li class="p-0 mt-3 text-small list-group-item d-flex justify-content-between align-items-center">

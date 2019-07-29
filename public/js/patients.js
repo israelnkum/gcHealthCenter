@@ -20,9 +20,13 @@ $(document).ready(function () {
         dropdownParent: $('#add_service .modal-content')
     });
 
+    $("#labs_date").select2({
+        dropdownParent: $('#upload_lab_scans .modal-content')
+    });
 
-
-
+    $("#scan_date").select2({
+        dropdownParent: $('#upload_lab_scans .modal-content')
+    });
 
     let table = $('#patients_table').DataTable({
         "aLengthMenu": [
