@@ -177,7 +177,7 @@
                                     </blockquote>
                                 </div>
                             </div>
-                            @if(count($scanned_results)>0)
+                            @if($scanned_results)
                                 <h4>Scan Result(s)</h4>
                                 <div class="col-sm-12">
                                     <div id="lightgallery" class="row lightGallery">
@@ -188,7 +188,7 @@
 
                                 </div>
                             @endif
-                            @if(count($lab_results)>0)
+                            @if($lab_results)
                                 <h4>Lab Result(s)</h4>
                                 <div class="col-sm-12">
                                     <div id="lightgallery-without-thumb" class="row lightGallery">

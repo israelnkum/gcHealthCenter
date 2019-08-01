@@ -23,6 +23,7 @@ class CreateRegistrationsTable extends Migration
             $table->decimal('registration_fee');
             $table->boolean('vitals')->default(0);
             $table->boolean('consult')->default(0);
+            $table->boolean('review')->default(0);
             $table->boolean('medication')->default(0);
             $table->boolean('detain')->default(0);
             $table->boolean('hasArrears')->default(0);
@@ -31,6 +32,7 @@ class CreateRegistrationsTable extends Migration
             $table->integer('user_id');
             $table->boolean('old_patient')->default(0);
             $table->string('last_visit',30)->nullable();
+            $table->string('type',20)->default('Consultation')->nullable();
             $table->timestamps();
         });
     }

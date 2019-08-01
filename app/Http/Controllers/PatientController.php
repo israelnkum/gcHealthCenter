@@ -414,7 +414,7 @@ class PatientController extends Controller
             ->groupBy('date');
 
 //        return $records;
-        return view('pages.patients.old-records')
+        return view('pages.patients.view-old-records')
             ->with('patient',$patient)
             ->with('records',$records);
     }

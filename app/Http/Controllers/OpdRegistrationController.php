@@ -9,6 +9,7 @@ use App\Medication;
 use App\PatientDiagnosis;
 use App\Payment;
 use App\Registration;
+use App\Review;
 use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,7 +60,8 @@ class OpdRegistrationController extends Controller
 
                 //check if insured is selected as charge option in the charge select box
                 if ($charges->name != "Insured") {
-                    return back()->with('error','Please Select Insured as charge option');
+                    toastr()->error('Please Select Insured as charge option');
+                    return back();
                 }else{
 
                     //create new registration
@@ -71,6 +73,10 @@ class OpdRegistrationController extends Controller
                     $register->insurance_amount = str_replace(',', '', substr($request->input('insurance_type'), strpos($request->input('insurance_type'), ',')));
                     $register->registration_fee = $charges->amount;
                     $register->user_id = Auth::user()->id;
+                    if (\Request::has('review')){
+                        $register->consult=2;
+                        $register->type="Review";
+                    }
                     if ($register->save()){
                         /*
                         *if registration is saved  then create vitals, consultation
@@ -90,10 +96,18 @@ class OpdRegistrationController extends Controller
                          * Create a new consultation for insured
                          */
 
-                        $consultation = new Consultation();
-                        $consultation->patient_id =$request->input('patient_id');
-                        $consultation->registration_id =$register->id;
-                        $consultation->save();
+                        if (\Request::has('review')){
+                            $review = new Review();
+                            $review->patient_id =$request->input('patient_id');
+                            $review->registration_id =$register->id;
+                            $review->user_id =Auth::user()->id;
+                            $review->save();
+                        }else{
+                            $consultation = new Consultation();
+                            $consultation->patient_id =$request->input('patient_id');
+                            $consultation->registration_id =$register->id;
+                            $consultation->save();
+                        }
 
 
                         $payment = new Payment();
@@ -144,6 +158,10 @@ class OpdRegistrationController extends Controller
                 $register->isInsured = 0;
                 $register->registration_fee = $charges->amount;
                 $register->user_id=Auth::user()->id;
+                if (\Request::has('review')){
+                    $register->consult=2;
+                    $register->type="Review";
+                }
                 if ($register->save()) {
                     /*
                     *if registration is saved  then create vitals, consultation
@@ -176,10 +194,18 @@ class OpdRegistrationController extends Controller
                     /*
                      * Create a new consultation for non-insured
                      */
-                    $consultation = new Consultation();
-                    $consultation->patient_id = $request->input('patient_id');
-                    $consultation->registration_id = $register->id;
-                    $consultation->save();
+                    if (\Request::has('review')){
+                        $review = new Review();
+                        $review->patient_id =$request->input('patient_id');
+                        $review->registration_id =$register->id;
+                        $review->user_id =Auth::user()->id;
+                        $review->save();
+                    }else{
+                        $consultation = new Consultation();
+                        $consultation->patient_id =$request->input('patient_id');
+                        $consultation->registration_id =$register->id;
+                        $consultation->save();
+                    }
 
                     /*
                      * Create a new bill for non-insured
@@ -199,8 +225,8 @@ class OpdRegistrationController extends Controller
             }
         }
 
-        return redirect()->route('patients.show',[$request->input('patient_id')])
-            ->with('success','Registration Successful');
+        toastr()->success('Registration Successful');
+        return redirect()->route('patients.show',[$request->input('patient_id')]);
 
     }
 

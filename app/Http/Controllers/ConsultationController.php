@@ -37,6 +37,7 @@ class ConsultationController extends Controller
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',0)
+            ->where('type','Consultation')
             ->whereDate('created_at', Carbon::today())
             ->limit(1)
 //            ->orderBy('created_at','asc')
@@ -86,15 +87,7 @@ class ConsultationController extends Controller
      */
     public function store(Request $request)
     {
-//        return $request;
-        /*foreach ($request->input('medications') as $med) {
-            $qty = substr($med['dosage'],0,1)*$med['days'];
-            $remainder = $qty % $med['days'];
 
-            $quotient = ($qty - $remainder) / $med['days'];
-        }
-
-        return $quotient;*/
         $getRegistration = Consultation::where('registration_id',$request->input('registration_id'))
             ->latest()
             ->first();
@@ -207,12 +200,10 @@ class ConsultationController extends Controller
                     $medication->days = $med['days'];
                     $medication->qty = $med['qty'];
                     $medication->qty_dispensed =0;
+                    $medication->type ="Consultation";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
-
-
                 }else{
-
                     //update
                     $medication = Medication::find($check->id);
                     $medication->patient_id = $request->input('patient_id');
@@ -283,7 +274,6 @@ class ConsultationController extends Controller
         /*
          * Start Calculating Consultation fee
          */
-
         $service_charge = Charge::where('name','Consultation')->first();
 
         //charge for consultation if only the person is not insured
@@ -418,8 +408,8 @@ class ConsultationController extends Controller
         }
         $registration->save();
 
-        return redirect()->route('consultation.index')
-            ->with('success','Consulting Success');
+        toastr()->success('Consulting Successful');
+        return redirect()->route('consultation.index');
     }
 
     /**
@@ -445,16 +435,27 @@ class ConsultationController extends Controller
         $otherMedication ="";
 
         if (count($searchPatient) == 0){
-            return back()->with('error','Sorry! No Record Found');
+            toastr()->error('Sorry! No Record Found');
+            return back();
         }
 
         if (count($searchPatient) != 0) {
 
             $recentRegistration = Registration::with('consultation')
-                ->where('patient_id', $id)->latest()->first();
+                ->where('patient_id', $id)
+                ->where('consult', 1)
+                ->where('type', 'Consultation')
+                ->latest()->first();
+
 
         }
+
+        if (empty($recentRegistration)){
+            toastr()->error('Sorry! Patient has NO Registration');
+            return back();
+        }
         if (!empty($recentRegistration)){
+
             $recentConsultation = Consultation::where('patient_id', $id)
                 ->where('registration_id', $recentRegistration->id)->latest()->first();
             $recentVitals = Vital::where('patient_id', $id)
@@ -554,7 +555,7 @@ class ConsultationController extends Controller
 
 //        return $getImplodedMedicine;
 
-        return view('pages.consultations.search_result')
+        return view('pages.consultations.search-result')
             ->with('registration',$registration)
             ->with('getVitals',$getVitals)
             ->with('diagnosis',$diagnosis)
@@ -574,8 +575,8 @@ class ConsultationController extends Controller
             ->with('charges',$charges)
             ->with('otherMedication',$otherMedication)
             ->with('patient_id',$id)
-            ->with('scanned_results',$recentConsultation->scanned_results)
-            ->with('lab_results',$recentConsultation->lab_results);
+            ->with('scanned_results',$recentRegistration->scanned_results)
+            ->with('lab_results',$recentRegistration->lab_results);
     }
 
 
@@ -601,6 +602,7 @@ class ConsultationController extends Controller
         if (count($searchPatient) !=0) {
             $recentRegistration = Registration::with('patient')
                 ->where('patient_id', $searchPatient[0]->id)
+                ->where('consult', 1)
                 ->latest()->first();
         }
 
@@ -720,7 +722,8 @@ class ConsultationController extends Controller
                 $getVitals =[];
             }
 
-            return view('pages.consultations.search_result')
+//            return $recentConsultation;
+            return view('pages.consultations.search-result')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
                 ->with('diagnosis',$diagnosis)
@@ -743,7 +746,7 @@ class ConsultationController extends Controller
                 ->with('lab_results',$recentConsultation->lab_results)
                 ->with('scanned_results',$recentConsultation->scanned_results);
         }else{
-            return view('pages.consultations.search_result')
+            return view('pages.consultations.search-result')
                 ->with('searchPatient',$searchPatient)
                 ->with('recentRegistration',$recentRegistration)
                 ->with('recentConsultation',$recentConsultation)
@@ -771,6 +774,7 @@ class ConsultationController extends Controller
         $registration = Registration::find($id);
 
         $registration->detain = 2;
+        $registration->medication = 2;
         $registration->discharged_date =date('Y-m-d H:i:s');
 
         $registration->save();
@@ -820,14 +824,28 @@ class ConsultationController extends Controller
         /*
          * End Detention Bill Calculation
          */
+
         $payment = Payment::where('registration_id',$id)
             ->where('patient_id',$registration->patient_id)
             ->first();
         $payment->grand_total = $payment->grand_total+$detentionBill;
-        $payment->arrears = floatval(str_replace('-','',$payment->arrears))+$detentionBill;
+        if ($payment->change > 0){
+            $change = $payment->change - $detentionBill;
+
+            if ($change < 0){
+                $payment->arrears = $change;
+                $payment->change =0;
+            }else{
+                $payment->change  =$change;
+            }
+        }else{
+            $payment->arrears = floatval(str_replace('-','',$payment->arrears))+$detentionBill;
+        }
+
         $payment->save();
 
-        return back()->with('success','Patient Discharged');
+        toastr()->success('Patient Discharged');
+        return back();
     }
     /**
      * Show the form for editing the specified resource.
@@ -1120,6 +1138,7 @@ class ConsultationController extends Controller
 
         $getRegistration = Registration::where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
+
         $vitals = Vital::with('user')->where('patient_id',$data[1])
             ->whereDate('created_at',$data[0])->get();
         $consultation = Consultation::where('patient_id',$data[1])
@@ -1234,8 +1253,8 @@ class ConsultationController extends Controller
                 ->with('count_registration',$count_registration)
                 ->with('getBills',$getBills)
                 ->with('detentionBill',$detentionBill)
-                ->with('scanned_results',$consultation->scanned_results)
-                ->with('lab_results',$consultation->lab_results);
+                ->with('scanned_results',$getRegistration[0]->scanned_results)
+                ->with('lab_results',$getRegistration[0]->lab_results);
         }else{
             return view('pages.consultations.index')
                 ->with('registration',$registration)
@@ -1249,8 +1268,8 @@ class ConsultationController extends Controller
                 ->with('medication',$medication)
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
-                ->with('scanned_results',$consultation->scanned_results)
-                ->with('lab_results',$consultation->lab_results);;
+                ->with('scanned_results',$getRegistration[0]->scanned_results)
+                ->with('lab_results',$getRegistration[0]->lab_results);;
         }
 
     }
@@ -1277,8 +1296,8 @@ class ConsultationController extends Controller
         $medication->qty = substr($request->input('dosage'),0,1)*$request->input('days');
         $medication->save();
 
-        return redirect()->route('consultation.edit',[$medication->registration_id])
-            ->with('success','Medication Updated');
+        toastr()->success('Medication Updated');
+        return redirect()->route('consultation.edit',[$medication->registration_id]);
     }
 
     //EDit patient's diagnosis
@@ -1305,8 +1324,9 @@ class ConsultationController extends Controller
         $patient_diagnosis = PatientDiagnosis::find($request->input('p_diagnosis_id'));
         $patient_diagnosis->diagnoses_id =$request->input('diagnosis_id');
         $patient_diagnosis->save();
-        return redirect()->route('consultation.edit',[$patient_diagnosis->registration_id])
-            ->with('success','Diagnosis Updated');
+
+        toastr()->success('Diagnosis Updated');
+        return redirect()->route('consultation.edit',[$patient_diagnosis->registration_id]);
     }
 
 
@@ -1329,8 +1349,9 @@ class ConsultationController extends Controller
         $patient_service = Service::find($request->input('p_service_id'));
         $patient_service->charge_id =$request->input('charge_id');
         $patient_service->save();
-        return redirect()->route('consultation.edit',[$patient_service->registration_id])
-            ->with('success','Service Updated');
+
+        toastr()->success('Service Updated');
+        return redirect()->route('consultation.edit',[$patient_service->registration_id]);
     }
 
 

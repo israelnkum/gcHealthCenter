@@ -264,15 +264,24 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-md-6" >
+                                            <div class="col-md-12" >
                                                 <label for="" class="text-info">Other Medication(s)</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small>Drug</small>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <small>Dosage</small>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <small>Days</small>
                                             </div>
                                         </div>
                                         <div class="other-repeater">
                                             <div data-repeater-list="other-medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
-                                                        <div class="col-md-7">
+                                                        <div class="col-md-6">
                                                             <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                         </div>
                                                         <div class="col-md-3">

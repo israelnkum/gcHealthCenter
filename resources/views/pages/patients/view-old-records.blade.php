@@ -27,9 +27,20 @@
                 <i class="icon icon-trash"></i> Delete Selected
             </button>--}}
             <!-- Button trigger modal -->
-                <a role="button" href="{{route('consultation.show',$patient->id)}}" class="btn btn-danger">
+                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                    @csrf
+                    <div class="form-group row mb-0">
+                        <div class="col-md-12 ">
+                            <input type="hidden"  class="form-control" name="search" value="{{$patient->folder_number}}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="icon icon-arrow-left-circle"></i> Go Back
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {{--<a role="button" href="{{route('consultation.show',$patient->id)}}" class="btn btn-danger">
                     <i class="icon icon-close"></i> Go Back
-                </a>
+                </a>--}}
             </div>
         </div>
         <div class="row mb-5">

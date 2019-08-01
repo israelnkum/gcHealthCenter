@@ -51,13 +51,16 @@
 
         @if(count($searchPatient)>1)
             <div class="row">
+                <div class="col-md-12">
+                    <h4 class="display-4 text-info">Search Results</h4>
+                </div>
                 @foreach($searchPatient as $dat)
-                    <div class="col-md-6 grid-margin">
+                    <div class="col-md-4 grid-margin">
                         <div class="card">
                             <h4 class="card-title mt-0"></h4>
                             <div class="card-body">
                                 <h6 class=" text-uppercase mb-0">{{$dat->first_name." ".$dat->other_name." ".$dat->last_name}}</h6>
-                                <div class="d-flex justify-content-between align-items-center">
+                                {{--<div class="d-flex justify-content-between align-items-center">
                                     <a href="{{route('consultation.show',$dat->id)}}" style="text-decoration: none" class="">
 
                                         <div class="d-inline-block pt-3">
@@ -67,12 +70,30 @@
                                             <small class="text-gray">{{$dat->phone_number}}</small>
                                         </div>
                                     </a>
-                                    {{--<div class="d-inline-block">
+                                    <div class="d-inline-block">
                                         <div class=" px-4 py-2 rounded">
                                             <a href="{{route('patients.edit',$dat->id)}}" class="text-dark" style="text-decoration: none;"><i class="icon-note icon-lg"></i></a>
                                         </div>
-                                    </div>--}}
-                                </div>
+                                    </div>
+                                </div>--}}
+                                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                                    @csrf
+                                    <div class="d-inline-block pt-3">
+                                        <div class="d-md-flex">
+                                            <h5 class="mb-0 text-uppercase"><span class="text-danger">Folder Number:</span> {{$dat->folder_number}}</h5>
+                                        </div>
+                                        <small class="text-gray">{{$dat->phone_number}}</small>
+                                    </div>
+                                    <div class="form-group row mb-0">
+                                        <div class="col-md-12 text-right">
+                                            <input type="hidden"  class="form-control" name="search" value="{{$dat->folder_number}}">
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="icon icon-book-open"></i> open
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </form>
 
                             </div>
                         </div>
@@ -501,30 +522,21 @@
                                     </div>
                                     <h4>Scan Result(s)</h4>
                                     <div class="col-sm-12">
-                                        {{$scanned_results}}
-                                        @if(count($scanned_results)>0)
-                                            <div id="lightgallery" class="row lightGallery">
-                                                @foreach($scanned_results as $scan)
 
-                                                    <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
-                                                @endforeach
-                                            </div>
-                                        @endif
 
                                     </div>
 
                                     <h4>Lab Result(s)</h4>
                                     <div class="col-sm-12">
 
-                                        <?php
-                                        $labs=explode(',',$consultation[0]->labs)
-                                        ?>
-                                        <div id="lightgallery-without-thumb" class="row lightGallery">
-                                            @foreach($labs as $lab)
-                                                {{--                                                    {{$lab}}--}}
-                                                <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
-                                            @endforeach
-                                        </div>
+                                        @if($lab_results)
+                                            <div id="lightgallery" class="row lightGallery">
+                                                @foreach($lab_results as $scan)
+
+                                                    <a href="{{asset('public/labs/'.$scan)}}" class="image-tile"><img src="{{asset('public/labs/'.$scan)}}" alt="{{$scan}}"></a>
+                                                @endforeach
+                                            </div>
+                                        @endif
 
                                     </div>
                                 </div>
@@ -576,12 +588,12 @@
                                                 <a role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-primary pt-1 pb-1 pr-1 pl-1">
                                                     <i class="icon icon-plus"></i> Add Record
                                                 </a>
-                                                <button data-toggle="modal" data-target="#add_service" role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-secondary pt-1 pb-1 pr-1 pl-1">
+                                                {{--<button data-toggle="modal" data-target="#add_service" role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-secondary pt-1 pb-1 pr-1 pl-1">
                                                     <i class="icon icon-plus"></i> Add Service
                                                 </button>
                                                 <button data-toggle="modal" data-target="#add_drug"  role="button" href="{{route('records.edit',$recentRegistration->id)}}" class="btn btn-dark pt-1 pb-1 pr-1 pl-1">
                                                     <i class="icon icon-plus"></i> Add Med
-                                                </button>
+                                                </button>--}}
                                                 <a role="button" href="{{route('view_detention_record',[$recentRegistration->patient_id,$recentRegistration->id])}}?{{Hash::make(time())}}" class="btn btn-info pt-1 pb-1 pr-1 pl-1">
                                                     <i class="icon icon-notebook"></i>View Record
                                                 </a>
@@ -603,7 +615,7 @@
                                                             <div class="modal-body pt-0 text-left">
                                                                 <input type="hidden" value="{{$recentRegistration->patient_id}}" name="patient_id">
                                                                 <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
-
+                                                                <input type="hidden" name="not_review" value="not_review">
                                                                 <div class="row">
                                                                     <div class="col-md-12 mb-3">
                                                                         <label class="text-info">Select Service</label>
@@ -652,6 +664,7 @@
                                                             <div class="modal-body pt-0">
                                                                 <input type="hidden" value="{{$recentRegistration->patient_id}}" name="patient_id">
                                                                 <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
+                                                                <input type="hidden" name="not_review" value="not_review">
                                                                 <div class="row">
                                                                     <div class="col-md-7 text-left" >
                                                                         <label for="" class="text-info">Drugs</label>
@@ -920,7 +933,8 @@
                                                         @endif
                                                     </ul>
                                                 </blockquote>
-                                                @if(count($scanned_results)>0)
+
+                                                @if(count($scanned_results) !=0)
                                                     <label for="" class="text-info">Scan Result(s)</label>
                                                     <blockquote class="blockquote">
 
@@ -931,7 +945,7 @@
                                                         </div>
                                                     </blockquote>
                                                 @endif
-                                                @if(count($lab_results)>0)
+                                                @if(count($lab_results) !=0)
                                                     <label for="" class="text-info">Lab Result(s)</label>
                                                     <blockquote class="blockquote">
                                                         <div id="lightgallery-without-thumb" class="row lightGallery">
@@ -963,64 +977,64 @@
                                                         </tbody>
                                                     </table>
                                                 </blockquote>
+                                                @if(count($otherMedication) != 0)
+                                                    <label class="text-info">Other Medication</label>
+                                                    <blockquote class="blockquote">
+                                                        <div class="row">
+                                                            <table class="table-borderless table">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Drug</th>
+                                                                    <th>Dosage</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
 
-                                                <label class="text-info">Other Medication</label>
-                                                <blockquote class="blockquote">
-                                                    <div class="row">
-                                                        <table class="table-borderless table">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Drug</th>
-                                                                <th>Dosage</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @if($otherMedication)
                                                                 @foreach($otherMedication as $med)
                                                                     <tr>
                                                                         <td>{{$med->drug}}</td>
                                                                         <td>{{$med->dosage}}</td>
                                                                     </tr>
                                                                 @endforeach
-                                                            @endif
-                                                            </tbody>
-                                                        </table>
-                                                        {{--<table class="table table-borderless">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Item</th>
-                                                                <th>Amount</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @php($total = 0)
-                                                            @foreach($getBills as $bill)
+                                                                </tbody>
+                                                            </table>
+                                                            {{--<table class="table table-borderless">
+                                                                <thead>
                                                                 <tr>
-                                                                    <td>{{$bill->item}}</td>
-                                                                    <td>{{$bill->total_amount_to_pay}}</td>
+                                                                    <th>Item</th>
+                                                                    <th>Amount</th>
                                                                 </tr>
-                                                                @php($total +=$bill->total_amount_to_pay)
-                                                            @endforeach
-                                                            @if($detentionBill)
-                                                                <tr>
-                                                                    <td>Detention</td>
-                                                                    <td>{{$detentionBill}}.00</td>
+                                                                </thead>
+                                                                <tbody>
+                                                                @php($total = 0)
+                                                                @foreach($getBills as $bill)
+                                                                    <tr>
+                                                                        <td>{{$bill->item}}</td>
+                                                                        <td>{{$bill->total_amount_to_pay}}</td>
+                                                                    </tr>
+                                                                    @php($total +=$bill->total_amount_to_pay)
+                                                                @endforeach
+                                                                @if($detentionBill)
+                                                                    <tr>
+                                                                        <td>Detention</td>
+                                                                        <td>{{$detentionBill}}.00</td>
+                                                                    </tr>
+                                                                @endif
+                                                                <tr class="bg-primary text-white">
+                                                                    <td class="p-2 text-right">
+                                                                        Total
+                                                                    </td>
+                                                                    <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
                                                                 </tr>
-                                                            @endif
-                                                            <tr class="bg-primary text-white">
-                                                                <td class="p-2 text-right">
-                                                                    Total
-                                                                </td>
-                                                                <td class="p-2">GH₵ {!! $total+$detentionBill !!}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>--}}
+                                                                </tbody>
+                                                            </table>--}}
 
-                                                        {{-- <div class="col-md-12 text-right mt-3">
-                                                             <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
-                                                         </div>--}}
-                                                    </div>
-                                                </blockquote>
+                                                            {{-- <div class="col-md-12 text-right mt-3">
+                                                                 <p><b>Prepared By:</b> {{$vital->user->first_name." ".$vital->user->last_name}}.  <b>Time:</b> {{substr($vital->created_at,0,10)}}</p>
+                                                             </div>--}}
+                                                        </div>
+                                                    </blockquote>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

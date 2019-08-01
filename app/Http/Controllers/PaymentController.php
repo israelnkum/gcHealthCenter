@@ -129,14 +129,14 @@ class PaymentController extends Controller
             }
         }
 
-        $registration = Registration::find($request->input('registration_id'));
-        if ($request->input('grand_total') > $request->input('amount_paid')){
+       /* $registration = Registration::find($request->input('registration_id'));
+        if ($request->input('grand_total') >= $request->input('amount_paid')){
             $registration->hasArrears =1;
             $registration->medication =2;
         }else{
             $registration->medication =1;
             $registration->hasArrears =0;
-        }
+        }*/
 
         $registration->save();
 
@@ -148,9 +148,17 @@ class PaymentController extends Controller
         $payment->patient_id = $request->input('patient_id');
         $payment->service_total = $request->input('service_total');
         $payment->drugs_total = $request->input('drugs_total');
-        $payment->grand_total = $request->input('grand_total');
         $payment->amount_paid = $request->input('amount_paid');
-        $payment->arrears = floatval($request->input('amount_paid'))-floatval($request->input('grand_total'));
+        if (floatval($request->input('amount_paid')) > floatval($request->input('grand_total'))){
+            $payment->arrears = 0;
+            $payment->change =floatval($request->input('amount_paid')) - floatval($request->input('grand_total')) ;
+        }else{
+            $payment->change = 0;
+            $payment->arrears = floatval($request->input('grand_total')) - floatval($request->input('amount_paid'));
+        }
+        $payment->grand_total = $request->input('grand_total');
+
+//        $payment->arrears = floatval($request->input('amount_paid'))-floatval($request->input('grand_total'));
         $payment->user_id = Auth::user()->id;
         $payment->save();
 
@@ -166,8 +174,8 @@ class PaymentController extends Controller
         $paymentLogs->user_id = Auth::user()->id;
 
         $paymentLogs->save();
-        return redirect()->route('drugs.create')
-            ->with('success','Drugs Dispensed');
+        toastr()->success('Drugs Dispensed');
+        return redirect()->route('drugs.create');
     }
 
     /**
@@ -262,25 +270,25 @@ class PaymentController extends Controller
                 $bill->save();
             }
         }
+
+        //if arrears is paid
         if (\Request::has('arrears')) {
-            /* $registration = Registration::find($request->input('registration_id'));
-             if ($request->input('grand_total') > $request->input('amount_paid')) {
-                 $registration->hasArrears = 1;
-                 $registration->medication = 2;
-             } else {
-                 $registration->medication = 1;
-                 $registration->hasArrears = 0;
-             }
-
-             $registration->save();*/
-
-
             $payment = Payment::where('registration_id', $request->input('registration_id'))
                 ->where('patient_id', $request->input('patient_id'))->first();
+            //check if patient paid more than necessary
+            if ((floatval($request->input('amount_paid')) + floatval($payment->amount_paid))  > floatval($payment->grand_total)){
+                //calculate for the change
+                $payment->change =floatval($request->input('amount_paid')) -floatval(str_replace('-','',$payment->arrears));
+                $payment->arrears = 0;
+            }else{
+                //else calculate for arrears
+                $payment->change = 0;
+                $payment->arrears =floatval(str_replace('-','',$payment->arrears)) - (floatval($request->input('amount_paid')));
+            }
 
             $payment->amount_paid = $payment->amount_paid + $request->input('amount_paid');
-            $payment->arrears = str_replace('-', '', $payment->arrears) - $request->input('amount_paid');
-            $payment->user_id = Auth::user()->id;
+
+
 
             $payment->save();
 
@@ -291,28 +299,41 @@ class PaymentController extends Controller
             $paymentLogs->drugs_total = 0;
             $paymentLogs->grand_total = $request->input('arrears');
             $paymentLogs->amount_paid = $request->input('amount_paid');
-            $paymentLogs->arrears = $request->input('amount_paid') - $request->input('grand_total');
+            $paymentLogs->arrears = $request->input('amount_paid') - $request->input('arrears');
             $paymentLogs->user_id = Auth::user()->id;
             $paymentLogs->save();
         }
 
-        return redirect()->route('drugs.create')
-            ->with('success','Drugs Dispensed');
+        toastr()->success('Drugs Dispensed');
+        return redirect()->route('drugs.create');
     }
 
 
     public function payArrears(Request $request){
 
         $payment = Payment::find($request->input('payment_id'));
-        $payment->amount_paid = $payment->amount_paid+$request->input('amount_paid');
-//        $patient->grand_total =$patient->grand_total+$request->input('amount_paid');
-        $arrears =$payment->arrears = str_replace('-','',$payment->arrears)-$request->input('amount_paid');
+
+        //check if patient paid more than necessary
+        if ((floatval($request->input('amount_paid')) + floatval($payment->amount_paid))  > floatval($payment->grand_total)){
+
+            //calculate for the change
+            $payment->change =floatval($request->input('amount_paid')) -floatval(str_replace('-','',$payment->arrears));
+            $payment->arrears = 0;
+        }else{
+
+            //else calculate for arrears
+            $payment->change = 0;
+            $payment->arrears =floatval(str_replace('-','',$payment->arrears)) - (floatval($request->input('amount_paid')));
+        }
+
+        $payment->amount_paid = $payment->amount_paid + $request->input('amount_paid');
+
         $payment->save();
 
 
         if ($request->input('amount_paid') <= 0){
-
-            return back()->with('error','Amount cannot be Zero');
+            toastr()->success('Amount cannot be Zero');
+            return back();
         }else{
             $paymentLogs = new PaymentLogs();
             $paymentLogs->registration_id = $payment->registration_id;

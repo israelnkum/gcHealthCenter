@@ -67,7 +67,8 @@ class VitalsController extends Controller
         $registration->vitals = 1;
         $registration->save();
 
-        return redirect()->route('vitals.index')->with('success','Vitals Added Successfully');
+        toastr()->success('Vitals Added Successfully');
+        return redirect()->route('vitals.index');
     }
 
     /**
@@ -88,8 +89,8 @@ class VitalsController extends Controller
         }
 
         if (count($registered->registration) == 0){
-            return  redirect()->route('patients.show',$registered->id)
-                ->with('error','Please register patient before checking vitals');
+            toastr()->error('Please register patient before checking vitals');
+            return  redirect()->route('patients.show',$registered->id);
         }else{
 //            return $registered;
             return view('pages.vitals.edit')
@@ -124,8 +125,8 @@ class VitalsController extends Controller
 
 
             if (count($registered->registration) == 0){
-                return  redirect()->route('patients.show',$registered->id)
-                    ->with('error','Please register patient before checking vitals');
+                toastr()->error('Please register patient before checking vitals');
+                return  redirect()->route('patients.show',$registered->id);
             }else{
 
                 return view('pages.vitals.edit')
@@ -170,7 +171,8 @@ class VitalsController extends Controller
             $registration = Registration::find($request->input('registration_id'));
             $registration->vitals = 1;
             $registration->save();
-            return redirect()->route('vitals.index')->with('success','Vitals Updated Successfully');
+            toastr()->success('Vitals Updated Successfully');
+            return redirect()->route('vitals.index');
         }else{
 
             $registration = Registration::find($request->input('registration_id'));
@@ -199,7 +201,8 @@ class VitalsController extends Controller
             $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
             $bill->save();
-            return redirect()->route('vitals.index')->with('success','Vitals Updated');
+            toastr()->success('Vitals Updated');
+            return redirect()->route('vitals.index');
         }
 
 

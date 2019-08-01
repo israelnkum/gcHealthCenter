@@ -67,6 +67,23 @@ class DrugController extends Controller
             ->orderBy('created_at','asc')
             ->first();
 
+
+
+        if (empty($registration)){
+            $registration = Registration::with('patient')
+
+                ->where('vitals',1)
+                ->where('review',1)
+                ->where('medication',0)
+                ->whereDate('created_at', Carbon::today())
+                ->limit(1)
+                ->orderBy('created_at','asc')
+                ->first();
+
+
+        }
+
+
         if (!empty($registration)){
             $allPatientRegistration = Registration::where('patient_id',$registration->patient_id)->get();
 
@@ -86,12 +103,12 @@ class DrugController extends Controller
 //                ->where('type','!=','Drug')
                 ->get();
 
-     /*       $checkForArrears = Payment::where('patient_id',$registration->patient_id)
-//                ->where('arrears','<=','grand_total')
-                ->where('arrears','!=',0)
-                ->get();
+            /*       $checkForArrears = Payment::where('patient_id',$registration->patient_id)
+       //                ->where('arrears','<=','grand_total')
+                       ->where('arrears','!=',0)
+                       ->get();
 
-            return $checkForArrears;*/
+                   return $checkForArrears;*/
 
             //check if patient is detained Or Admitted
             if ( $registration->detain == 0){
@@ -144,7 +161,7 @@ class DrugController extends Controller
 
         $drugs = Drug::all()->count();
 
-        return view('pages.pharmacy.drug_dispense')
+        return view('pages.pharmacy.drug-dispense')
             ->with('registration',$registration)
             ->with('drugs',$drugs)
             ->with('vitals',$vitals)

@@ -248,18 +248,30 @@
 
                                                         <div class="form-row form-group">
                                                             <div class="col-md-6" >
-                                                                <div id="patient_charge_div" style="display: none;">
-                                                                    <label for="patient_charges">Charge</label>
-                                                                    <select  title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
-                                                                        <option value="">~Charge~</option>
-                                                                        @foreach($charges as $charge)
-                                                                            @if($charge->name == "Insured" || $charge->name == "Non-Insured")
-                                                                                <option value="{{$charge->id}}">{{$charge->name}}</option>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <div class="invalid-feedback">
-                                                                        Charge is required.
+                                                                <div class="row" id="patient_charge_div" style="display: none;">
+                                                                    <div class="col-md-12">
+                                                                        <div>
+                                                                            <label>Insurance</label>
+                                                                            <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                                <option value="">Select Insurance</option>
+                                                                                @foreach($charges as $charge)
+                                                                                    @if($charge->name == "Insured" || $charge->name=="Non-Insured")
+                                                                                        <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                                    @endif
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <div class="invalid-feedback">
+                                                                                Insurance is required.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-check form-check-flat mt-3">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="review" id="review">
+                                                                                Review
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
@@ -319,18 +331,30 @@
 
                                                                     <div class="form-row form-group">
                                                                         <div class="col-md-6" >
-                                                                            <div id="patient_charge_div" style="display: none;">
-                                                                                <label>Charge</label>
-                                                                                <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
-                                                                                    <option value="">~Charge~</option>
-                                                                                    @foreach($charges as $charge)
-                                                                                        @if($charge->name == "Insured" || $charge->name=="Non-Insured")
-                                                                                            <option value="{{$charge->id}}">{{$charge->name}}</option>
-                                                                                        @endif
-                                                                                    @endforeach
-                                                                                </select>
-                                                                                <div class="invalid-feedback">
-                                                                                    Charge is required.
+                                                                            <div class="row" id="patient_charge_div" style="display: none;">
+                                                                                <div class="col-md-12">
+                                                                                    <div>
+                                                                                        <label>Insurance</label>
+                                                                                        <select title="Select Charge"  name="charges" id="patient_charges" class="js-example-basic-single form-control" style="width: 100%" >
+                                                                                            <option value="">Select Insurance</option>
+                                                                                            @foreach($charges as $charge)
+                                                                                                @if($charge->name == "Insured" || $charge->name=="Non-Insured")
+                                                                                                    <option value="{{$charge->id}}">{{$charge->name}}</option>
+                                                                                                @endif
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                        <div class="invalid-feedback">
+                                                                                            Insurance is required.
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <div class="form-check form-check-flat mt-3">
+                                                                                        <label class="form-check-label">
+                                                                                            <input type="checkbox" class="form-check-input" name="review" id="review">
+                                                                                            Review
+                                                                                        </label>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                             <input type="hidden" name="patient_id" value="{{$data[0]->id}}">
@@ -448,8 +472,8 @@
                                             <label class="text-info" for="labs_date">Registration Date</label>
                                             <select  name="registration_id" id="labs_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
                                                 @if($patient_registrations)
+                                                    <option value="">~</option>
                                                     @foreach($patient_registrations as $p_registration)
-                                                        <option value="">~</option>
                                                         <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
                                                     @endforeach
                                                 @endif
@@ -469,8 +493,8 @@
                                             <label class="text-info" for="scan_date">Registration Date</label>
                                             <select  name="scan_date" id="scan_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
                                                 @if($patient_registrations)
+                                                    <option value="">~</option>
                                                     @foreach($patient_registrations as $p_registration)
-                                                        <option value="">~</option>
                                                         <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
                                                     @endforeach
                                                 @endif
