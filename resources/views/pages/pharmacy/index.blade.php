@@ -174,6 +174,7 @@
                                                                 <th>Retail Price</th>
                                                                 <th>Supplier ID</th>
                                                                 <th>Drug type ID</th>
+                                                                <th>Unit Of Pricing</th>
                                                                 <th>Insurance</th>
                                                                 {{--<th>Expiry Date</th>--}}
                                                                 <th>Action</th>
@@ -206,6 +207,7 @@
                                                                     <td>{{$drug->retail_price}}</td>
                                                                     <td>{{$drug->supplier_id}}</td>
                                                                     <td>{{$drug->drug_type_id}}</td>
+                                                                    <td>{{$drug->unit_of_pricing}}</td>
                                                                     <td>{{$drug->nhis_amount}}</td>
                                                                     {{--                                                                    <td>{{$drug->expiry_date}}</td>--}}
                                                                     <td>
@@ -428,6 +430,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <a href="{{route('upload_format')}}" class="badge badge-success">Download Drug Upload Format</a>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -561,16 +565,15 @@
                     </div>
                     <div class="modal-body pt-0">
                         <div class="form-row">
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="name">Drug Name</label>
                                 <input title="Enter Insurance Name" type="text" name="name" class="form-control" id="name" required>
                                 <div class="invalid-feedback">
                                     Drug Name is required.
                                 </div>
                             </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-5">
+
+                            <div class="col-md-4">
                                 <label for="drug_type1">Drug Type</label>
                                 <select id="drug_type1" title="Select Drug Type" name="type_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Type~</option>
@@ -583,7 +586,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-5">
+                            <div class="col-md-2">
                                 <label for="unit_of_pricing">Unit Of Pricing</label>
                                 <select id="unit_of_pricing" title="Select Supplier" name="unit_of_pricing" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select~</option>
@@ -652,24 +655,21 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="temperature" class="col-sm-2 col-form-label">Cost Price</label>
                             <div class="col-sm-4">
+                                <label for="temperature">Cost Price</label>
                                 <input required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" name="cost_price">
                                 <div class="invalid-feedback">
                                     Cost Price is required
                                 </div>
                             </div>
-
-                            <label for="retail_price" class="col-sm-2 col-form-label text-right">Retail Price</label>
                             <div class="col-sm-4">
+                                <label for="retail_price">Retail Price</label>
                                 <input required type="text" name="retail_price" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" id="retail_price">
                                 <div class="invalid-feedback">
                                     Retail Price is required
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="">Expiry Date</label>
                                 <input required type="date" class="form-control" data-inputmask="'alias': 'date'" style="text-align: right;" name="expiry_date">
                                 <div class="invalid-feedback">
@@ -693,7 +693,7 @@
 
     <!-- edit Drug  modal -->
     <div class="modal fade" id="editDrugModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="post" action="/drugs" id="editDrugForm" class="needs-validation" novalidate>
                 @csrf
                 {!! method_field('put') !!}
@@ -706,16 +706,14 @@
                     </div>
                     <div class="modal-body pt-0">
                         <div class="form-row">
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="name">Drug Name</label>
                                 <input title="Enter Insurance Name" type="text" name="name" class="form-control" id="edit_drug_name" required>
                                 <div class="invalid-feedback">
                                     Drug Name is required.
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <label for="">Drug Type</label>
                                 <select title="Select Drug Type" id="edit_drug_type_id" name="type_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Type~</option>
@@ -727,10 +725,49 @@
                                     Drug Type is required.
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-row form-group">
-                            <div class="col-md-12">
+                            <div class="col-md-2">
+                                <label for="edit_unit_of_pricing">Unit Of Pricing</label>
+                                <select id="edit_unit_of_pricing" title="Select Supplier" name="unit_of_pricing" class="js-example-basic-single form-control" style="width: 100%">
+                                    <option value="">~Select~</option>
+                                    <option value="Blister (x10tabs)">Blister (x10tabs)</option>
+                                    <option value="10ml">10ml</option>
+                                    <option value="20ml">20ml</option>
+                                    <option value="30GR">30GR</option>
+                                    <option value="6 PESS">6 PESS</option>
+                                    <option value="15G">15G</option>
+                                    <option value="AMPOULE">AMPOULE</option>
+                                    <option value="VIAL">VIAL</option>
+                                    <option value="BOTTLE">BOTTLE</option>
+                                    <option value="SATCHET">SATCHET</option>
+                                    <option value="BOTTLE/SATCHET">BOTTLE/SATCHET</option>
+                                    <option value="DOSE">DOSE</option>
+                                    <option value="SUPP">SUPP</option>
+                                    <option value="PACK">PACK</option>
+                                    <option value="PACK (6caps)">PACK (6caps)</option>
+                                    <option value="PACK (9tabs)">PACK (9tabs)</option>
+                                    <option value="PACK (14tabs)">PACK (14tabs)</option>
+                                    <option value="PACK (28tabs)">PACK (28tabs)</option>
+                                    <option value="PACK (30tabs)">PACK (30tabs)</option>
+                                    <option value="1 course">1 course</option>
+                                    <option value="1 course (6tabs)">1 course (6tabs)</option>
+                                    <option value="1 course (24tabs)">1 course (24tabs)</option>
+                                    <option value="2 course (12tabs)">2 course (12tabs)</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Unit of Pricing is required.
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="display: none;" id="edit_blisters">
+                                <label for="number_of_tablet">Tablets Per Blister</label>
+                                <input name="no_of_tablet" id="number_of_tablet" type="number" value="10" class="form-control">
+                                <div class="invalid-feedback">
+                                    N<u>o</u> Blisters is required.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
                                 <label for="">Supplier</label>
                                 <select title="Select Supplier" id="edit_supplier_id" name="supplier_id" class="js-example-basic-single form-control" style="width: 100%" required>
                                     <option value="">~Select Supplier~</option>
@@ -742,34 +779,31 @@
                                     Supplier is required.
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-row form-group">
-                            <div class="col-md-6">
+                            <div class="col-md-2">
                                 <label for="">Quantity In Stock</label>
                                 <input required type="text" disabled class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" id="quantity_stock" name="quantity_stock">
                                 <div class="invalid-feedback">
                                     Quantity is required
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-2">
                                 <label for="">Receiving Stock</label>
                                 <input required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" id="edit_receiving_stock" name="receiving_stock">
                                 <div class="invalid-feedback">
                                     Receiving Stock is required
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="temperature" class="col-sm-2 col-form-label">Cost Price</label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
+                                <label for="temperature">Cost Price</label>
                                 <input required type="text" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" id="edit_cost_price" name="cost_price">
                                 <div class="invalid-feedback">
                                     Cost Price is required
                                 </div>
                             </div>
 
-                            <label for="retail_price" class="col-sm-2 col-form-label text-right">Retail Price</label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
+                                <label for="retail_price">Retail Price</label>
+
                                 <input required type="text" name="retail_price" class="form-control" data-inputmask="'alias': 'currency'" style="text-align: right;" id="edit_retail_price">
                                 <div class="invalid-feedback">
                                     Retail Price is required

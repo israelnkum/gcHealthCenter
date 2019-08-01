@@ -80,6 +80,7 @@ Route::post('/edit-service','ConsultationController@edit_service_charge')->name(
  */
 
 Route::resource('drugs','DrugController');
+Route::get('/upload_format','DrugController@downloadUploadFormat')->name('upload_format');
 Route::post('/bulk-delete-drug','DrugController@bulk_deleteDrug')->name('bulk_deleteDrug');
 //Route::post('/search-consultation','ConsultationController@searchConsultation')->name('searchConsultation');
 Route::post('/bulk-upload','DrugController@upload_drug')->name('upload_drug');

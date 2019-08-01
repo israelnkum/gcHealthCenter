@@ -49,30 +49,32 @@
                                     $i=1;
                                 @endphp
                                 @foreach($users as $user)
-                                    <tr>
-                                        <td>
-                                            <div class="form-check form-check-flat">
-                                                <label class="form-check-label">
-                                                    <input type="checkbox" value="{{$user->id}}" class="form-check-input checkItem" name="selected_id[]" id="remember">
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td>{!! $i !!}</td>
-                                        <td>{{$user->first_name." ".$user->middle_name." ".$user->last_name}}</td>
-                                        <td>{{$user->id}}</td>
-                                        <td>{{$user->username}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->phone_number}}</td>
-                                        <td>{{$user->role}}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-sm btn-secondary edit">
-                                                <i class="icon icon-pencil"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    @php
-                                        $i = $i+1;
-                                    @endphp
+                                    @if($user->role != "Super Admin")
+                                        <tr>
+                                            <td>
+                                                <div class="form-check form-check-flat">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" value="{{$user->id}}" class="form-check-input checkItem" name="selected_id[]" id="remember">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>{!! $i !!}</td>
+                                            <td>{{$user->first_name." ".$user->middle_name." ".$user->last_name}}</td>
+                                            <td>{{$user->id}}</td>
+                                            <td>{{$user->username}}</td>
+                                            <td>{{$user->email}}</td>
+                                            <td>{{$user->phone_number}}</td>
+                                            <td>{{$user->role}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-secondary edit">
+                                                    <i class="icon icon-pencil"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @php
+                                            $i = $i+1;
+                                        @endphp
+                                    @endif
                                 @endforeach
                                 </tbody>
                             </table>

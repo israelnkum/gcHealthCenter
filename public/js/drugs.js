@@ -48,6 +48,17 @@ $(document).ready(function () {
         }
     });
 
+    $("#edit_unit_of_pricing").change(function () {
+        if ($("#edit_unit_of_pricing").val() == "Blister (x10tabs)"){
+            $('#edit_blisters').fadeIn(1000).slideDown(1000);
+            $('#number_of_tablet').attr('required', true);
+
+        }else {
+            $('#edit_blisters').fadeOut(1000).slideUp(1000);
+            $('#number_of_tablet').removeAttr('required');
+        }
+    });
+
 
 
     $('#patient_insurance_type').attr('required',true);
@@ -273,6 +284,7 @@ $(document).ready(function () {
     drug_table.column(2).visible(false);
     drug_table.column(9).visible(false);
     drug_table.column(10).visible(false);
+    drug_table.column(11).visible(false);
     drug_table.on('click','.edit',function () {
         $tr = $(this).closest('tr');
 
@@ -285,6 +297,7 @@ $(document).ready(function () {
         $('#edit_drug_name').val(data[3]);
         $('#edit_supplier_id').val(data[9]).trigger('change');
         $('#edit_drug_type_id').val(data[10]).trigger('change');
+        $('#edit_unit_of_pricing').val(data[11]).trigger('change');
         $('#quantity_stock').val(data[6]);
         $('#edit_cost_price').val(data[7]);
         $('#edit_retail_price').val(data[8]);

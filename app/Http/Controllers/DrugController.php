@@ -357,20 +357,21 @@ class DrugController extends Controller
 
         $drug->name = $request->input('name');
         $drug->drug_type_id = $request->input('type_id');
-        $drug->qty_in_stock = $request->input('receiving_stock');
+        $drug->qty_in_stock = $drug->qty_in_stock+ $request->input('receiving_stock');
+
+
         $drug->unit_of_pricing = $request->input('unit_of_pricing');
         if (\Request::has('no_of_tablet')){
 //                $drug->no_of_tablet = $request->input('no_of_tablet');
-            $drug->no_of_tablet = $request->input('no_of_tablet');
-            $drug->qty_in_tablet = $request->input('receiving_stock')*10;
+            $drug->no_of_tablet  = $request->input('no_of_tablet');
+            $drug->qty_in_tablet =  $drug->qty_in_tablet+$request->input('receiving_stock')*10;
         }
 
         $drug->retail_price = $request->input('retail_price');
-
         $drug->supplier_id = $request->input('supplier_id');
         $drug->cost_price = $request->input('cost_price');
 
-        $drug->nhis_amount = $request->input('nhis_amount');
+//        $drug->nhis_amount = $request->input('nhis_amount');
         $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
         $drug->user_id = Auth::user()->id;
 
@@ -397,5 +398,11 @@ class DrugController extends Controller
                 ->where('created_at',$medication->created_at)->delete();
             return back()->with('success','Medication Updated');
         }
+    }
+
+    public function downloadUploadFormat(){
+
+        $pathToFile = public_path('Upload_Format.xlsx');
+        return response()->download($pathToFile, 'Upload_Format.xlsx');
     }
 }

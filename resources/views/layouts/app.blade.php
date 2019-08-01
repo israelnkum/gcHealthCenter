@@ -223,7 +223,7 @@
                         <li class="nav-item">
                             <a href="{{route('home')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-screen-desktop"></i><span class="menu-title">Home</span></a>
                         </li>
-                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Nurse")
+                        @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin" || Auth::user()->role == "Nurse")
                             <li class="nav-item">
                                 <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-folder-alt"></i><span class="menu-title">File</span><i class="menu-arrow"></i></a>
                                 <div class="submenu">
@@ -235,7 +235,7 @@
                                 </div>
                             </li>
                         @endif
-                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Doctor")
+                        @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin" || Auth::user()->role == "Doctor")
                             <li class="nav-item">
                                 <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-energy"></i><span class="menu-title">Consultation/Review</span><i class="menu-arrow"></i></a>
                                 <div class="submenu">
@@ -247,7 +247,7 @@
                             </li>
                         @endif
 
-                        @if(Auth::user()->role == "Admin" || Auth::user()->role == "Pharmacist")
+                        @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin" || Auth::user()->role == "Pharmacist")
                             <li class="nav-item">
                                 <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-drop">
                                     </i><span class="menu-title">Pharmacy</span><i class="menu-arrow"></i>
@@ -262,14 +262,14 @@
                         @endif
 
 
-                        <li class="nav-item">
+                 {{--       <li class="nav-item">
                             <a href="{{route('reports.index')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
-                        </li>
+                        </li>--}}
 
-                        @if(Auth::user()->role == "Admin")
+                        @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin")
                             <li class="nav-item">
                                 <a href="{{route('users.index')}}?{{Hash::make(time())}}" class="nav-link">
                                     <i class="link-icon icon-user"></i>
