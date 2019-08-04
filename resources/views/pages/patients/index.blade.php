@@ -583,19 +583,19 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <input title="Enter First name" type="text" name="first_name" class="form-control" id="first_name" placeholder="First Name"  required>
+                                <input title="Enter First name" type="text" name="first_name" class="form-control text-capitalize" id="first_name" placeholder="First Name"  required>
                                 <div class="invalid-feedback">
                                     First Name is required
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <input title="Enter Last Name" type="text" name="last_name" class="form-control" id="last_name" placeholder="Last Name"  required>
+                                <input title="Enter Last Name" type="text" name="last_name" class="form-control text-capitalize" id="last_name" placeholder="Last Name"  required>
                                 <div class="invalid-feedback">
                                     Last Name is required
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <input title="Enter Other Name" type="text" name="other_name" class="form-control" id="other_name" placeholder="Other Name"  >
+                                <input title="Enter Other Name" type="text" name="other_name" class="form-control text-capitalize" id="other_name" placeholder="Other Name"  >
 
                             </div>
                         </div>
@@ -626,13 +626,13 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Postal Address" type="text" name="postal_address" class="form-control" id="postal_address" placeholder="Postal Address" >
+                                <input title="Enter Postal Address" type="text" name="postal_address" class="form-control text-uppercase" id="postal_address" placeholder="Postal Address" >
                                 <div class="invalid-feedback">
                                     Postal Address is required
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <input title="Enter House Number" type="text" name="house_number" class="form-control" id="house_number" placeholder="House Number" >
+                                <input title="Enter House Number" type="text" name="house_number" class="form-control text-uppercase" id="house_number" placeholder="House Number" >
                                 <div class="invalid-feedback">
                                     House Number is required
                                 </div>
@@ -641,7 +641,7 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Locality" type="text" name="locality" class="form-control" id="locality" placeholder="Locality"  required>
+                                <input title="Enter Locality" type="text" name="locality" class="form-control text-capitalize" id="locality" placeholder="Locality"  required>
                                 <div class="invalid-feedback">
                                     Locality is required
                                 </div>
@@ -655,7 +655,7 @@
                         </div>
                         <div class="form-row form-group">
                             <div class="col-md-6">
-                                <input title="Enter Occupation" type="text" name="occupation" class="form-control" id="occupation" placeholder="Occupation"  required>
+                                <input title="Enter Occupation" type="text" name="occupation" class="form-control text-capitalize" id="occupation" placeholder="Occupation"  required>
                                 <div class="invalid-feedback">
                                     Occupation is required
                                 </div>
@@ -677,7 +677,7 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Name Of Nearest Relative" type="text" name="name_of_relative" class="form-control" id="name_of_relative" placeholder="Name Of Nearest Relative">
+                                <input title="Enter Name Of Nearest Relative" type="text" name="name_of_relative" class="form-control text-capitalize" id="name_of_relative" placeholder="Name Of Nearest Relative">
                                 {{--<div class="invalid-feedback">
                                     Locality is required
                                 </div>--}}

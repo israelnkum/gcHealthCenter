@@ -490,19 +490,24 @@
                                 <h4 class="card-title">Pay Arrears</h4>
                                 <form action="{{route('payArrears')}}" method="post" class="needs-validation" novalidate>
                                     @csrf
+                                    <input name="arrears" hidden type="number" value="{{$arrears->arrears}}">
                                     <input type="hidden" value="{{$recentRegistration->patient->id}}" name="patient_id">
                                     <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
                                     <input type="hidden" name="payment_id" value="{{$arrears->id}}">
                                     <div class="form-group row p-3" style="border: dashed  black 1px;">
-                                        <div class="col-md-4 offset-md-4">
+                                        <div class="col-md-4">
+                                            <h6>Arrears</h6>
+                                            <h4 class="display-4">{{$arrears->arrears}}</h4>
+                                            <small class="text-danger">Note: Detention will not be added unit patient is dicharged</small>
+                                        </div>
+                                        <div class="col-md-4 text-center">
                                             <label for="amount_paid">Amount Paid</label>
-                                            <input type="number" name="amount_paid" min="0" max="{{str_replace('-','',$arrears->arrears)}}" id="amount_paid" class="form-control" required>
+                                            <input type="text" name="amount_paid" min="0"  id="amount_paid" class="form-control" required>
                                             <div class="invalid-feedback">
                                                 Amount required
                                             </div>
-                                        </div>
-                                        <div class="col-md-4 text-center offset-md-4 mt-3">
-                                            <button class="btn btn-info">Pay Arrears</button>
+
+                                            <button class="btn btn-info mt-3">Pay Arrears</button>
                                         </div>
                                     </div>
                                 </form>

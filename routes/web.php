@@ -48,6 +48,7 @@ Route::resource('registration','OpdRegistrationController');
  */
 
 Route::resource('reports','ReportsController');
+Route::get('patients-reports','ReportsController@patient_report')->name('patients-reports');
 
 
 

@@ -141,24 +141,22 @@
                                         <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
                                         <input required type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
                                         <div class="form-group row">
-                                            <label for="complains" class="text-info">Complains</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="complains" class="text-info">Complains</label>
                                                 <textarea required  name="complains" class="form-control" id="complains" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Complains is required
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="physical_examination" class="text-info">Physical Examination</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="physical_examination" class="text-info">Physical Examination</label>
                                                 <textarea required  name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Physical Examination is required
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
+
+                                        {{--<div class="form-group row">
                                             <div class="col-sm-12">
                                                 <label for="findings" class="text-info">Findings</label>
                                                 <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
@@ -166,10 +164,10 @@
                                                     Finding is required
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-12">
-                                                <label for="diagnosis" class="text-info">Diagnosis</label>
+                                        </div>--}}
+
+                                            <div class="col-sm-6 mt-3">
+                                                <label for="select_diagnosis" class="text-info">Diagnosis</label>
                                                 <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                     <option value="">Select Diagnosis</option>
                                                     @foreach($diagnosis as $diag)
@@ -180,9 +178,8 @@
                                                     Diagnosis is required
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6 mt-3">
+                                                <label for="other_diagnosis_text" class="text-info">Other Diagnosis</label>
                                                 <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                 <div class="invalid-feedback">
                                                     Diagnosis is required
@@ -328,7 +325,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <div class="col-sm-6">
+                                            {{--<div class="col-sm-6">
                                                 <div class="row">
                                                     <div class="col-md-12 mb-3">
                                                         <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
@@ -339,30 +336,24 @@
                                                         <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
                                                     </div>
                                                 </div>
+                                            </div>--}}
+                                            <div class="col-md-6 mb-3">
+                                                <label class="text-info">Select Service</label>
+                                                <select  class="col-12 form-control mr-1 selectMedicine" multiple   name="service[]" id="service">
+                                                    <option value=""></option>
+                                                    @foreach($charges as $charge)
+                                                        @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
+                                                            <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <div class="row">
-                                                    <div class="col-md-12 mb-3">
-                                                        <label class="text-info">Select Service</label>
-                                                        <select  class="col-12 form-control mr-1 selectMedicine" multiple   name="service[]" id="service">
-                                                            <option value=""></option>
-                                                            @foreach($charges as $charge)
-                                                                @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
-                                                                    <option value="{{$charge->id.",".$charge->name}}">{{$charge->name}}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <blockquote class="blockquote">
-                                                            <div class="form-check">
-                                                                <label class="form-check-label">
-                                                                    <input type="checkbox" name="detain_admit" class="form-check-input">
-                                                                    Detain/Admit Patient
-                                                                </label>
-                                                            </div>
-                                                        </blockquote>
-                                                    </div>
+                                            <div class="col-md-6 p-3">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" name="detain_admit" class="form-check-input">
+                                                        Detain/Admit Patient
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -436,12 +427,12 @@
                                                 <p class="mb-0">{{$consult->complains}}</p>
                                             </blockquote>
                                         </div>
-                                        <div class="col-md-12 p-1">
+                                        {{--<div class="col-md-12 p-1">
                                             <label class="text-info">Findings</label>
                                             <blockquote class="blockquote" >
                                                 <p class="mb-0">{{$consult->findings}}</p>
                                             </blockquote>
-                                        </div>
+                                        </div>--}}
                                         <div class="col-md-12">
                                             <label class="text-info">Physical Examination</label>
                                             <blockquote class="blockquote" >

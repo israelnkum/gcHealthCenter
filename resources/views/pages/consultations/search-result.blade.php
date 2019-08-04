@@ -202,7 +202,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group row">
+                                                    {{--<div class="form-group row">
                                                         <div class="col-sm-12">
                                                             <label for="findings" class="text-info">Findings</label>
                                                             <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
@@ -210,7 +210,7 @@
                                                                 Finding is
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>--}}
                                                     <div class="form-group row">
                                                         <div class="col-sm-12">
                                                             <label for="diagnosis" class="text-info">Diagnosis</label>
@@ -474,12 +474,12 @@
                                                     <p class="mb-0">{{$consult->complains}}</p>
                                                 </blockquote>
                                             </div>
-                                            <div class="col-md-12 p-1">
+                                            {{--<div class="col-md-12 p-1">
                                                 <label class="text-info">Findings</label>
                                                 <blockquote class="blockquote" >
                                                     <p class="mb-0">{{$consult->findings}}</p>
                                                 </blockquote>
-                                            </div>
+                                            </div>--}}
                                             <div class="col-md-12">
                                                 <label class="text-info">Physical Examination</label>
                                                 <blockquote class="blockquote" >
@@ -912,10 +912,10 @@
                                                 </blockquote>
 
 
-                                                <label class="text-info">Findings</label>
+                                               {{-- <label class="text-info">Findings</label>
                                                 <blockquote class="blockquote">
                                                     <p class="mb-0">{{$recentConsultation->findings}}</p>
-                                                </blockquote>
+                                                </blockquote>--}}
 
                                                 <label class="text-info">Physical Examination</label>
                                                 <blockquote class="blockquote">

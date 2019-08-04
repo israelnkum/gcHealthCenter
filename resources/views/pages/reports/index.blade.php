@@ -27,20 +27,20 @@
                                             <h4>Patients</h4>
 
                                             <div>
-                                                <form action="">
+                                                <form action="{{route('patients-reports')}}" method="get" >
                                                     <div class="form-row">
                                                         <div class="col-md-2">
                                                             <label for="Type">Type</label>
-                                                            <select name="" id="Type" class="form-control selectMedicine" style="width: 100%;">
+                                                            <select name="type" id="Type" class="form-control selectMedicine" style="width: 100%;">
                                                                 <option value=""></option>
-                                                                <option value="1">All Patients</option>
-                                                                <option value="2">Detained Patients</option>
-                                                                <option value="3">Discharged Patients</option>
+                                                                <option value="all">All Patients</option>
+                                                                <option value="detained">Detained Patients</option>
+                                                                <option value="discharged">Discharged Patients</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label for="Type">Gender</label>
-                                                            <select name="" id="Type" class="form-control selectMedicine" style="width: 100%;">
+                                                            <select name="gender" id="Type" class="form-control selectMedicine" style="width: 100%;">
                                                                 <option value=""></option>
                                                                 <option value="Male">Male</option>
                                                                 <option value="Female">Female</option>
@@ -88,7 +88,7 @@
                                                             </div>
                                                         </div>--}}
                                                     </div>
-                                                    <div class="form-row">
+                                                    {{--<div class="form-row">
                                                         <div class="col-md-6">
                                                             <label for="age_between">Date (Between)</label>
                                                             <div class="row">
@@ -110,7 +110,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>--}}
                                                     <div class="form-row">
                                                         <div class="col-md-2">
                                                             <button class="btn btn-dark mt-4" type="submit">Generate</button>

@@ -69,8 +69,8 @@ class PatientController extends Controller
 
 
 
-
-        return back()->with('success','Record Uploaded');
+        toastr()->success('Record Uploaded');
+        return back();
     }
 
     /**
@@ -136,25 +136,25 @@ class PatientController extends Controller
         $patient->registration_number= $folderNumber;
         $patient->folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
         $patient->title= $request->input('title');
-        $patient->first_name= $request->input('first_name');
-        $patient->last_name= $request->input('last_name');
-        $patient->other_name= $request->input('other_name');
+        $patient->first_name= ucwords($request->input('first_name'));
+        $patient->last_name= ucwords($request->input('last_name'));
+        $patient->other_name= ucwords($request->input('other_name'));
         $patient->date_of_birth= $request->input('date_of_birth');
         $patient->gender= $request->input('gender');
         $patient->age= Carbon::parse(str_replace('/','-',$request->input('date_of_birth')))->age;
         $patient->marital_status= $request->input('marital_status');
         $patient->other_information= $request->input('other_information');
-        $patient->postal_address= $request->input('postal_address');
-        $patient->house_number= $request->input('house_number');
-        $patient->locality= $request->input('locality');
+        $patient->postal_address= strtoupper($request->input('postal_address'));
+        $patient->house_number= strtoupper($request->input('house_number'));
+        $patient->locality= ucwords($request->input('locality'));
         $patient->phone_number= $request->input('phone_number');
-        $patient->occupation= $request->input('occupation');
+        $patient->occupation= ucwords($request->input('occupation'));
         $patient->religion= $request->input('religion');
         if (\Request::has('old_patient')) {
             $patient->old_patient =1;
             $patient->last_visit = $request->input('last_visit');
         }
-        $patient->name_of_nearest_relative= $request->input('name_of_relative');
+        $patient->name_of_nearest_relative= ucwords($request->input('name_of_relative'));
         $patient->number_of_nearest_relative= $request->input('relative_phone_number');
         $patient->user_id=Auth::user()->id;
 
@@ -305,8 +305,8 @@ class PatientController extends Controller
         }
 
 
-        return redirect()->route('patients.show',[$patient->id])
-            ->with('success','New Patient Added');
+        toastr()->success('New Patient Added');
+        return redirect()->route('patients.show',[$patient->id]);
     }
 
     /**
@@ -380,8 +380,8 @@ class PatientController extends Controller
         $patient->user_id=Auth::user()->id;
         $patient->save();
 
-        return redirect()->route('patients.show',[$id])
-            ->with('success','Patient\'s Information Updated');
+        toastr()->success('Patient\'s Information Updated');
+        return redirect()->route('patients.show',[$id]);
     }
 
 

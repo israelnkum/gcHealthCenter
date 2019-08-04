@@ -186,7 +186,9 @@ class DrugController extends Controller
         $checkIfExist = Drug::where('name',$request->input('name'))->count();
 
         if ($checkIfExist == 1){
-            return back()->with('error','Drug Already Exist');
+
+            toastr()->error('Drug Already Exist');
+            return back();
         }else {
             $drug = new Drug();
             $drug->name = $request->input('name');
@@ -210,8 +212,8 @@ class DrugController extends Controller
 
             $drug->save();
 
-            return redirect('/drugs')
-                ->with('success','Drug Added');
+            toastr()->success('Drug Added');
+            return redirect('/drugs');
         }
 
     }
@@ -237,8 +239,8 @@ class DrugController extends Controller
             $level->delete();
         }
 
-        return redirect('/drugs')
-            ->with('success','Drug Deleted.');
+        toastr()->success('Drug Deleted.');
+        return redirect('/drugs');
 
     }
 
@@ -321,13 +323,17 @@ class DrugController extends Controller
                     }
                 }
             } else {
-                return redirect('/drugs')->with("error", "Only excel file is accepted!");
+                toastr()->error('Only excel file is accepted!');
+                return redirect('/drugs');
             }
         } else {
             // return redirect('/upload/courses')->with("error", " <span style='font-weight:bold;font-size:13px;'></span> ");
-            return redirect('drugs')->with("error", "Please upload an excel file!");
+            toastr()->error('Please upload an excel file!');
+            return redirect('drugs');
         }
-        return redirect('/drugs')->with("success", " $total Drugs uploaded successfully");
+
+        toastr()->success("$total Drugs uploaded successfully");
+        return redirect('/drugs');
     }
     /**
      * Show the form for editing the specified resource.
@@ -376,8 +382,8 @@ class DrugController extends Controller
         $drug->user_id = Auth::user()->id;
 
         $drug->save();
-        return redirect('/drugs')
-            ->with('success','Drug Updated');
+        toastr()->success('Drug Updated');
+        return redirect('/drugs');
     }
 
 
@@ -396,7 +402,9 @@ class DrugController extends Controller
                 ->where('item_id',$medication->drugs_id)
                 ->where('patient_id',$medication->patient_id)
                 ->where('created_at',$medication->created_at)->delete();
-            return back()->with('success','Medication Updated');
+
+            toastr()->success('Medication Updated');
+            return back();
         }
     }
 

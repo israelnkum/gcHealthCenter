@@ -99,7 +99,7 @@ class ConsultationController extends Controller
         $consultation = Consultation::find($getRegistration->id);
         $consultation ->patient_id =$request->input('patient_id');
         $consultation ->complains=$request->input('complains');
-        $consultation ->findings=$request->input('findings');
+        $consultation ->findings=$request->input('physical_examination');
         $consultation ->physical_examination=$request->input('physical_examination');
         $consultation ->other_diagnosis=$request->input('other_diagnosis');
         $consultation ->user_id=Auth::user()->id;
@@ -916,7 +916,7 @@ class ConsultationController extends Controller
         $consultation = Consultation::find($id);
         $consultation->patient_id =$request->input('patient_id');
         $consultation->complains=$request->input('complains');
-        $consultation->findings=$request->input('findings');
+        $consultation->findings=$request->input('physical_examination');
         $consultation->physical_examination=$request->input('physical_examination');
         $consultation->other_diagnosis=$request->input('other_diagnosis');
         $consultation->user_id=Auth::user()->id;

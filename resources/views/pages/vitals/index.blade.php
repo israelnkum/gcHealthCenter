@@ -135,7 +135,12 @@
                                                                 <div class="row">
                                                                     <label for="rdt" class="col-sm-4 col-form-label" >RDT (Malaria)</label>
                                                                     <div class="col-sm-6">
-                                                                        <input type="number" class="form-control" id="rdt" name="rdt">
+                                                                       {{-- <input type="number" class="form-control" id="rdt" name="rdt">--}}
+                                                                        <select name="rdt" id="rdt" class="form-control selectMedicine" style="width: 100%">
+                                                                            <option value=""></option>
+                                                                            <option value="Negative">Negative</option>
+                                                                            <option value="Positive">Positive</option>
+                                                                        </select>
                                                                         <div class="invalid-feedback">
                                                                             RDT (Malaria) is required
                                                                         </div>

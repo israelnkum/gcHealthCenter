@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Patient;
+use App\Registration;
 use Illuminate\Http\Request;
 
 class ReportsController extends Controller
@@ -80,5 +82,26 @@ class ReportsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function patient_report(Request $request){
+        $reports = Patient::query();
+        if ($request->has('type') && $request->input('type') != ""){
+            if ($request->input('type') == "all"){
+                $reports = Patient::all();
+            }elseif ($request->input('type') == "detained"){
+                $reports = Registration::with('patient')->where('detain',1)->get();
+            }elseif ($request->input('type') == "discharged"){
+                $reports = Registration::with('patient')->where('detain',2)->get();
+            }
+        }
+
+
+        if ($request->has('gender') && $request->input('gender') != ""){
+            $reports = Patient::where('gender',$request->input('gender'))->get();
+        }
+
+        return $reports;
     }
 }

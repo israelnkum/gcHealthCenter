@@ -105,7 +105,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                       {{-- <div class="form-group row">
                                             <div class="col-sm-12">
                                                 <label for="findings" class="text-info">Findings</label>
                                                 <textarea  name="findings" class="form-control" id="findings" rows="10"></textarea>
@@ -113,7 +113,7 @@
                                                     Finding is
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>--}}
                                         <div class="form-group row">
                                             <div class="col-sm-12">
                                                 <label for="diagnosis" class="text-info">Diagnosis</label>

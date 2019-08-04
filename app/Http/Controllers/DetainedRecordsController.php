@@ -340,7 +340,7 @@ class DetainedRecordsController extends Controller
         $records->patient_id = $request->input('patient_id');
         $records->registration_id = $request->input('registration_id');
         $records->complains = $request->input('complains');
-        $records->findings = $request->input('findings');
+        $records->findings = $request->input('physical_examination');
         $records->physical_examination = $request->input('physical_examination');
         $records->other_diagnosis = $request->input('other_diagnosis');
         $records->labs = implode($labFileNames, ',');

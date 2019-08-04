@@ -158,7 +158,11 @@
                                                                 <div class="form-group row sugar{!! $i !!}" style="display: none">
                                                                     <label for="rdt" class="col-sm-2 col-form-label">RDT (Malaria)</label>
                                                                     <div class="col-sm-3">
-                                                                        <input type="text" value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif" class="form-control" id="rdt" name="rdt">
+                                                                        <select name="rdt" id="rdt" class="form-control selectMedicine" style="width: 100%">
+                                                                            <option value="@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif">@if($userRegistration->vitals == 1){!! $registered->vitals[$i-1]->RDT !!}@endif</option>
+                                                                            <option value="Negative">Negative</option>
+                                                                            <option value="Positive">Positive</option>
+                                                                        </select>
                                                                         <div class="invalid-feedback">
                                                                             RDT (Malaria) is required
                                                                         </div>

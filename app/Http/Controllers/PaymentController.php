@@ -129,14 +129,9 @@ class PaymentController extends Controller
             }
         }
 
-       /* $registration = Registration::find($request->input('registration_id'));
-        if ($request->input('grand_total') >= $request->input('amount_paid')){
-            $registration->hasArrears =1;
-            $registration->medication =2;
-        }else{
-            $registration->medication =1;
-            $registration->hasArrears =0;
-        }*/
+        $registration = Registration::find($request->input('registration_id'));
+        $registration->hasArrears =1;
+        $registration->medication =2;
 
         $registration->save();
 
@@ -315,7 +310,6 @@ class PaymentController extends Controller
 
         //check if patient paid more than necessary
         if ((floatval($request->input('amount_paid')) + floatval($payment->amount_paid))  > floatval($payment->grand_total)){
-
             //calculate for the change
             $payment->change =floatval($request->input('amount_paid')) -floatval(str_replace('-','',$payment->arrears));
             $payment->arrears = 0;
@@ -342,7 +336,7 @@ class PaymentController extends Controller
             $paymentLogs->drugs_total = 0;
             $paymentLogs->grand_total = $payment->grand_total;
             $paymentLogs->amount_paid = $request->input('amount_paid');
-            $paymentLogs->arrears = $arrears;
+            $paymentLogs->arrears = $request->input('amount_paid') - $request->input('arrears');
             $paymentLogs->user_id = Auth::user()->id;
             $paymentLogs->save();
         }

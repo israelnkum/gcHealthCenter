@@ -293,7 +293,7 @@
                                         <div class=" col-md-4 offset-md-8">
                                             <label for="">Amount Paid</label>
                                             <div class=" input-group">
-                                                <input type="number" min="0" id="amount_paid_input" required class=" form-control"  name="amount_paid" placeholder="Amount Paid">
+                                                <input type="text"  id="amount_paid_input" required class=" form-control"  name="amount_paid" placeholder="Amount Paid">
                                                 <div class=" input-group-prepend bg-info text-white">
                                                     <button type="submit" class=" input-group-text btn text-white">
                                                         Dispense
