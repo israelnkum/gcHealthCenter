@@ -53,7 +53,9 @@ Route::get('patients-reports','ReportsController@patient_report')->name('patient
 
 
 Route::resource('vitals','VitalsController');
-Route::post('/search-registration-for-vitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');
+Route::get('/search-registration-for-vitals','VitalsController@searchRegistrationForVitals')->name('searchRegistrationForVitals');
+Route::get('/search-vitals-by-date','VitalsController@vitalByDate')->name('vitalByDate');
+Route::post('/add-vitals-detention','VitalsController@addVital')->name('addVital');
 
 
 /*

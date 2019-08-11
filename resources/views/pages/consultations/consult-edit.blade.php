@@ -8,7 +8,7 @@
                 <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <input required type="hidden"  value="{{$patient->folder_number}}" class="form-control" name="search">
-                    <button type="submit" class="btn-danger btn text-small"><i class="icon icon-close"></i> Cancel</button>
+                    <button type="submit" class="btn-danger btn text-small"><i class="icon icon-arrow-left-circle"></i> Go Back</button>
                 </form>
             </div>
         </div>
@@ -85,34 +85,31 @@
                                         <input  type="hidden" name="patient_id" value="{{$patient->id}}">
                                         <input  type="hidden" name="registration_number" value="{{$patient->registration_number}}">
                                         <div class="form-group row">
-                                            <label for="complains" class="text-info">Complains</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="complains" class="text-info">Complains</label>
                                                 <textarea  name="complains" class="form-control" id="complains" rows="10">{{$consultation->complains}}</textarea>
                                                 <div class="invalid-feedback">
                                                     Complains is
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="physical_examination" class="text-info">Physical Examination</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="physical_examination" class="text-info">Physical Examination</label>
                                                 <textarea   name="physical_examination" class="form-control" id="physical_examination" rows="10">{{$consultation->physical_examination}}</textarea>
                                                 <div class="invalid-feedback">
                                                     Physical Examination is
                                                 </div>
                                             </div>
                                         </div>
-                                       {{-- <div class="form-group row">
-                                            <div class="col-sm-12">
-                                                <label for="findings" class="text-info">Findings</label>
-                                                <textarea  name="findings" class="form-control" id="findings" rows="10">{{$consultation->findings}}</textarea>
-                                                <div class="invalid-feedback">
-                                                    Finding is
-                                                </div>
-                                            </div>
-                                        </div>--}}
-                                        <div class="form-group row">
-                                            <div class="col-sm-12">
+                                         <div class="form-group row">
+                                             <div class="col-sm-6">
+                                                 <label for="findings" class="text-info">History</label>
+                                                 <textarea  name="findings" class="form-control" id="findings" rows="10">{{$consultation->findings}}</textarea>
+                                                 <div class="invalid-feedback">
+                                                     Finding is
+                                                 </div>
+                                             </div>
+
+                                            <div class="col-sm-6">
                                                 <label for="diagnosis" class="text-info">Diagnosis</label>
                                                 <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                     <option value="">Select Diagnosis</option>
@@ -129,15 +126,15 @@
                                             <div class="col-md-7" >
                                                 <label for="" class="text-info">Drugs</label>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4">
                                                 <label for="" class="text-info">Dosage</label>
                                             </div>
-                                            <div class="col-md-1">
-                                                <label for="" class="text-info">Days</label>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <label for="" class="text-info">Days</label>
-                                            </div>
+{{--                                            <div class="col-md-1">--}}
+{{--                                                <label for="" class="text-info">Days</label>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col-md-1">--}}
+{{--                                                <label for="" class="text-info">Days</label>--}}
+{{--                                            </div>--}}
                                         </div>
                                         <div class="repeater">
                                             <div data-repeater-list="medications">
@@ -154,7 +151,7 @@
                                                                 Drug is required
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        <div class="col-md-4">
                                                             {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
                                                             {{--<select required class="selectMedicine col-12 form-control mr-1 dosage"    name="dosage" id="dosage">
                                                                 <option value=""></option>
@@ -178,12 +175,12 @@
                                                                 Dosage is required
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-1">
+                                                        {{--<div class="col-md-1">
                                                             <input type="number"  name="days" value="0" style="width: 70px;" min="1" placeholder="Days"  class="form-control days">
                                                         </div>
                                                         <div class="col-md-1">
                                                             <input type="number"  name="qty" value="0" style="width: 70px;" min="1" placeholder="Qty"  class="form-control qty">
-                                                        </div>
+                                                        </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
                                                                 <i class="icon-close"></i>
@@ -208,10 +205,10 @@
                                             <div data-repeater-list="other-medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-7">
                                                             <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
                                                             {{--<select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
                                                                 <option value=""></option>
@@ -235,9 +232,9 @@
                                                                 Dosage is
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        {{--<div class="col-md-2">
                                                             <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
-                                                        </div>
+                                                        </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
                                                                 <i class="icon-close"></i>
@@ -314,7 +311,7 @@
                                         <td><small>{{$medicine->dosage}} x {{$medicine->days}}</small></td>
                                         <td>
                                             <div class="row">
-                                                <div class="col-md-6 text-right">
+                                                {{--<div class="col-md-6 text-right">
                                                     @if($medicine->dispensed ==1)
                                                         <i class="icon icon-note"></i>
                                                     @else
@@ -323,7 +320,7 @@
                                                         </a>
                                                     @endif
 
-                                                </div>
+                                                </div>--}}
                                                 <div class="col-md-6 text-left">
                                                     <form action="{{route('drugs.destroy',$medicine->id)}}" method="post" onsubmit="return confirm('Do you really want to delete this medication')">
                                                         @csrf
@@ -417,18 +414,18 @@
                             </table>
                         </blockquote>
 
-                        <label class="text-info">Scan Result</label>
-                        <blockquote class="blockquote">
-                            <table class="table ">
-                                <thead>
-                                <tr>
-                                    <th>Result Img</th>
-                                    <th>Name</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @if(count($scanned_results)>0)
+                        @if(count($scanned_results)>0)
+                            <label class="text-info">Scan Result</label>
+                            <blockquote class="blockquote">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>Result Img</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
                                     @php($i =1)
                                     @foreach($scanned_results as $scan)
                                         <tr>
@@ -452,23 +449,24 @@
                                         </tr>
                                         @php($i++)
                                     @endforeach
-                                @endif
-                                </tbody>
-                            </table>
-                        </blockquote>
+                                    </tbody>
+                                </table>
+                            </blockquote>
+                        @endif
 
-                        <label class="text-info">Lab Result</label>
-                        <blockquote class="blockquote">
-                            <table class="table ">
-                                <thead>
-                                <tr>
-                                    <th>Result Img</th>
-                                    <th>Name</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @if(count($lab_results)>0)
+                        @if(count($lab_results)>0)
+                            <label class="text-info">Lab Result</label>
+                            <blockquote class="blockquote">
+                                <table class="table ">
+                                    <thead>
+                                    <tr>
+                                        <th>Result Img</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
                                     @php($i= 1)
                                     @foreach($lab_results as $scan)
                                         <tr>
@@ -493,11 +491,11 @@
                                         </tr>
                                         @php($i++)
                                     @endforeach
-                                @endif
-                                </tbody>
-                            </table>
-                        </blockquote>
 
+                                    </tbody>
+                                </table>
+                            </blockquote>
+                        @endif
                     </div>
                 </div>
             </div>

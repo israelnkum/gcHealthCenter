@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -179,5 +180,22 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+
+    public function sync() {
+        // Connect to live database
+        $live_database = DB::connection('online-db');
+        // Get table data from production
+        foreach($live_database->table('table_name')->get() as $data){
+            // Save data to staging database - default db connection
+           return DB::table('table_name')->insert((array) $data);
+        }
+//        // Get table_2 data from production
+//        foreach($live_database->table('table_2_name')->get() as $data){
+//            // Save data to staging database - default db connection
+//            DB::table('table_2_name')->insert((array) $data);
+//        }
     }
 }

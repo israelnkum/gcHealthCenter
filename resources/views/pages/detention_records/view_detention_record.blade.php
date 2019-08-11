@@ -37,8 +37,8 @@
                                 {{$patient->title." ".$patient->first_name." ".$patient->other_name." ".$patient->last_name}}
                             </h4>
                             @foreach($recentRecord as $record)
-                                <div>
-                                    <span class="badge badge-dark mb-3 badge-pill font-weight-bold">
+                                <div class="text-right">
+                                    <span class="badge badge-dark mb-3  font-weight-bold">
                                        Date:  {{substr($record->created_at,0,10)}}
 
                                        Time:  {{date("g:i a", strtotime($record->created_at))}}
@@ -46,30 +46,36 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label for="">Complains</label>
-                                        <blockquote class="blockquote">
-                                            {{$record->complains}}
-                                        </blockquote>
+                                        @if($record->complains != "")
+                                            <label for="">Complains</label>
+                                            <blockquote class="blockquote" style="font-size: 15px;">
+                                                {{$record->complains}}
+                                            </blockquote>
+                                        @endif
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="">Physical Examination</label>
-                                        <blockquote class="blockquote">
-                                            {{$record->physical_examination}}
-                                        </blockquote>
+                                        @if($record->physical_examination != "")
+                                            <label for="">Physical Examination</label>
+                                            <blockquote class="blockquote" style="font-size: 15px;">
+                                                {{$record->physical_examination}}
+                                            </blockquote>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    {{--<div class="col-md-6">
                                         <label for="">Findings</label>
                                         <blockquote class="blockquote">
                                             {{$record->findings}}
                                         </blockquote>
-                                    </div>
+                                    </div>--}}
                                     <div class="col-md-6">
-                                        <label for="">Other Diagnosis</label>
-                                        <blockquote class="blockquote">
-                                            {{$record->other_diagnosis}}
-                                        </blockquote>
+                                        @if($record->other_diagnosis != "")
+                                            <label for="">Other Diagnosis</label>
+                                            <blockquote class="blockquote">
+                                                {{$record->other_diagnosis}}
+                                            </blockquote>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row">
@@ -105,13 +111,23 @@
                                         @endif
                                     </div>
                                 </div>
-                              {{--  <div class="row">
-                                    <div class="col-md-12 text-right">
-                                        <a href="{{$record->id}}" class="btn btn-success">Edit</a>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @foreach($services as $service)
+                                            @if($service != null)
+                                                @if($service->created_at == $record->created_at)
+                                                    {{$service->charge->name}}
+                                                @endif
+                                            @endif
+                                        @endforeach
                                     </div>
-                                </div>--}}
+                                </div>
+                                {{--  <div class="row">
+                                      <div class="col-md-12 text-right">
+                                          <a href="{{$record->id}}" class="btn btn-success">Edit</a>
+                                      </div>
+                                  </div>--}}
                             @endforeach
-
                         </div>
                     </div>
                 </div>

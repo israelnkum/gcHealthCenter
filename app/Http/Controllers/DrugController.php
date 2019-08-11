@@ -68,7 +68,6 @@ class DrugController extends Controller
             ->first();
 
 
-
         if (empty($registration)){
             $registration = Registration::with('patient')
 
@@ -403,7 +402,7 @@ class DrugController extends Controller
                 ->where('patient_id',$medication->patient_id)
                 ->where('created_at',$medication->created_at)->delete();
 
-            toastr()->success('Medication Updated');
+            toastr()->success('Medication Deleted');
             return back();
         }
     }

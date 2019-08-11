@@ -50,6 +50,7 @@ class PaymentController extends Controller
                     ->where('registration_id',$request->input('registration_id'))
                     ->where('patient_id',$request->input('patient_id'))->first();
 
+                $med->qty = $request->input('qty')[$i];
                 $med->qty_dispensed = $request->input('qty_dispensed')[$i];
                 $med->save();
 
@@ -92,7 +93,7 @@ class PaymentController extends Controller
                     $drugArrears->dosage=$check->dosage;
                     $drugArrears->unit_of_pricing = $findDrug->unit_of_pricing;
                     $drugArrears->qty = $check->qty;
-                    $drugArrears->days = $check->days;
+//                    $drugArrears->days = $check->days;
                     $drugArrears->qty_dispensed = $check->qty_dispensed;
                     $drugArrears->amount = $request->input('price')[$i];
                     $drugArrears->insurance_amount = $request->input('insurance')[$i];

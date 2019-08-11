@@ -18,6 +18,7 @@ class CreateServicesTable extends Migration
             $table->integer('registration_id');
             $table->integer('patient_id');
             $table->integer('charge_id');
+            $table->string('type',20)->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

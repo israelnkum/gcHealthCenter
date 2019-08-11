@@ -88,34 +88,32 @@
                                         <input  type="hidden" name="patient_id" value="{{$registration->patient->id}}">
                                         <input  type="hidden" name="registration_number" value="{{$registration->patient->registration_number}}">
                                         <div class="form-group row">
-                                            <label for="complains" class="text-info">Complains</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="complains" class="text-info">Complains</label>
                                                 <textarea  name="complains" class="form-control" id="complains" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Complains is
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="physical_examination" class="text-info">Physical Examination</label>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="physical_examination" class="text-info">Physical Examination</label>
                                                 <textarea   name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Physical Examination is
                                                 </div>
                                             </div>
                                         </div>
-                                       {{-- <div class="form-group row">
-                                            <div class="col-sm-12">
-                                                <label for="findings" class="text-info">Findings</label>
-                                                <textarea  name="findings" class="form-control" id="findings" rows="10"></textarea>
-                                                <div class="invalid-feedback">
-                                                    Finding is
-                                                </div>
-                                            </div>
-                                        </div>--}}
+                                        {{-- <div class="form-group row">
+                                             <div class="col-sm-12">
+                                                 <label for="findings" class="text-info">Findings</label>
+                                                 <textarea  name="findings" class="form-control" id="findings" rows="10"></textarea>
+                                                 <div class="invalid-feedback">
+                                                     Finding is
+                                                 </div>
+                                             </div>
+                                         </div>--}}
                                         <div class="form-group row">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
                                                 <label for="diagnosis" class="text-info">Diagnosis</label>
                                                 <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]">
 
@@ -127,9 +125,8 @@
                                                     Diagnosis is
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-6">
+                                                <label for="other_diagnosis_text" class="text-info">Other Diagnosis</label>
                                                 <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                 <div class="invalid-feedback">
                                                     Diagnosis is
@@ -143,9 +140,12 @@
                                             <div class="col-md-3">
                                                 <label for="" class="text-info">Dosage</label>
                                             </div>
-                                            <div class="col-md-3">
+                                            {{--<div class="col-md-1">
                                                 <label for="" class="text-info">Days</label>
                                             </div>
+                                            <div class="col-md-1">
+                                                <label for="" class="text-info">Qty</label>
+                                            </div>--}}
                                         </div>
                                         <div class="repeater">
                                             <div data-repeater-list="medications">
@@ -186,12 +186,12 @@
                                                                 Dosage is required
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-1">
-                                                            <input type="number"  name="days" value="0" style="width: 70px;" min="1" placeholder="Days"  class="form-control days">
+                                                        {{--<div class="col-md-1">
+                                                            <input type="number"  name="days" style="width: 70px;" min="1" placeholder="0"  class="form-control days">
                                                         </div>
                                                         <div class="col-md-1">
-                                                            <input type="number"  name="qty" value="0" style="width: 70px;" min="1" placeholder="Qty"  class="form-control qty">
-                                                        </div>
+                                                            <input type="number"  name="qty"  style="width: 70px;"  min="1" placeholder="0"  class="form-control qty">
+                                                        </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
                                                                 <i class="icon-close"></i>

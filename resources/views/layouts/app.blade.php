@@ -23,11 +23,13 @@
 
     <!-- endinject -->
     <link rel="shortcut icon" href="{{asset('public/images/logo.jpeg')}}" />
-
 </head>
 <body onload=display_ct();>
 <div class="container-scroller">
     <!-- partial:partials/_horizontal-navbar.html -->
+    @if(Auth::user()->first_name == "" || Auth::user()->last_name == "")
+        @php(toastr()->error('Please Update your Personal Data'))
+    @endif
     <nav class="navbar horizontal-layout col-lg-12 col-12 p-0">
         <div class="nav-top flex-grow-1">
             <div class="container d-flex flex-row h-100 align-items-center">

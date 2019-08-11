@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Bill;
 use App\Patient;
+use App\Payment;
 use App\Registration;
 use App\Vital;
 use Illuminate\Http\Request;
@@ -50,8 +51,6 @@ class VitalsController extends Controller
      */
     public function store(Request $request)
     {
-
-
         $vital = new Vital();
         $vital->patient_id = $request->input('patient_id');
         $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
@@ -102,38 +101,68 @@ class VitalsController extends Controller
 
     public function searchRegistrationForVitals(Request $request){
 
-        $registration= Patient::with('registration','vitals')
+        /*$search_patient= Patient::with('registration','vitals')
             ->where('folder_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->get();*/
+        $search_patient= Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->get();
 
-//        return $registration;
-        if (count($registration) >1){
+//        return $search_patient;
+        if (count($search_patient) >1){
             return view('pages.vitals.edit')
-                ->with('registration',$registration);
-        }elseif(count($registration) == 0){
-            $registration = "Nothing Found";
-
-//            return $registration;
+                ->with('search_patient',$search_patient);
+        }elseif(count($search_patient) == 0){
+            $search_patient = "Nothing Found";
             return view('pages.vitals.index')
-                ->with('registration',$registration);
+                ->with('search_patient',$search_patient);
         }else{
-            foreach ($registration as $registered){
 
-            }
+            $vitals = Vital::where('patient_id',$search_patient[0]->id)
+                ->latest()->first();
 
+//            return $vitals;
+            $allPatientVitals = Vital::where('patient_id',$search_patient[0]->id)->get();
+            return view('pages.vitals.edit')
+                ->with('vitals',$vitals)
+                ->with('search_patient',$search_patient)
+                ->with('allPatientVitals',$allPatientVitals);
+            /* foreach ($search_patient as $registered){
 
-            if (count($registered->registration) == 0){
-                toastr()->error('Please register patient before checking vitals');
-                return  redirect()->route('patients.show',$registered->id);
-            }else{
+             }
 
-                return view('pages.vitals.edit')
-                    ->with('registration',$registration);
-            }
+             if (count($registered->registration) == 0){
+                 toastr()->error('Please register patient before checking vitals');
+                 return  redirect()->route('patients.show',$registered->id);
+             }else{
+
+                 return view('pages.vitals.edit')
+                     ->with('search_patient',$search_patient);
+             }*/
         }
 
+    }
+
+    public function vitalByDate(Request $request){
+
+
+        $search_patient= Patient::where('folder_number', 'like', '%' . $request->input("folder_number") . '%')
+            ->get();
+
+        $vitals = Vital::where('patient_id',$search_patient[0]->id)
+            ->where('created_at',$request->input('vital_date'))
+            ->latest()->first();
+
+
+//        return $vitals;
+        $allPatientVitals = Vital::where('patient_id',$search_patient[0]->id)->get();
+        return view('pages.vitals.edit')
+            ->with('vitals',$vitals)
+            ->with('search_patient',$search_patient)
+            ->with('allPatientVitals',$allPatientVitals);
     }
     /**
      * Show the form for editing the specified resource.
@@ -155,7 +184,6 @@ class VitalsController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         //check if patient doesn't need rdt(malaria) test
         if (empty($request->input('rdt'))){
             $vital = Vital::find($id);
@@ -165,6 +193,7 @@ class VitalsController extends Controller
             $vital->pulse = $request->input('pulse');
             $vital->RDT = $request->input('rdt');
             $vital->glucose = $request->input('glucose');
+            $vital->type = "Consultation";
             $vital->user_id=Auth::user()->id;
             $vital->save();
 
@@ -174,40 +203,88 @@ class VitalsController extends Controller
             toastr()->success('Vitals Updated Successfully');
             return redirect()->route('vitals.index');
         }else{
-
             $registration = Registration::find($request->input('registration_id'));
 
             $vital = Vital::find($id);
+            if ($vital->RDT == ""){
+                //add a new bill for rdt (malaria Test)
+                $bill = new Bill();
+                $bill->registration_id = $request->input('registration_id');
+                $bill->patient_id =$registration->patient_id;
+                $bill->item = "Malaria Test";
+                $bill->amount =10;
+                $bill->insurance_amount =0;
+                $bill->total_amount_to_pay=10;
+                $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+
+                $bill->save();
+            }
+
             $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
             $vital->weight = $request->input('weight');
             $vital->temperature = $request->input('temperature');
             $vital->pulse = $request->input('pulse');
             $vital->RDT = $request->input('rdt');
             $vital->glucose = $request->input('glucose');
+            $vital->type = "Consultation";
             $vital->user_id=Auth::user()->id;
             $vital->save();
+
 
             $registration->vitals = 1;
             $registration->save();
 
-            //add a new bill for rdt (malaria Test)
-            $bill = new Bill();
-            $bill->registration_id = $request->input('registration_id');
-            $bill->patient_id =$registration->patient_id;
-            $bill->item = "Malaria Test";
-            $bill->amount =10;
-            $bill->insurance_amount =0;
-            $bill->total_amount_to_pay=10;
-            $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-
-            $bill->save();
             toastr()->success('Vitals Updated');
-            return redirect()->route('vitals.index');
+            return back();
+        }
+    }
+
+
+    //if patient is detained, you can check vitals
+    public function addVital(Request $request){
+        if ($request->has('rdt')){
+            $check_bill = Bill::where('patient_id',$request->input('patient_id'))
+                ->where('registration_id',$request->input('registration_id'))
+                ->where('item','Malaria Test')->first();
+            if (empty($check_bill)) {
+                $bill = new Bill();
+                $bill->registration_id = $request->input('registration_id');
+                $bill->patient_id = $registration->patient_id;
+                $bill->item = "Malaria Test";
+                $bill->amount = 10;
+                $bill->insurance_amount = 0;
+                $bill->total_amount_to_pay = 10;
+                $bill->billed_by = Auth::user()->first_name . " " . Auth::user()->last_name;
+                $bill->save();
+            }else{
+                $check_bill->amount=$check_bill->amount+10;
+                $check_bill->total_amount_to_pay=$check_bill->total_amount_to_pay+10;
+                $check_bill->save();
+            }
+            $payment = Payment::where('registration_id',$request->input('registration_id'))
+                ->where('patient_id',$request->input('patient_id'))
+                ->first();
+
+            $payment->grand_total = $payment->grand_total+10;
+            $payment->arrears = str_replace('-','',$payment->arrears)+10;
+            $payment->save();
         }
 
+        $vital = new Vital();
+        $vital->registration_id = $request->input('registration_id');
+        $vital->patient_id = $request->input('patient_id');
+        $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
+        $vital->weight = $request->input('weight');
+        $vital->temperature = $request->input('temperature');
+        $vital->pulse = $request->input('pulse');
+        $vital->RDT = $request->input('rdt');
+        $vital->glucose = $request->input('glucose');
+        $vital->type= "Detention";
+        $vital->user_id=Auth::user()->id;
+        $vital->save();
 
-
-
+        toastr()->success('Vitals Updated');
+        return back();
     }
 
     /**

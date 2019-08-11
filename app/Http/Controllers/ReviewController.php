@@ -80,10 +80,126 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
 //        return $request;
+
         $registration = Registration::find($request->input('registration_id'));
+
+        $count_registration = Registration::where('patient_id',$registration->patient_id)->get()->count();
+
+        /*
+                * Start Calculating Consultation fee
+                */
+        $service_charge = Charge::where('name','Consultation')->first();
+
+        //charge for consultation if only the person is not insured
+        if ($registration->isInsured != 1){ //if patient is not insured
+            /*
+             * check if patient is an old patient that is before the system
+             * then use the last visit
+             */
+
+            if ($count_registration == 1){ //if patient just registered, then registration count will be 1
+
+                $patient_info = Patient::find($request->input('patient_id')); //get patient info and check if an old patient
+                if ($patient_info->old_patient == 1){//if patient had records before the system
+                    //$getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
+
+                    /*             if (count($getAllRegistrations) == 1){
+
+                                 }elseif (count($getAllRegistrations)>1){
+                                     $totalRegistrations = sizeof($getAllRegistrations);
+                                     $getLastRegistration = $totalRegistrations -2;
+
+
+                                     $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[$getLastRegistration]->created_at,0,10));
+
+
+                                     $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                                     $noOfDays = $today->diffInDays($last_visit);
+                                 }*/
+                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $patient_info->last_visit);
+
+                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                    $noOfDays = $today->diffInDays($last_visit);
+
+                    if ($noOfDays>=15){ //if difference between today and patient's last visit is > 15
+
+                        $bill = new Bill(); // create a new bill
+                        $bill->registration_id = $request->input('registration_id');
+                        $bill->patient_id =$request->input('patient_id');
+                        $bill->item = $service_charge->name;
+                        $bill->item_id = $service_charge->id;
+                        $bill->amount =$service_charge->amount;
+                        $bill->type="Service";
+                        $bill->insurance_amount =0;
+                        $bill->total_amount_to_pay=$service_charge->amount;
+                        $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                        $bill->save();
+                    }
+                }
+                else{
+                    /*
+                     * if patient is new to the system
+                     */
+                    //get all patient registration
+
+
+                    $bill = new Bill();
+                    $bill->registration_id = $request->input('registration_id');
+                    $bill->patient_id =$request->input('patient_id');
+                    $bill->item = $service_charge->name;
+                    $bill->item_id = $service_charge->id;
+                    $bill->amount =$service_charge->amount;
+                    $bill->type="Service";
+                    $bill->insurance_amount =0;
+                    $bill->total_amount_to_pay=$service_charge->amount;
+                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                    $bill->save();
+                }
+            }else{
+                $getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
+
+
+//                return $getAllRegistrations;
+                /*   if (count($getAllRegistrations) == 1){
+                       $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[0]->created_at,0,10));
+                       $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                       $noOfDays = $today->diffInDays($last_visit);
+                   }elseif (count($getAllRegistrations)>1){
+
+                   }*/
+
+                $totalRegistrations = count($getAllRegistrations);
+                $getLastRegistration = $totalRegistrations -2;
+                $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[$getLastRegistration]->created_at,0,10));
+                $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
+                $noOfDays = $today->diffInDays($last_visit);
+
+                if ($noOfDays>=15){ //if difference between today and patient's last visit is > 15
+                    $bill = new Bill(); // create a new bill
+                    $bill->registration_id = $request->input('registration_id');
+                    $bill->patient_id =$request->input('patient_id');
+                    $bill->item = $service_charge->name;
+                    $bill->item_id = $service_charge->id;
+                    $bill->amount =$service_charge->amount;
+                    $bill->type="Service";
+                    $bill->insurance_amount =0;
+                    $bill->total_amount_to_pay=$service_charge->amount;
+                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
+                    $bill->save();
+                }
+            }
+        }
+
+        /*
+         * End Consultation Calculation
+         */
+
+
+
         $review = Review::where('registration_id',$registration->id)
             ->where('patient_id',$registration->patient_id)->first();
         $review->comments = $request->input('comments');
+//        $review->type ="Review";
         $review->save();
 
 
@@ -125,104 +241,13 @@ class ReviewController extends Controller
                     $medication->registration_id = $request->input('registration_id');
                     $medication->drug = $other['other_medication'];
                     $medication->dosage = $other['other_dosage'];
+                    $medication->type="Review";
                     $medication->user_id = Auth::user()->id;
                     $medication->save();
                 }
             }
         }
 
-        /*
-         * Start Calculating Consultation fee
-         */
-        $service_charge = Charge::where('name','Consultation')->first();
-
-        //charge for consultation if only the person is not insured
-        if ($registration->isInsured != 1){ //if patient is not insured
-            /*
-             * check if patient is an old patient that is before the system
-             * then use the last visit
-             */
-            $patient_info = Patient::find($request->input('patient_id'));
-            if ($patient_info->old_patient == 1){//if patient had records before the system
-
-
-                $getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
-
-//                    return $getAllRegistrations;
-                if (count($getAllRegistrations) == 1){
-//                        return "yes";
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', $patient_info->last_visit);
-
-
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
-//                        return $noOfDays;
-                }elseif (count($getAllRegistrations)>1){
-                    $totalRegistrations = sizeof($getAllRegistrations);
-                    $getLastRegistration = $totalRegistrations -2;
-
-
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[$getLastRegistration]->created_at,0,10));
-
-
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
-                }
-
-                if ($noOfDays>=15){ //if difference between today and patient's last visit is > 15
-                    $bill = new Bill(); // create a new bill
-                    $bill->registration_id = $request->input('registration_id');
-                    $bill->patient_id =$request->input('patient_id');
-                    $bill->item = $service_charge->name;
-                    $bill->item_id = $service_charge->id;
-                    $bill->amount =$service_charge->amount;
-                    $bill->type="Service";
-                    $bill->insurance_amount =0;
-                    $bill->total_amount_to_pay=$service_charge->amount;
-                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-                    $bill->save();
-                }
-            }else{
-                /*
-                 * if patient is new to the system
-                 */
-
-                //get all patient registration
-
-                $getAllRegistrations =Registration::where('patient_id',$request->input('patient_id'))->get();
-
-                if (count($getAllRegistrations) == 1){
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[0]->created_at,0,10));
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
-                }elseif (count($getAllRegistrations)>1){
-                    $totalRegistrations = count($getAllRegistrations);
-                    $getLastRegistration = $totalRegistrations -2;
-                    $last_visit = \Carbon\Carbon::createFromFormat('Y-m-d', substr($getAllRegistrations[$getLastRegistration]->created_at,0,10));
-                    $today = \Carbon\Carbon::createFromFormat('Y-m-d', date('Y-m-d'));
-                    $noOfDays = $today->diffInDays($last_visit);
-                }
-
-
-                if ($noOfDays>=15){
-                    $bill = new Bill();
-                    $bill->registration_id = $request->input('registration_id');
-                    $bill->patient_id =$request->input('patient_id');
-                    $bill->item = $service_charge->name;
-                    $bill->item_id = $service_charge->id;
-                    $bill->amount =$service_charge->amount;
-                    $bill->type="Service";
-                    $bill->insurance_amount =0;
-                    $bill->total_amount_to_pay=$service_charge->amount;
-                    $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
-                    $bill->save();
-                }
-            }
-        }
-
-        /*
-         * End Consultation Calculation
-         */
 
 
         if (\Request::has('service')) {
@@ -239,6 +264,7 @@ class ReviewController extends Controller
                     $service->patient_id = $request->input('patient_id');
                     $service->registration_id = $request->input('registration_id');
                     $service->charge_id = $data[0];
+                    $service->type="Review";
                     $service->user_id = Auth::user()->id;
                     $service->save();
 

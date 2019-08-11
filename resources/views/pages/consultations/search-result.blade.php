@@ -170,7 +170,7 @@
 
                                                     <div class="col-md-6 text-right">
                                                         <div class="form-group">
-                                                            <h6>RDT - <span class="text-danger">{{$getVitals[0]->RDT}} bpm</span></h6>
+                                                            <h6>RDT - <span class="text-danger">{{$getVitals[0]->RDT}}</span></h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -185,34 +185,32 @@
                                                     <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
                                                     <input required type="hidden" name="registration_number" value="{{$registered->patient->registration_number}}">
                                                     <div class="form-group row">
-                                                        <label for="complains" class="text-info">Complains</label>
-                                                        <div class="col-sm-12">
+                                                        <div class="col-sm-6">
+                                                            <label for="complains" class="text-info">Complains</label>
+
                                                             <textarea required name="complains" class="form-control" id="complains" rows="10"></textarea>
                                                             <div class="invalid-feedback">
                                                                 Complains is
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label for="physical_examination" class="text-info">Physical Examination</label>
-                                                        <div class="col-sm-12">
+
+                                                        <div class="col-sm-6">
+                                                            <label for="physical_examination" class="text-info">Physical Examination</label>
                                                             <textarea  required name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
                                                             <div class="invalid-feedback">
                                                                 Physical Examination is
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {{--<div class="form-group row">
-                                                        <div class="col-sm-12">
-                                                            <label for="findings" class="text-info">Findings</label>
-                                                            <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-6">
+                                                            <label for="findings" class="text-info">History</label>
+                                                            <textarea  name="findings" class="form-control" id="findings" rows="10"></textarea>
                                                             <div class="invalid-feedback">
-                                                                Finding is
+                                                                History is required
                                                             </div>
                                                         </div>
-                                                    </div>--}}
-                                                    <div class="form-group row">
-                                                        <div class="col-sm-12">
+                                                        <div class="col-sm-6">
                                                             <label for="diagnosis" class="text-info">Diagnosis</label>
                                                             <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                                 <option value="">Select Diagnosis</option>
@@ -223,11 +221,8 @@
                                                             <div class="invalid-feedback">
                                                                 Diagnosis is required
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <div class="col-sm-12">
-                                                            <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
+                                                            <label for="diagnosis" class="text-info mt-3">Other Diagnosis</label>
+                                                            <textarea placeholder="Other Diagnosis" rows="3" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                             <div class="invalid-feedback">
                                                                 Diagnosis is required
                                                             </div>
@@ -237,22 +232,22 @@
                                                         <div class="col-md-7" >
                                                             <label for="" class="text-info">Drugs</label>
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        <div class="col-md-4">
                                                             <label for="" class="text-info">Dosage</label>
                                                         </div>
-                                                        <div class="col-md-1">
+                                                        {{--<div class="col-md-1">
                                                             <label for="" class="text-info">Days</label>
                                                         </div>
                                                         <div class="col-md-1">
                                                             <label for="" class="text-info">Qty</label>
-                                                        </div>
+                                                        </div>--}}
                                                     </div>
                                                     <div class="repeater">
                                                         <div data-repeater-list="medications">
                                                             <div data-repeater-item class="mb-2">
                                                                 <div class="row">
                                                                     <div class="col-md-7">
-                                                                        <select required class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                                        <select class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
                                                                             <option value=""></option>
                                                                             @foreach($drugs as $drug)
                                                                                 <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
@@ -262,7 +257,7 @@
                                                                             Drug is required
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-2">
+                                                                    <div class="col-md-4">
                                                                         {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
                                                                         {{--<select required class="selectMedicine col-12 form-control mr-1 dosage"    name="dosage" id="dosage">
                                                                             <option value=""></option>
@@ -272,7 +267,7 @@
                                                                             <option value="1stat">stat</option>
                                                                             <option value="1dly">dly</option>
                                                                         </select>--}}
-                                                                        <input required list="dosage" class="form-control" placeholder="Dosage" name="dosage">
+                                                                        <input  list="dosage" class="form-control" placeholder="Dosage" name="dosage">
                                                                         <datalist id="dosage">
                                                                             <option value="tid">
                                                                             <option value="bd">
@@ -286,12 +281,12 @@
                                                                             Dosage is required
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-1">
-                                                                        <input type="number" required name="days" value="0" style="width: 70px;" min="1" placeholder="Days"  class="form-control days">
+                                                                    {{--<div class="col-md-1">
+                                                                        <input type="number"  name="days" value="0" style="width: 70px;"  placeholder="Days"  class="form-control days">
                                                                     </div>
                                                                     <div class="col-md-1">
-                                                                        <input type="number" required name="qty" value="0" style="width: 70px;" min="1" placeholder="Qty"  class="form-control qty">
-                                                                    </div>
+                                                                        <input type="number"  name="qty" value="0" style="width: 70px;" placeholder="Qty"  class="form-control qty">
+                                                                    </div>--}}
                                                                     <div class="col-md-1">
                                                                         <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
                                                                             <i class="icon-close"></i>
@@ -319,7 +314,7 @@
                                                                     <div class="col-md-7">
                                                                         <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
                                                                     </div>
-                                                                    <div class="col-md-3">
+                                                                    <div class="col-md-4">
                                                                         {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
                                                                         {{-- <select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
                                                                              <option value=""></option>
@@ -344,9 +339,9 @@
                                                                             Dosage is
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-2">
+                                                                    {{--<div class="col-md-2">
                                                                         <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
-                                                                    </div>
+                                                                    </div>--}}
                                                                     <div class="col-md-1">
                                                                         <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
                                                                             <i class="icon-close"></i>
@@ -457,7 +452,7 @@
 
                                             <div class="col-md-6 text-right">
                                                 <div class="form-group">
-                                                    <h6 style="font-size: 13px;">RDT - <span class="text-danger">{{$vital->RDT}} bpm</span></h6>
+                                                    <h6 style="font-size: 13px;">RDT - <span class="text-danger">{{$vital->RDT}}</span></h6>
                                                 </div>
                                             </div>
                                         </div>
@@ -894,7 +889,7 @@
 
                                                     <div class="col-md-6 text-right">
                                                         <div class="form-group">
-                                                            <h6>RDT - <span class="text-danger">{{$recentVitals->RDT}} bpm</span></h6>
+                                                            <h6>RDT - <span class="text-danger">{{$recentVitals->RDT}}</span></h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -912,14 +907,19 @@
                                                 </blockquote>
 
 
-                                               {{-- <label class="text-info">Findings</label>
-                                                <blockquote class="blockquote">
-                                                    <p class="mb-0">{{$recentConsultation->findings}}</p>
-                                                </blockquote>--}}
+                                                {{-- <label class="text-info">Findings</label>
+                                                 <blockquote class="blockquote">
+                                                     <p class="mb-0">{{$recentConsultation->findings}}</p>
+                                                 </blockquote>--}}
 
                                                 <label class="text-info">Physical Examination</label>
                                                 <blockquote class="blockquote">
                                                     <p class="mb-0">{{$recentConsultation->physical_examination}}</p>
+                                                </blockquote>
+
+                                                <label class="text-info">History</label>
+                                                <blockquote class="blockquote">
+                                                    <p class="mb-0">{{$recentConsultation->findings}}</p>
                                                 </blockquote>
 
                                                 <label class="text-info">Diagnosis</label>
@@ -1036,6 +1036,18 @@
                                                     </blockquote>
                                                 @endif
                                             </div>
+                                            @if(count($services)>0)
+                                                <div class="col-md-6">
+                                                    <label class="text-info">Services</label>
+                                                    <blockquote class="blockquote">
+                                                        <ul>
+                                                            @foreach($services as $service)
+                                                                <li>{{$service->charge->name}}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </blockquote>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     @endif

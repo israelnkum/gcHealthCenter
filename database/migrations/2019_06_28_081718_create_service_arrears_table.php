@@ -19,6 +19,7 @@ class CreateServiceArrearsTable extends Migration
             $table->integer('patient_id');
             $table->integer('service_id');
             $table->string('item');
+            $table->string('type')->nullable();
             $table->decimal('amount')->default(0);
             $table->string('billed_by',199);
             $table->timestamps();

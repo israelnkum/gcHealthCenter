@@ -40,6 +40,7 @@ $(document).ready(function () {
     $("#unit_of_pricing").change(function () {
         if ($("#unit_of_pricing").val() == "Blister (x10tabs)"){
             $('#blisters').fadeIn(1000).slideDown(1000);
+
             $('#number_of_tablet').attr('required', true);
 
         }else {
@@ -50,11 +51,13 @@ $(document).ready(function () {
 
     $("#edit_unit_of_pricing").change(function () {
         if ($("#edit_unit_of_pricing").val() == "Blister (x10tabs)"){
+            $('#check_unit_of_pricing').fadeIn(1000).slideDown(1000);
             $('#edit_blisters').fadeIn(1000).slideDown(1000);
             $('#number_of_tablet').attr('required', true);
 
         }else {
             $('#edit_blisters').fadeOut(1000).slideUp(1000);
+            $('#check_unit_of_pricing').fadeOut(1000).slideDown(1000);
             $('#number_of_tablet').removeAttr('required');
         }
     });

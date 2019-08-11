@@ -69,9 +69,15 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-vitals" role="tab" aria-controls="patient-vitals" aria-selected="false">
-                                            <i class="icon-layers"></i>
-                                            Previous Vitals
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#consultation-review" role="tab" aria-controls="patient-records" aria-selected="false">
+                                            <i class="icon-cloud-upload"></i>
+                                            Upload Lab/Scan For Consultation/Review
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-records" role="tab" aria-controls="patient-records" aria-selected="false">
+                                            <i class="icon-cloud-upload"></i>
+                                            Upload Lab/Scan For Detention
                                         </a>
                                     </li>
                                 </ul>
@@ -393,86 +399,8 @@
                                                                 </form>
                                                             </div>
                                                         @elseif(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain == 1)
-                                                            <div class="col-md-4 ">
-                                                                <h6>Patient is Detained, <span class="text-danger">You can add Vitals</span></h6>
-                                                                <form class="needs-validation p-3" style="border: dashed 1px"  novalidate method="post" action="{{route('addVital')}}">
-                                                                    @csrf
-                                                                    <input type="hidden" name="registration_id" value="{{$registered->id}}">
-                                                                    <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-6">
-                                                                            <label for="blood_pressure">Blood Pressure(BP)</label>
-                                                                            <div class="row">
-                                                                                <div class="col-md-6">
-                                                                                    <input required type="number" name="systolic" value="0" class="form-control" >
-                                                                                    <small class="text-danger">Systolic</small>
-                                                                                    <div class="invalid-feedback">
-                                                                                        is required
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-6">
-                                                                                    <input required type="number" value="0" name="diastolic" class="form-control">
-                                                                                    <small class="text-danger">Diastolic</small>
-                                                                                    <div class="invalid-feedback">
-                                                                                        is required
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-6">
-                                                                            <label for="weight">Weight</label>
-                                                                            <input required type="text" class="form-control" id="weight" name="weight">
-                                                                            <div class="invalid-feedback">
-                                                                                Weight  is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-6">
-                                                                            <label for="temperature">Temperature</label>
-                                                                            <input required type="text" class="form-control"  name="temperature">
-                                                                            {{--                                                        temperature{{$i}}--}}
-                                                                            <div class="invalid-feedback">
-                                                                                Temperature is required
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-sm-6">
-                                                                            <label for="pulse">Pulse</label>
-                                                                            <input required type="number" name="pulse" class="form-control" id="pulse">
-                                                                            <div class="invalid-feedback">
-                                                                                Pulse is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <div class="col-md-6">
-                                                                            <label for="rdt" >RDT (Malaria)</label>
-                                                                            {{-- <input type="number" class="form-control" id="rdt" name="rdt">--}}
-                                                                            <select name="rdt" class="form-control selectMedicine" style="width: 100%">
-                                                                                <option value=""></option>
-                                                                                <option value="Negative">Negative</option>
-                                                                                <option value="Positive">Positive</option>
-                                                                            </select>
-                                                                            <div class="invalid-feedback">
-                                                                                RDT (Malaria) is required
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <label for="glucose">Glucose</label>
-                                                                            <input type="text" value="0" class="form-control"  name="glucose">
-                                                                            <div class="invalid-feedback">
-                                                                                Glucose (Sugar Level) is required
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-12 text-right">
-                                                                            <button class="btn btn-primary">Add Vital</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </form>
+                                                            <div class="col-md-5 p-3">
+                                                                <p class="display-4">Patient is Detained</p>
                                                             </div>
                                                         @endif
                                                     @endif
@@ -525,45 +453,82 @@
                                         </div>
                                     </div>
 
-                                    {{--Previous Vitals --}}
-                                    <div class="tab-pane fade" id="patient-vitals" role="tabpanel" aria-labelledby="tab-2-2">
-                                        <div class="row">
-                                            <div class="col-md-12 text-center">
-                                                <blockquote class="blockquote" style="border: dashed 1px;">
-                                                    <h5 class="text-uppercase">Previous Vitals</h5>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-striped">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>N<u>o</u></th>
-                                                                <th>Date</th>
-                                                                <th>Blood Pressure</th>
-                                                                <th>Weight</th>
-                                                                <th>Temperature</th>
-                                                                <th>Pulse</th>
-                                                                <th>RDT</th>
-                                                                <th>Glucose</th>
-                                                            </tr>
-                                                            </thead>
 
-                                                            <tbody>
-                                                            @php($i=1)
-                                                            @foreach($patient_vitals as $vital)
-                                                                <tr>
-                                                                    <td>{{$i}}</td>
-                                                                    <td>{{$vital->created_at}}</td>
-                                                                    <td>{{$vital->blood_pressure}}</td>
-                                                                    <td>{{$vital->weight}}</td>
-                                                                    <td>{{$vital->temperature}}</td>
-                                                                    <td>{{$vital->pulse}}</td>
-                                                                    <td>{{$vital->RDT}}</td>
-                                                                    <td>{{$vital->glucose}}</td>
-                                                                </tr>
-                                                                @php($i++)
-                                                            @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                    {{--Upload LAb/Scan For Consultataion or REview --}}
+                                    <div class="tab-pane fade" id="consultation-review" role="tabpanel" aria-labelledby="tab-2-2">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <blockquote class="blockquote" style="border: dashed 1px;">
+                                                    <h5 class="text-uppercase">Upload Old Record(s)</h5>
+                                                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation text-center">
+                                                        @csrf
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
+                                                                <input style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="labs_dat">Registration Date</label>
+                                                                <select  name="registration_id" id="labs_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($patient_registrations)
+                                                                        <option value="">~</option>
+                                                                        @foreach($patient_registrations as $p_registration)
+                                                                            <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-check form-check-flat mt-0">
+                                                                    <label class="form-check-label mt-5">
+                                                                        <input type="checkbox" class="form-check-input" name="lab_review">
+                                                                        Review
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>Scan</b></u> Result(s)</label>
+                                                                <input  style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="scan_dat">Registration Date</label>
+                                                                <select  name="scan_date" id="scan_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($patient_registrations)
+                                                                        <option value="">~</option>
+                                                                        @foreach($patient_registrations as $p_registration)
+                                                                            <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-2">
+                                                                <div class="form-check form-check-flat mt-0">
+                                                                    <label class="form-check-label mt-5">
+                                                                        <input type="checkbox" class="form-check-input" name="scan_review">
+                                                                        Review
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="icon icon-cloud-upload"></i> Upload
+                                                        </button>
+                                                    </form>
                                                 </blockquote>
                                             </div>
                                         </div>
@@ -575,79 +540,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Upload Labs/Scan modal -->
-            <div class="modal fade" id="upload_lab_scans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
-                        @csrf
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editStaffTitle">Upload Labs/Scan</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body pt-0">
-                                <blockquote class="blockquote" style="border: dashed 1px;">
-                                    <div class="form-group row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
-                                            <input style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
-                                            <div class="invalid-feedback text-small">
-                                                File Required
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-info" for="labs_date">Registration Date</label>
-                                            <select  name="registration_id" id="labs_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
-                                                @if($patient_registrations)
-                                                    <option value="">~</option>
-                                                    @foreach($patient_registrations as $p_registration)
-                                                        <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                            <div class="invalid-feedback text-small">
-                                                Date Required
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-info">Upload <u><b>Scan</b></u> Result(s)</label>
-                                            <input  style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
-                                            <div class="invalid-feedback text-small">
-                                                File Required
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-info" for="scan_date">Registration Date</label>
-                                            <select  name="scan_date" id="scan_date" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
-                                                @if($patient_registrations)
-                                                    <option value="">~</option>
-                                                    @foreach($patient_registrations as $p_registration)
-                                                        <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                            <div class="invalid-feedback text-small">
-                                                Date Required
-                                            </div>
-                                        </div>
-                                    </div>
-                                </blockquote>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                    <i class="icon icon-close"></i> Close
-                                </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="icon icon-plus"></i> Add Staff
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
         @elseif(count($data) > 1)
             <div class="row">
                 @foreach($data as $dat)
@@ -718,13 +610,13 @@
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <input title="Enter Last Name" type="text" name="last_name" class="form-control" id="last_name" placeholder="Last Name"  required>
+                                <input title="Enter Last Name" type="text" name="last_name" class="form-control text-capitalize" id="last_name" placeholder="Last Name"  required>
                                 <div class="invalid-feedback">
                                     Last Name is required
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <input title="Enter Other Name" type="text" name="other_name" class="form-control" id="other_name" placeholder="Other Name"  >
+                                <input title="Enter Other Name" type="text" name="other_name" class="form-control text-capitalize" id="other_name" placeholder="Other Name"  >
 
                             </div>
                         </div>
@@ -755,13 +647,13 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Postal Address" type="text" name="postal_address" class="form-control" id="postal_address" placeholder="Postal Address" >
+                                <input title="Enter Postal Address" type="text" name="postal_address" class="form-control text-uppercase" id="postal_address" placeholder="Postal Address" >
                                 <div class="invalid-feedback">
                                     Postal Address is required
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <input title="Enter House Number" type="text" name="house_number" class="form-control" id="house_number" placeholder="House Number" >
+                                <input title="Enter House Number" type="text" name="house_number" class="form-control text-uppercase" id="house_number" placeholder="House Number" >
                                 <div class="invalid-feedback">
                                     House Number is required
                                 </div>
@@ -770,7 +662,7 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Locality" type="text" name="locality" class="form-control" id="locality" placeholder="Locality"  required>
+                                <input title="Enter Locality" type="text" name="locality" class="form-control text-capitalize" id="locality" placeholder="Locality"  required>
                                 <div class="invalid-feedback">
                                     Locality is required
                                 </div>
@@ -784,7 +676,7 @@
                         </div>
                         <div class="form-row form-group">
                             <div class="col-md-6">
-                                <input title="Enter Occupation" type="text" name="occupation" class="form-control" id="occupation" placeholder="Occupation"  required>
+                                <input title="Enter Occupation" type="text" name="occupation" class="form-control text-capitalize" id="occupation" placeholder="Occupation"  required>
                                 <div class="invalid-feedback">
                                     Occupation is required
                                 </div>
@@ -806,7 +698,7 @@
 
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
-                                <input title="Enter Name Of Nearest Relative" type="text" name="name_of_relative" class="form-control" id="name_of_relative" placeholder="Name Of Nearest Relative">
+                                <input title="Enter Name Of Nearest Relative" type="text" name="name_of_relative" class="form-control text-capitalize" id="name_of_relative" placeholder="Name Of Nearest Relative">
                                 {{--<div class="invalid-feedback">
                                     Locality is required
                                 </div>--}}

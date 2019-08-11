@@ -19,7 +19,7 @@ $(document).ready(function () {
         $("tr.txtMult").each(function () {
             // get the values from this row:
             let $val1 = parseFloat($('.val1', this).text());
-            let $val2 = parseFloat($('.val2', this).text());
+            let $val2 = parseFloat($('.val2', this).val());
             let $val3 = parseFloat($('.val3',this).val());
             let dispenseTotal = ($val1) * ($val3);
             let $total = ($val1) * ($val2);
@@ -29,7 +29,14 @@ $(document).ready(function () {
             addDispense += dispenseTotal;
 
         });
+
+
+        $("#grand_bill_text").text("GH₵"+ (mult+parseFloat($("#detention_input").val())));
+        $("#bill_arrears_text").text("GH₵"+ (mult+parseFloat($("#detention_input").val())));
+        $("#bill_arrears_input").val(mult+parseFloat($("#detention_input").val()));
+
         $("#drugsText").text(mult.toFixed(2));
+        $("#drug_bill_Text").text("GH₵" + (mult.toFixed(2)));
         $("#drugs").val(mult);
 
         let  ser =Number($('#service').val());
@@ -50,6 +57,8 @@ $(document).ready(function () {
     $(".arrearsMulti input").keyup(multiplyInputs);
     $(".arrearsMulti input").click(multiplyInputs);
     $(".arrearsMulti input").hover(multiplyInputs);
+
+
     function multiplyInputs() {
         let addition = 0;
         // for each row:
@@ -72,11 +81,13 @@ $(document).ready(function () {
 
     }
 
-    $('#amount_paid_input').keyup(calculateArrears);
+    $('.amount_paid_input').keyup(calculateArrears);
+    $('.amount_paid_input').click(calculateArrears);
+    $('.amount_paid_input').hover(calculateArrears);
     function calculateArrears() {
-        let amount_paid = parseFloat($('#amount_paid_input').val());
-        let grand_total = parseFloat($('#detention_input').val());
-        $("#bill_amt_txt").text($('#amount_paid_input').val());
+        let amount_paid = parseFloat($('.amount_paid_input').val());
+        let grand_total = parseFloat($('#bill_arrears_input').val());
+        $("#bill_amt_txt").text("GH₵"+ ($('.amount_paid_input').val()));
 
         $("#bill_arrears_text").text(Number((grand_total) - (amount_paid)).toFixed(2));
     }

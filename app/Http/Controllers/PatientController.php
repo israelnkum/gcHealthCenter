@@ -323,17 +323,21 @@ class PatientController extends Controller
 //      return $data;
 
         $patient_registrations =0;
+        $patient_vitals =0;
         if (count($data) == 1){
             $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
+            $patient_vitals = Vital::where('patient_id',$data[0]->id)->get();
         }
 
         $insuranceType = Insurance::all();
         $charges = Charge::all();
+
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
             ->with('charges',$charges)
-            ->with('patient_registrations',$patient_registrations);;
+            ->with('patient_vitals',$patient_vitals)
+            ->with('patient_registrations',$patient_registrations);
     }
 
     /**
@@ -392,15 +396,19 @@ class PatientController extends Controller
             ->get();
 
         $patient_registrations =0;
+        $patient_vitals =0;
         if (count($data) == 1){
             $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
+            $patient_vitals = Vital::where('patient_id',$data[0]->id)->get();
         }
+
         $insuranceType = Insurance::all();
         $charges = Charge::all();
         return view('pages.patients.index')
             ->with('data',$data)
             ->with('charges',$charges)
             ->with('insuranceType',$insuranceType)
+            ->with('patient_vitals',$patient_vitals)
             ->with('patient_registrations',$patient_registrations);
     }
 
@@ -439,6 +447,11 @@ class PatientController extends Controller
                 $record->registration_id = $request->input('registration_id');
                 $record->consultation_id = $consultation->id;
                 $record->file_name =$fileName;
+                if ($request->has('lab_review')){
+                    $record->type="Review";
+                }else{
+                    $record->type="Consultation";
+                }
                 $record->user_id = Auth::user()->id;
                 $record->save();
             }
@@ -461,6 +474,11 @@ class PatientController extends Controller
                 $record->registration_id = $request->input('registration_id');
                 $record->consultation_id = $consultation->id;
                 $record->file_name =$scannedFileName;
+                if ($request->has('scan_review')){
+                    $record->type="Review";
+                }else{
+                    $record->type="Consultation";
+                }
                 $record->user_id = Auth::user()->id;
                 $record->save();
             }

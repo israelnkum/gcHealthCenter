@@ -17,9 +17,9 @@ class CreateScannedResultsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('registration_id');
             $table->integer('patient_id');
-            $table->integer('consultation_id');
             $table->string('file_name',1000);
             $table->integer('user_id');
+            $table->string('type',20)->nullable();
             $table->timestamps();
         });
     }

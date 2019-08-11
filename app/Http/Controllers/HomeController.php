@@ -7,6 +7,7 @@ use App\Drug;
 use App\Patient;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,16 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+//        $live_database = DB::connection('online-db');
+//        // Get table data from production
+//        foreach(DB::table('users')->get() as $data => $value){
+//            // Save data to staging database - default db connection
+//         return   $live_database->table('users')
+//                ->whereIn('id', (array) $data)
+//                ->get();
+////            $live_database->table('users')->updateOrInsert((array) $data);
+//        }
 
         if (Auth::user()->updated == 0) {
 

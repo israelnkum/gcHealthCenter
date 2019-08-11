@@ -792,6 +792,7 @@
                                 <div class="invalid-feedback">
                                     Receiving Stock is required
                                 </div>
+                                <small id="check_unit_of_pricing" class="text-danger d-none">Should be in Blisters</small>
                             </div>
                             <div class="col-sm-2">
                                 <label for="temperature">Cost Price</label>

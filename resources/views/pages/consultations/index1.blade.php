@@ -10,7 +10,7 @@
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
-                                <input required type="text"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
+                                <input required type="text"  class="form-control font-weight-bold" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
                                     <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
                                 </div>
@@ -32,7 +32,7 @@
                                     <label style="font-size: 12px">Search by Date</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select required name="data" style="width: 100%" class="js-example-basic-single w-100 form-control">
+                                    <select required name="data" style="width: 100%" class="js-example-basic-single w-100 form-control font-weight-bold">
                                         <option value="">Select Record Date</option>
                                         @if(count($registration)  == 1)
                                             @foreach($allRegistrations as $userRegistration)
@@ -143,32 +143,30 @@
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label for="complains" class="text-info">Complains</label>
-                                                <textarea required  name="complains" class="form-control" id="complains" rows="10"></textarea>
+                                                <textarea style="font-size: 15px"  required  name="complains" class="form-control font-weight-bold" id="complains" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Complains is required
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <label for="physical_examination" class="text-info">Physical Examination</label>
-                                                <textarea required  name="physical_examination" class="form-control" id="physical_examination" rows="10"></textarea>
+                                                <textarea style="font-size: 15px"  required  name="physical_examination" class="form-control font-weight-bold" id="physical_examination" rows="10"></textarea>
                                                 <div class="invalid-feedback">
                                                     Physical Examination is required
                                                 </div>
                                             </div>
 
-                                        {{--<div class="form-group row">
-                                            <div class="col-sm-12">
-                                                <label for="findings" class="text-info">Findings</label>
-                                                <textarea required name="findings" class="form-control" id="findings" rows="10"></textarea>
+                                            <div class="col-sm-6 mt-3">
+                                                <label for="findings" class="text-info">History</label>
+                                                <textarea style="font-size: 15px"   name="findings" class="form-control font-weight-bold" id="findings" rows="8"></textarea>
                                                 <div class="invalid-feedback">
                                                     Finding is required
                                                 </div>
                                             </div>
-                                        </div>--}}
 
                                             <div class="col-sm-6 mt-3">
                                                 <label for="select_diagnosis" class="text-info">Diagnosis</label>
-                                                <select  class="form-control js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
+                                                <select  class="form-control font-weight-bold js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
                                                     <option value="">Select Diagnosis</option>
                                                     @foreach($diagnosis as $diag)
                                                         <option value="{{$diag->id}}">{{$diag->name}}</option>
@@ -177,10 +175,8 @@
                                                 <div class="invalid-feedback">
                                                     Diagnosis is required
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-6 mt-3">
-                                                <label for="other_diagnosis_text" class="text-info">Other Diagnosis</label>
-                                                <textarea placeholder="Other Diagnosis" class="form-control" id="other_diagnosis_text" name="other_diagnosis"></textarea>
+                                                <label for="other_diagnosis_text" class="text-info mt-3">Other Diagnosis</label>
+                                                <textarea style="font-size: 15px"  rows="3" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                 <div class="invalid-feedback">
                                                     Diagnosis is required
                                                 </div>
@@ -190,22 +186,22 @@
                                             <div class="col-md-7" >
                                                 <label for="" class="text-info">Drugs</label>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-4">
                                                 <label for="" class="text-info">Dosage</label>
                                             </div>
-                                            <div class="col-md-1">
+                                            {{--<div class="col-md-1">
                                                 <label for="" class="text-info">Days</label>
                                             </div>
                                             <div class="col-md-1">
                                                 <label for="" class="text-info">Qty</label>
-                                            </div>
+                                            </div>--}}
                                         </div>
                                         <div class="repeater">
                                             <div data-repeater-list="medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
                                                         <div class="col-md-7">
-                                                            <select required class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                            <select class="selectMedicine col-12 form-control font-weight-bold mr-1"    name="drug_id" id="drug_id">
                                                                 <option value=""></option>
                                                                 @foreach($drugs as $drug)
                                                                     <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
@@ -215,9 +211,9 @@
                                                                 Drug is required
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
-                                                            {{--<select required class="selectMedicine col-12 form-control mr-1 dosage"    name="dosage" id="dosage">
+                                                        <div class="col-md-4">
+                                                            {{-- <input type="text" name="dosage" id="dosage"  class="form-control font-weight-bold col-12 ml-1">--}}
+                                                            {{--<select required class="selectMedicine col-12 form-control font-weight-bold mr-1 dosage"    name="dosage" id="dosage">
                                                                 <option value=""></option>
                                                                 <option value="3tid">tid</option>
                                                                 <option value="2bd">bd</option>
@@ -225,7 +221,7 @@
                                                                 <option value="1stat">stat</option>
                                                                 <option value="1dly">dly</option>
                                                             </select>--}}
-                                                            <input required list="dosage" class="form-control" placeholder="Dosage" name="dosage">
+                                                            <input list="dosage" class="form-control font-weight-bold" placeholder="Dosage" name="dosage">
                                                             <datalist id="dosage">
                                                                 <option value="tid">
                                                                 <option value="bd">
@@ -239,12 +235,12 @@
                                                                 Dosage is required
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-1">
-                                                            <input type="number" required name="days" value="0" style="width: 70px;" min="1" placeholder="Days"  class="form-control days">
-                                                        </div>
-                                                        <div class="col-md-1">
-                                                            <input type="number" required name="qty" value="0" style="width: 70px;" min="1" placeholder="Qty"  class="form-control qty">
-                                                        </div>
+                                                        {{--   <div class="col-md-1">
+                                                               <input type="number" min="1"  name="days" value="0" style="width: 70px;" placeholder="Days"  class="form-control font-weight-bold days">
+                                                           </div>
+                                                           <div class="col-md-1">
+                                                               <input type="number" min="1"  name="qty" value="0" style="width: 70px;"  placeholder="Qty"  class="form-control font-weight-bold qty">
+                                                           </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
                                                                 <i class="icon-close"></i>
@@ -270,29 +266,29 @@
                                             <div class="col-md-3">
                                                 <small>Dosage</small>
                                             </div>
-                                            <div class="col-md-2">
+                                            {{--<div class="col-md-2">
                                                 <small>Days</small>
-                                            </div>
+                                            </div>--}}
                                         </div>
                                         <div class="other-repeater">
                                             <div data-repeater-list="other-medications">
                                                 <div data-repeater-item class="mb-2">
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control col-12 ml-1">
+                                                            <input type="text" title="Drug Name" placeholder="Enter Drug name" name="other_medication" id="other_medication"  class="form-control font-weight-bold col-12 ml-1">
                                                         </div>
                                                         <div class="col-md-3">
-                                                            {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control col-12 ml-1">--}}
-                                                           {{-- <select  class="selectMedicine col-12 form-control mr-1"    name="other_dosage" id="other_dosage">
-                                                                <option value=""></option>
-                                                                <option value="3tid">tid</option>
-                                                                <option value="2bd">bd</option>
-                                                                <option value="1nocte">nocte</option>
-                                                                <option value="1stat">stat</option>
-                                                                <option value="1dly">dly</option>
-                                                            </select>
---}}
-                                                            <input  list="other_dosage" class="form-control" placeholder="Dosage" name="other_dosage">
+                                                            {{--                                                                    <input type="text" name="other_dosage" id="other_dosage" placeholder="Dosage"  class="form-control font-weight-bold col-12 ml-1">--}}
+                                                            {{-- <select  class="selectMedicine col-12 form-control font-weight-bold mr-1"    name="other_dosage" id="other_dosage">
+                                                                 <option value=""></option>
+                                                                 <option value="3tid">tid</option>
+                                                                 <option value="2bd">bd</option>
+                                                                 <option value="1nocte">nocte</option>
+                                                                 <option value="1stat">stat</option>
+                                                                 <option value="1dly">dly</option>
+                                                             </select>
+ --}}
+                                                            <input  list="other_dosage" class="form-control font-weight-bold" placeholder="Dosage" name="other_dosage">
                                                             <datalist id="other_dosage">
                                                                 <option value="tid">
                                                                 <option value="bd">
@@ -306,9 +302,9 @@
                                                                 Dosage is
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
-                                                            <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
-                                                        </div>
+                                                        {{--<div class="col-md-2">
+                                                            <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control font-weight-bold">
+                                                        </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
                                                                 <i class="icon-close"></i>
@@ -329,17 +325,17 @@
                                                 <div class="row">
                                                     <div class="col-md-12 mb-3">
                                                         <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
-                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control font-weight-bold-file">
                                                     </div>
                                                     <div class="col-md-12">
                                                         <label class="text-info">Upload <u><b>SCAN</b></u> Result(s)</label>
-                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+                                                        <input style="border-radius: 0; border: dashed 1px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control font-weight-bold-file">
                                                     </div>
                                                 </div>
                                             </div>--}}
                                             <div class="col-md-6 mb-3">
                                                 <label class="text-info">Select Service</label>
-                                                <select  class="col-12 form-control mr-1 selectMedicine" multiple   name="service[]" id="service">
+                                                <select  class="col-12 form-control font-weight-bold mr-1 selectMedicine" multiple   name="service[]" id="service">
                                                     <option value=""></option>
                                                     @foreach($charges as $charge)
                                                         @if($charge->name != "Insured" && $charge->name !="Detain/Admit" && $charge->name != "Non-Insured" && $charge->name != "Consultation")
@@ -354,6 +350,16 @@
                                                         <input type="checkbox" name="detain_admit" class="form-check-input">
                                                         Detain/Admit Patient
                                                     </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 mt-3">
+                                                <label for="findings" class="text-info">Note</label>
+                                                <textarea style="font-size: 15px"   name="notes" class="form-control font-weight-bold" id="notes" rows="8"></textarea>
+                                                <div class="invalid-feedback">
+                                                    Finding is required
                                                 </div>
                                             </div>
                                         </div>

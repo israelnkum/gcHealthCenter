@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchRegistrationForVitals')}}" method="post">
+                <form class="needs-validation" novalidate action="{{route('searchRegistrationForVitals')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
@@ -87,14 +87,14 @@
                                                             <div class="col-sm-3">
                                                                 <div class="row">
                                                                     <div class="col-md-6">
-                                                                        <input required type="number" name="systolic" value="0" class="form-control" id="systolic{!! $i !!}">
+                                                                        <input required type="number" name="systolic" value="0" class="form-control" >
                                                                         <small class="text-danger">Systolic</small>
                                                                         <div class="invalid-feedback">
                                                                             is required
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-6">
-                                                                        <input required type="number" value="0" name="diastolic" class="form-control" id="diastolic{!! $i !!}">
+                                                                        <input required type="number" value="0" name="diastolic" class="form-control">
                                                                         <small class="text-danger">Diastolic</small>
                                                                         <div class="invalid-feedback">
                                                                             is required
@@ -105,7 +105,7 @@
 
                                                             <label for="weight" class="col-sm-2 col-form-label text-right">Weight</label>
                                                             <div class="col-sm-3">
-                                                                <input required type="number" class="form-control" id="weight" name="weight">
+                                                                <input required type="text" class="form-control" id="weight" name="weight">
                                                                 <div class="invalid-feedback">
                                                                     Weight  is required
                                                                 </div>
@@ -114,7 +114,7 @@
                                                         <div class="form-group row">
                                                             <label for="temperature" class="col-sm-2 col-form-label">Temperature</label>
                                                             <div class="col-sm-3">
-                                                                <input required type="text" class="form-control" id="temperature{{$i}}" name="temperature">
+                                                                <input required type="text" class="form-control"  name="temperature">
                                                                 {{--                                                        temperature{{$i}}--}}
                                                                 <div class="invalid-feedback">
                                                                     Temperature is required
@@ -131,12 +131,12 @@
                                                         </div>
 
                                                         <div class="form-group row">
-                                                            <div class="malaria{!! $i !!} col-md-6" style="display: none;">
+                                                            <div class="malaria{!! $i !!} col-md-6">
                                                                 <div class="row">
                                                                     <label for="rdt" class="col-sm-4 col-form-label" >RDT (Malaria)</label>
                                                                     <div class="col-sm-6">
                                                                        {{-- <input type="number" class="form-control" id="rdt" name="rdt">--}}
-                                                                        <select name="rdt" id="rdt" class="form-control selectMedicine" style="width: 100%">
+                                                                        <select name="rdt" class="form-control selectMedicine" style="width: 100%">
                                                                             <option value=""></option>
                                                                             <option value="Negative">Negative</option>
                                                                             <option value="Positive">Positive</option>
@@ -147,11 +147,11 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="sugar{!! $i !!} col-md-6" style="display: none;">
+                                                            <div class="sugar{!! $i !!} col-md-6">
                                                                 <div class="row">
                                                                     <label for="glucose" class="col-sm-4 col-form-label ">Glucose(Sugar Level)</label>
                                                                     <div class="col-sm-4" >
-                                                                        <input type="number" class="form-control" id="glucose" name="glucose">
+                                                                        <input type="text" value="0" class="form-control"  name="glucose">
                                                                         <div class="invalid-feedback">
                                                                             Glucose (Sugar Level) is required
                                                                         </div>
