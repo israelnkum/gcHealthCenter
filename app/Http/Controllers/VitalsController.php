@@ -59,6 +59,7 @@ class VitalsController extends Controller
         $vital->pulse = $request->input('pulse');
         $vital->RDT = $request->input('rdt');
         $vital->glucose = $request->input('glucose');
+        $vital->type = "Consultation";
         $vital->user_id= Auth::user()->id;
         $vital->save();
 

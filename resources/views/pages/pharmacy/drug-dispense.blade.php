@@ -182,7 +182,7 @@
                                         @foreach($medication as $med)
                                             <tr class=" txtMult">
                                                 <td id="d_name">{{$med->drugs->name}}</td>
-                                                <td>{{$med->dosage}} x {{$med->days}}days</td>
+                                                <td>{{$med->dosage}} days</td>
                                                 <td>
                                                     @if($registration->isInsured ==0)
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")
@@ -212,8 +212,8 @@
                                                 </td>
 
                                                 <td>
-                                                    <span class=" val2">{{$med->qty}}</span>
-                                                    <input name="qty[]" required value="{{$med->qty}}" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" hidden style="width: 80px;" class="  form-control">
+{{--                                                    <span class="val2">{{$med->qty}}</span>--}}
+                                                    <input name="qty[]" required value="0" min="1" max="{{$med->drugs->quantity_in_stock}}" type="number" style="width: 60px;" class="val2  form-control">
                                                 </td>
                                                 <td style="display: none;"><input name="data[]" type="text" value="{{$med->drugs->name.",".$med->dosage." x ".$med->days.",".$med->drugs->unit_of_pricing.",".$med->qty.",".$med->days.",".$med->drugs->retail_price.",".$med->drugs->nhis_amount}}"></td>
 
@@ -245,7 +245,7 @@
                                                     </li>
                                                     <li class=" list-group-item d-flex justify-content-between align-items-center">
                                                         Grand Total:
-                                                        <span class=" badge badge-pill"> GH₵ <span id="grandText">0.00</span> </span>
+                                                        <span class=" badge calculateArrearsbadge-pill"> GH₵ <span id="grandText">0.00</span> </span>
                                                         <input type="hidden" value="0" id="grand" name="grand_total">
                                                     </li>
                                                 </ul>
@@ -293,7 +293,7 @@
                                         <div class=" col-md-4 offset-md-8">
                                             <label for="">Amount Paid</label>
                                             <div class=" input-group">
-                                                <input type="text"  id="amount_paid_input" required class=" form-control"  name="amount_paid" placeholder="Amount Paid">
+                                                <input type="text"   required class="amount_paid_input form-control"  name="amount_paid" placeholder="Amount Paid">
                                                 <div class=" input-group-prepend bg-info text-white">
                                                     <button type="submit" class=" input-group-text btn text-white">
                                                         Dispense
@@ -381,10 +381,10 @@
                                     <div class="col-md-12">
                                         <div class="text-center" style="line-height: 14px; border-bottom: dashed 1px;">
                                             {{--                                            <img src="{{asset('public/images/logo.jpeg')}}" height="auto" width="70" alt="" class="img-fluid p-0">--}}
-                                            <h6  class="text-uppercase mb-0">GC Health Centre</h6>
+                                            <h6  class="text-uppercase mb-0">GC Health Centre LTD</h6>
                                             <small class="mt-0 mb-0 p-0">KWESIMINTIM</small>
                                             <br>
-                                            <small class="mt-0">+233 247 909 665</small>
+                                            <small class="mt-0">+233 247 909 665 / 031 2000 951</small>
 
                                             <h6 class="p-1 bg-dark text-white mt-2" style="font-size: 15px;" >Official Receipt</h6>
                                             <ul class="list-unstyled  mb-0">
@@ -435,25 +435,27 @@
                                                 @else
                                                 @php($detentionBill = 0)
                                             @endif
+                                            <li  class="p-0 text-small bg-dark text-white list-group-item d-flex justify-content-between align-items-center">
+                                                Service Total:
+                                                <span>GH₵ {{$serviceTotal+$detentionBill}}</span>
+                                            </li>
                                             <li class="p-0 text-small d-flex list-group-item  justify-content-between align-items-center">
                                                 {{--                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">--}}
                                                 Drug Total:
-                                                <span> GH₵ {{$total_d_total}}</span>
-                                            </li>
-                                            <li  class="p-0 text-small list-group-item d-flex justify-content-between align-items-center">
-                                                Service Total:
-                                                <span>GH₵ {{$serviceTotal+$detentionBill}}</span>
+                                                <span id="drug_bill_Text"></span>
                                             </li>
                                             <li class="p-0 text-small bg-warning d-flex list-group-item  justify-content-between align-items-center">
                                                 <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="detention_input">
                                                 Grand Total:
-                                                <span> GH₵ {{$total+$detentionBill+$total_d_total}}</span>
+                                                <span id="grand_bill_text"> GH₵ {{$total+$detentionBill+$total_d_total}}</span>
                                             </li>
                                             <li class="p-0 text-small d-flex list-group-item  justify-content-between align-items-center">
                                                 Amount Paid:
                                                 <span><span id="bill_amt_txt"> 0.00</span></span>
                                             </li>
                                             <li class="p-0 text-small d-flex list-group-item  justify-content-between align-items-center">
+                                                <input type="hidden" value="{{$total+$detentionBill+$total_d_total}}" id="bill_arrears_input">
+
                                                 Arrears:
                                                 <span> <span id="bill_arrears_text">{{$total+$detentionBill+$total_d_total}}.00</span></span>
                                             </li>

@@ -112,13 +112,16 @@ class PatientController extends Controller
         $patient = new Patient();
 
         $countLogs = Patient::get()->count();
+
         if ($countLogs == 0){
             $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'01';
         }else{
-            $record = Patient::latest()->first();
+            $record = Patient::latest('id')->first();
+
+//            return $record;
 
             $expNum =$record->registration_number;
-            //return $expNum;
+//            return $expNum;
             if ($expNum == '' ){
                 $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'1';
             } else {
@@ -127,11 +130,11 @@ class PatientController extends Controller
                 }else{
                     $folderNumber=  $patient->registration_number =  substr(date('Y'),'2').'01';
                 }
-
-
 //                return $record;
             }
         }
+
+//        return $folderNumber;
 
         $patient->registration_number= $folderNumber;
         $patient->folder_number= "GC/".substr($folderNumber,0,2)."/".substr($folderNumber,2);
