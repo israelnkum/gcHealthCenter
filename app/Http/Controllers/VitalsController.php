@@ -187,7 +187,8 @@ class VitalsController extends Controller
     {
         //check if patient doesn't need rdt(malaria) test
         if (empty($request->input('rdt'))){
-            $vital = Vital::find($id);
+            $vital = Vital::where('registration_id',$request->input('registration_id'))
+                ->where('patient_id',$request->input('patient_id'))->first();
             $vital->blood_pressure = $request->input('systolic')."/".$request->input('diastolic');
             $vital->weight = $request->input('weight');
             $vital->temperature = $request->input('temperature');
@@ -206,7 +207,10 @@ class VitalsController extends Controller
         }else{
             $registration = Registration::find($request->input('registration_id'));
 
-            $vital = Vital::find($id);
+
+
+            $vital = Vital::where('registration_id',$request->input('registration_id'))
+                ->where('patient_id',$request->input('patient_id'))->first();
             if ($vital->RDT == ""){
                 //add a new bill for rdt (malaria Test)
                 $bill = new Bill();

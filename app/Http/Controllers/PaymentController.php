@@ -104,9 +104,6 @@ class PaymentController extends Controller
                 }
 
 
-
-
-
                 $getDrug = Drug::find($findMed->drugs_id);
 
                 $bill = new Bill();

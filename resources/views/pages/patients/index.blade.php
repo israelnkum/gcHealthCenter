@@ -5,7 +5,7 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 grid-margin offset-md-2">
-                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchPatient')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12">
@@ -72,6 +72,18 @@
                                         <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#patient-vitals" role="tab" aria-controls="patient-vitals" aria-selected="false">
                                             <i class="icon-layers"></i>
                                             Previous Vitals
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#consultation-review" role="tab" aria-controls="patient-records" aria-selected="false">
+                                            <i class="icon-cloud-upload"></i>
+                                            Upload Lab/Scan For Consultation/Review
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tab-2-2" data-toggle="tab" href="#detention-upload" role="tab" aria-controls="patient-records" aria-selected="false">
+                                            <i class="icon-cloud-upload"></i>
+                                            Upload Lab/Scan For Detention
                                         </a>
                                     </li>
                                 </ul>
@@ -222,16 +234,16 @@
                                                             </div>
                                                         @endif
                                                     @endforeach
-                                                    <div class="text-right">
+                                                    {{--<div class="text-right">
                                                         <button class="btn btn-dark p-1" type="button" data-toggle="modal" data-target="#upload_lab_scans">Upload Labs/Scan</button>
-                                                    </div>
+                                                    </div>--}}
                                                 </div>
 
 
                                             </div>
                                             @if(count($registration)  == 0)
                                                 <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
-                                                    <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
+                                                    <form novalidate class="needs-validation form-sub" method="post" action="{{route('registration.store')}}">
                                                         @csrf
                                                         <div class="form-row form-group">
                                                             <div class="col-md-6">
@@ -304,7 +316,7 @@
                                                         </div>
                                                         <div class="form-group row ">
                                                             <div class="col-md-12 text-right">
-                                                                <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
+                                                                <button class="btn btn-dark loading" disabled id="btn_register" type="submit">Register</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -314,7 +326,7 @@
                                                     @if($key == count( $registration ) -1 )
                                                         @if(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain != 1)
                                                             <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">
-                                                                <form novalidate class="needs-validation" method="post" action="{{route('registration.store')}}">
+                                                                <form novalidate class="needs-validation form-sub" method="post" action="{{route('registration.store')}}">
                                                                     @csrf
                                                                     <div class="form-row form-group">
                                                                         <div class="col-md-6">
@@ -387,7 +399,7 @@
                                                                     </div>
                                                                     <div class="form-group row ">
                                                                         <div class="col-md-12 text-right">
-                                                                            <button class="btn btn-dark" disabled id="btn_register" type="submit">Register</button>
+                                                                            <button class="btn btn-dark loading" disabled id="btn_register" type="submit">Register</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
@@ -395,7 +407,7 @@
                                                         @elseif(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain == 1)
                                                             <div class="col-md-4 ">
                                                                 <h6>Patient is Detained, <span class="text-danger">You can add Vitals</span></h6>
-                                                                <form class="needs-validation p-3" style="border: dashed 1px"  novalidate method="post" action="{{route('addVital')}}">
+                                                                <form class="needs-validation form-sub p-3" style="border: dashed 1px"  novalidate method="post" action="{{route('addVital')}}">
                                                                     @csrf
                                                                     <input type="hidden" name="registration_id" value="{{$registered->id}}">
                                                                     <input type="hidden" name="patient_id" value="{{$registered->patient->id}}">
@@ -469,7 +481,7 @@
 
                                                                     <div class="form-group row">
                                                                         <div class="col-sm-12 text-right">
-                                                                            <button class="btn btn-primary">Add Vital</button>
+                                                                            <button class="btn loading btn-primary">Add Vital</button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
@@ -488,7 +500,7 @@
                                             <div class="col-md-12 text-center">
                                                 <blockquote class="blockquote" style="border: dashed 1px;">
                                                     <h5 class="text-uppercase">Upload Old Record(s)</h5>
-                                                    <form action="{{route('upload-records')}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
+                                                    <form action="{{route('upload-records')}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation form-sub">
                                                         @csrf
                                                         <div class="form-group row">
                                                             <div class="col-md-6 offset-md-3">
@@ -516,7 +528,7 @@
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-md-12 text-center">
-                                                                <button class="btn btn-dark" type="submit">Upload Record(s)</button>
+                                                                <button class="btn btn-dark loading" type="submit">Upload Record(s)</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -569,6 +581,149 @@
                                         </div>
                                     </div>
 
+                                    {{--Upload LAb/Scan For Consultataion or REview --}}
+                                    <div class="tab-pane fade" id="consultation-review" role="tabpanel" aria-labelledby="tab-2-2">
+                                        <div class="row">
+                                            <div class="col-md-8 mb-5">
+                                                <blockquote class="blockquote" style="border: dashed 1px;">
+                                                    <h5 class="text-uppercase text-center">Upload Scan/labs for Consultation/Review</h5>
+                                                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation form-sub mt-5">
+                                                        @csrf
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
+                                                                <input style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="labs_dat">Registration Date</label>
+                                                                <select  name="lab_registration_id" id="labs_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($patient_registrations)
+                                                                        <option value="">~</option>
+                                                                        @foreach($patient_registrations as $p_registration)
+                                                                            <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-check form-check-flat mt-0">
+                                                                    <label class="form-check-label mt-5">
+                                                                        <input type="checkbox" class="form-check-input" name="lab_review">
+                                                                        Review
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>Scan</b></u> Result(s)</label>
+                                                                <input  style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="scan_dat">Registration Date</label>
+                                                                <select  name="registration_id" id="scan_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($patient_registrations)
+                                                                        <option value="">~</option>
+                                                                        @foreach($patient_registrations as $p_registration)
+                                                                            <option value="{{$p_registration->id}}">{{substr($p_registration->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-2">
+                                                                <div class="form-check form-check-flat mt-0">
+                                                                    <label class="form-check-label mt-5">
+                                                                        <input type="checkbox" class="form-check-input" name="scan_review">
+                                                                        Review
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary loading">
+                                                            <i class="icon icon-cloud-upload"></i> Upload
+                                                        </button>
+                                                    </form>
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{--Upload LAb/Scan For Detention --}}
+                                    <div class="tab-pane fade" id="detention-upload" role="tabpanel" aria-labelledby="tab-2-2">
+                                        <div class="row">
+                                            <div class="col-md-8 mb-5">
+                                                <blockquote class="blockquote" style="border: dashed 1px;">
+                                                    <h5 class="text-uppercase text-center">Upload Scan/labs for Detention</h5>
+                                                    <form id="scan_lab_form" action="{{route('upload-detention-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation form-sub mt-5">
+                                                        @csrf
+                                                        <div class="form-group row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>LAB</b></u> Result(s)</label>
+                                                                <input style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="labs[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="labs_dat">Record Date</label>
+                                                                <select  name="registration_id" id="labs_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($detention_records)
+                                                                        <option value="">~</option>
+                                                                        @foreach($detention_records as $record)
+                                                                            <option value="{{$record->id}}">{{substr($record->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="text-info">Upload <u><b>Scan</b></u> Result(s)</label>
+                                                                <input  style="border-radius: 0; border: dashed 1px; font-size: 10px; padding: 3px;" name="scan[]" type="file"  multiple  class="form-control-file">
+                                                                <div class="invalid-feedback text-small">
+                                                                    File Required
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <label class="text-info" for="scan_dat">Record Date</label>
+                                                                <select  name="registration_id" id="scan_dat" class="selectMedicine form-control" style="border-radius: 0; width: 100%; font-size: 10px; border: dashed 1px; padding: 3px;">
+                                                                    @if($detention_records)
+                                                                        <option value="">~</option>
+                                                                        @foreach($detention_records as $record)
+                                                                            <option value="{{$record->id}}">{{substr($record->created_at,0,10)}}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                <div class="invalid-feedback text-small">
+                                                                    Date Required
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary loading">
+                                                            <i class="icon icon-cloud-upload"></i> Upload
+                                                        </button>
+                                                    </form>
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -578,7 +733,7 @@
             <!-- Upload Labs/Scan modal -->
             <div class="modal fade" id="upload_lab_scans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation">
+                    <form id="scan_lab_form" action="{{route('upload-labs-scans',$data[0]->id)}}" enctype="multipart/form-data" method="post" novalidate class="needs-validation form-sub">
                         @csrf
                         <div class="modal-content">
                             <div class="modal-header">
@@ -639,8 +794,8 @@
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                     <i class="icon icon-close"></i> Close
                                 </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="icon icon-plus"></i> Add Staff
+                                <button type="submit" class="btn btn-primary loading">
+                                    <i class="icon icon-plus"></i> Upload
                                 </button>
                             </div>
                         </div>
@@ -689,7 +844,7 @@
     <!-- new patient modal -->
     <div class="modal fade" id="newPatient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <form method="post" action="{{route('patients.store')}}" class="needs-validation" novalidate>
+            <form method="post" action="{{route('patients.store')}}" class="needs-validation form-sub" novalidate>
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -925,7 +1080,7 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             <i class="icon icon-close"></i> Close
                         </button>
-                        <button type="submit" id="btn_add_patient" class="btn btn-primary">
+                        <button type="submit" id="btn_add_patient" class="btn btn-primary loading">
                             <i class="icon icon-plus"></i> Add Patient
                         </button>
                     </div>

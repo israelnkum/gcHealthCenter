@@ -374,6 +374,12 @@
     }
 
 
+    $('.form-sub').submit(function () {
+        $('.loading').text("Loading...");
+        $('.loading').attr('disabled',true);
+        // $('.loading-spin').fadeIn(1000).slideDown(1000);
+    });
+
     /*
     * Form Validation
      */

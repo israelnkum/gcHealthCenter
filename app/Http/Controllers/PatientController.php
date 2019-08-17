@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bill;
 use App\Charge;
 use App\Consultation;
+use App\DetentionRecord;
 use App\Insurance;
 use App\LabResult;
 use App\OldRecord;
@@ -33,6 +34,7 @@ class PatientController extends Controller
     {
         $data="none";
         $insuranceType = Insurance::all();
+        $detention_records = 0;
 
         $patient_registrations =0;
         $charges = Charge::all();
@@ -40,9 +42,11 @@ class PatientController extends Controller
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
             ->with('charges',$charges)
-            ->with('patient_registrations',$patient_registrations);
+            ->with('patient_registrations',$patient_registrations)
+            ->with('detention_records',$detention_records);
     }
 
+    //upload old data
     public function upload_old_files(Request $request){
 
         $patient = Patient::find($request->input('patient_id'));
@@ -330,6 +334,8 @@ class PatientController extends Controller
         if (count($data) == 1){
             $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
             $patient_vitals = Vital::where('patient_id',$data[0]->id)->get();
+            $detention_records = DetentionRecord::where('patient_id',$data[0]->id)->get();
+
         }
 
         $insuranceType = Insurance::all();
@@ -340,7 +346,8 @@ class PatientController extends Controller
             ->with('insuranceType',$insuranceType)
             ->with('charges',$charges)
             ->with('patient_vitals',$patient_vitals)
-            ->with('patient_registrations',$patient_registrations);
+            ->with('patient_registrations',$patient_registrations)
+            ->with('detention_records',$detention_records);
     }
 
     /**
@@ -403,6 +410,8 @@ class PatientController extends Controller
         if (count($data) == 1){
             $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
             $patient_vitals = Vital::where('patient_id',$data[0]->id)->get();
+
+            $detention_records = DetentionRecord::where('patient_id',$data[0]->id)->get();
         }
 
         $insuranceType = Insurance::all();
@@ -412,7 +421,8 @@ class PatientController extends Controller
             ->with('charges',$charges)
             ->with('insuranceType',$insuranceType)
             ->with('patient_vitals',$patient_vitals)
-            ->with('patient_registrations',$patient_registrations);
+            ->with('patient_registrations',$patient_registrations)
+            ->with('detention_records',$detention_records);
     }
 
 
@@ -431,11 +441,19 @@ class PatientController extends Controller
     }
 
 
+    //upload labs or scan REsult for consultation or detention
     public function uploadLabScanResult(Request $request,$patient_id){
 
-        $consultation = Consultation::where('registration_id',$request->input('registration_id'))->first();
 
+//        return $consultation;
         if (\Request::has('labs')) {
+            $this->validate($request,[
+                'lab_registration_id' => ['required'],
+            ]);
+
+
+            $consultation = Consultation::where('registration_id',$request->input('lab_registration_id'))->first();
+
             for ($i = 0; $i < count($request->file('labs')); $i++) {
                 $file = $request->file('labs')[$i];
                 $extension = $file->getClientOriginalExtension();
@@ -447,7 +465,7 @@ class PatientController extends Controller
 
                 $record = new LabResult();
                 $record->patient_id = $patient_id;
-                $record->registration_id = $request->input('registration_id');
+                $record->registration_id = $request->input('lab_registration_id');
                 $record->consultation_id = $consultation->id;
                 $record->file_name =$fileName;
                 if ($request->has('lab_review')){
@@ -463,6 +481,13 @@ class PatientController extends Controller
 
         //Upload Scans
         if (\Request::has('scan')){
+            $this->validate($request,[
+                'scan_registration_id' => ['required'],
+            ]);
+
+
+            $consultation = Consultation::where('lab_registration_id',$request->input('scan_registration_id'))->first();
+
             for ($i = 0; $i < count($request->file('scan')); $i++) {
                 $scannedFile = $request->file('scan')[$i];
                 $scannedExtension = $scannedFile->getClientOriginalExtension();
@@ -471,10 +496,9 @@ class PatientController extends Controller
 
                 $scannedFile->move('public/scan', $scannedFileName);
 
-
                 $record = new ScannedResult();
                 $record->patient_id = $patient_id;
-                $record->registration_id = $request->input('registration_id');
+                $record->registration_id = $request->input('scan_registration_id');
                 $record->consultation_id = $consultation->id;
                 $record->file_name =$scannedFileName;
                 if ($request->has('scan_review')){
@@ -482,6 +506,60 @@ class PatientController extends Controller
                 }else{
                     $record->type="Consultation";
                 }
+                $record->user_id = Auth::user()->id;
+                $record->save();
+            }
+        }
+
+        toastr()->success('Upload Successful');
+        return back();
+    }
+
+
+    public function uploadDetentionLabScanResult(Request $request,$patient_id){
+//        return $consultation;
+        if (\Request::has('labs')) {
+            $this->validate($request,[
+                'lab_registration_id' => ['required'],
+            ]);
+            for ($i = 0; $i < count($request->file('labs')); $i++) {
+                $file = $request->file('labs')[$i];
+                $extension = $file->getClientOriginalExtension();
+                $files = substr($file->getClientOriginalName(), 0, strpos($file->getClientOriginalName(), '.'));
+                $fileName = $files . '_' . time() . '.' . $extension;
+
+                $file->move('public/labs', $fileName);
+
+
+                $record = new LabResult();
+                $record->patient_id = $patient_id;
+                $record->registration_id = $request->input('lab_registration_id');
+                $record->file_name =$fileName;
+                $record->type="Detention";
+                $record->user_id = Auth::user()->id;
+                $record->save();
+            }
+        }
+
+
+        //Upload Scans
+        if (\Request::has('scan')){
+            $this->validate($request,[
+                'scan_registration_id' => ['required'],
+            ]);
+            for ($i = 0; $i < count($request->file('scan')); $i++) {
+                $scannedFile = $request->file('scan')[$i];
+                $scannedExtension = $scannedFile->getClientOriginalExtension();
+                $scannedFiles = substr($scannedFile->getClientOriginalName(), 0, strpos($scannedFile->getClientOriginalName(), '.'));
+                $scannedFileName = $scannedFiles . '_' . time() . '.' . $scannedExtension;
+
+                $scannedFile->move('public/scan', $scannedFileName);
+
+                $record = new ScannedResult();
+                $record->patient_id = $patient_id;
+                $record->registration_id = $request->input('scan_registration_id');
+                $record->file_name =$scannedFileName;
+                $record->type="Detention";
                 $record->user_id = Auth::user()->id;
                 $record->save();
             }

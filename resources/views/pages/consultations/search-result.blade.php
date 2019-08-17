@@ -940,7 +940,9 @@
 
                                                         <div id="lightgallery" class="row lightGallery">
                                                             @foreach($scanned_results as $scan)
-                                                                <a href="{{asset('public/scan/'.$scan->file_name)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan->file_name)}}" alt="{{$scan->file_name}}"></a>
+                                                                @if($scan->type != "Review")
+                                                                    <a href="{{asset('public/scan/'.$scan->file_name)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan->file_name)}}" alt="{{$scan->file_name}}"></a>
+                                                                @endif
                                                             @endforeach
                                                         </div>
                                                     </blockquote>
@@ -950,7 +952,9 @@
                                                     <blockquote class="blockquote">
                                                         <div id="lightgallery-without-thumb" class="row lightGallery">
                                                             @foreach($lab_results as $lab)
-                                                                <a href="{{asset('public/labs/'.$lab->file_name)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab->file_name)}}" alt="{{$lab->file_name}}"></a>
+                                                                @if($lab->type != "Review")
+                                                                    <a href="{{asset('public/labs/'.$lab->file_name)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab->file_name)}}" alt="{{$lab->file_name}}"></a>
+                                                                @endif
                                                             @endforeach
                                                         </div>
 

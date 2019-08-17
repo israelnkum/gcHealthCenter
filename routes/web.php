@@ -33,6 +33,7 @@ Route::post('/old-records','PatientController@upload_old_files')->name('upload-r
 Route::get('/search-patient','PatientController@searchPatient')->name('searchPatient');
 Route::get('/view-old-records/{id}','PatientController@viewOldRecord')->name('view-old-records');
 Route::post('/upload-labs-scans/{id}','PatientController@uploadLabScanResult')->name('upload-labs-scans');
+Route::post('/upload-detention-labs-scans/{id}','PatientController@uploadDetentionLabScanResult')->name('upload-detention-labs-scans');
 
 
 /*
