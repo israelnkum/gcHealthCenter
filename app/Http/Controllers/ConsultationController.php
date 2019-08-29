@@ -43,6 +43,13 @@ class ConsultationController extends Controller
 //            ->orderBy('created_at','asc')
             ->get();
 
+        $last_visit =[];
+        if (count($registration) != 0){
+            $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')->where('patient_id',$registration[0]->patient_id)->get();
+        }
+
+//        return $last_visit;
+
         $allRegistrations=0;
         if (count($registration) == 1){
             $allRegistrations = Registration::where('patient_id',$registration[0]->patient->id)->get();
@@ -55,6 +62,8 @@ class ConsultationController extends Controller
             $getVitals =[];
         }
 
+//        return $last_visit;
+
         $diagnosis = Diagnose::all();
         $drugs = Drug::where('qty_in_stock','>',0)
             ->where('retail_price','>',0)->get();
@@ -66,7 +75,8 @@ class ConsultationController extends Controller
             ->with('diagnosis',$diagnosis)
             ->with('drugs',$drugs)
             ->with('allRegistrations',$allRegistrations)
-            ->with('charges',$charges);
+            ->with('charges',$charges)
+            ->with('last_visit',$last_visit);
     }
 
     /**
@@ -436,7 +446,7 @@ class ConsultationController extends Controller
         $registration->save();
 
         toastr()->success('Consulting Successful');
-        return redirect()->route('consultation.index');
+        return redirect()->route('consultation.index1');
     }
 
     /**
@@ -608,20 +618,17 @@ class ConsultationController extends Controller
 
 
     public function searchConsultation(Request $request){
-
-
         $diagnosis = Diagnose::all();
         $drugs = Drug::all();
         $charges = Charge::all();
-        $searchPatient= Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+        $searchPatient= Patient::where('folder_number',$request->input("search"))
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
-
-
-
         if (count($searchPatient) == 0){
             toastr()->error('Sorry! No Record Found');
         }
+
+//        return $searchPatient;
         $recentConsultation="";
         $recentVitals ="";
         $recentRegistration="";
@@ -635,7 +642,7 @@ class ConsultationController extends Controller
                 ->where('patient_id', $searchPatient[0]->id)
                 ->where('type','Consultation')
 //                ->where('consult', 1)
-                    ->latest()
+                ->latest()
                 ->first();
         }
 
@@ -645,7 +652,6 @@ class ConsultationController extends Controller
         }
 
         if (!empty($recentRegistration)){
-
 
             $recentConsultation = Consultation::where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id',$recentRegistration->id)->latest()->first();

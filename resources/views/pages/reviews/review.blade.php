@@ -29,11 +29,11 @@
             </div>
         @elseif(count($registration)  == 1)
             <div class="row">
-                <div class ="col-md-4 grid-margin stretch-card">
+                <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
                             @foreach($registration as $registered)
-                                <h6 class="card-title">Patient Info</h6>
+                                <h6 class="text-uppercase">Patient Info</h6>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <small class="mb-1 text-primary" >
@@ -44,6 +44,7 @@
                                             <i class="icon-user mr-1"></i>
                                             {{$registered->patient->title." ".$registered->patient->first_name." ".$registered->patient->other_name." ".$registered->patient->last_name}}
                                         </small>
+                                        <br>
                                         <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->patient->phone_number}}</small>
                                     </div>
                                     <div class="col-md-6 text-right text-small">
@@ -78,12 +79,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
+                            <hr>
                             <h6 class="card-title">Add Review</h6>
                             <form action="{{route('review.store')}}" method="post" class="needs-validation" novalidate>
                                 @csrf
@@ -111,39 +107,38 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="row">
-                                    <div class="col-md-7 text-left" >
+                                    <div class="col-md-7" >
                                         <label for="" class="text-info">Drugs</label>
                                     </div>
-                                    <div class="col-md-2 text-left">
+                                    <div class="col-md-4">
                                         <label for="" class="text-info">Dosage</label>
                                     </div>
-                                    <div class="col-md-1 text-left">
+                                    {{--<div class="col-md-1">
                                         <label for="" class="text-info">Days</label>
                                     </div>
-                                    <div class="col-md-1 text-left">
+                                    <div class="col-md-1">
                                         <label for="" class="text-info">Qty</label>
-                                    </div>
+                                    </div>--}}
                                 </div>
                                 <div class="repeater">
                                     <div data-repeater-list="medications">
                                         <div data-repeater-item class="mb-2">
                                             <div class="row">
                                                 <div class="col-md-7">
-                                                    <select  style="width: 100% " class="selectMedicine col-12 form-control mr-1"    name="drug_id" id="drug_id">
+                                                    <select class="selectMedicine col-12 form-control font-weight-bold mr-1"    name="drug_id" id="drug_id">
                                                         <option value=""></option>
                                                         @foreach($drugs as $drug)
                                                             <option value="{{$drug->id}}"> {{$drug->name}} - ({{$drug->drug_type->name}}) </option>
                                                         @endforeach
                                                     </select>
                                                     <div class="invalid-feedback">
-                                                        Drug is
+                                                        Drug is required
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
-                                                    {{-- <input type="text" name="dosage" id="dosage"  class="form-control col-12 ml-1">--}}
-                                                    {{--<select  class="selectMedicine col-12 form-control mr-1 dosage"    name="dosage" id="dosage">
+                                                <div class="col-md-4">
+                                                    {{-- <input type="text" name="dosage" id="dosage"  class="form-control font-weight-bold col-12 ml-1">--}}
+                                                    {{--<select required class="selectMedicine col-12 form-control font-weight-bold mr-1 dosage"    name="dosage" id="dosage">
                                                         <option value=""></option>
                                                         <option value="3tid">tid</option>
                                                         <option value="2bd">bd</option>
@@ -151,7 +146,7 @@
                                                         <option value="1stat">stat</option>
                                                         <option value="1dly">dly</option>
                                                     </select>--}}
-                                                    <input  list="dosage" class="form-control" placeholder="Dosage" name="dosage">
+                                                    <input list="dosage" class="form-control font-weight-bold" placeholder="Dosage" name="dosage">
                                                     <datalist id="dosage">
                                                         <option value="tid">
                                                         <option value="bd">
@@ -162,15 +157,15 @@
                                                         <option value="course">
                                                     </datalist>
                                                     <div class="invalid-feedback">
-                                                        Dosage is
+                                                        Dosage is required
                                                     </div>
                                                 </div>
-                                                <div class="col-md-1">
-                                                    <input type="number"  name="days" value="0" style="width: 70px;"  placeholder="Days"  class="form-control days">
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <input type="number"  name="qty" value="0" style="width: 70px;"  placeholder="Qty"  class="form-control qty">
-                                                </div>
+                                                {{--   <div class="col-md-1">
+                                                       <input type="number" min="1"  name="days" value="0" style="width: 70px;" placeholder="Days"  class="form-control font-weight-bold days">
+                                                   </div>
+                                                   <div class="col-md-1">
+                                                       <input type="number" min="1"  name="qty" value="0" style="width: 70px;"  placeholder="Qty"  class="form-control font-weight-bold qty">
+                                                   </div>--}}
                                                 <div class="col-md-1">
                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn ml-2" >
                                                         <i class="icon-close"></i>
@@ -185,6 +180,7 @@
                                         </button>
                                     </div>
                                 </div>
+
 
                                 <div class="row">
                                     <div class="col-md-6 text-left" >
@@ -246,6 +242,97 @@
                             </form>
                         </div>
                     </div>
+                </div>
+
+                {{--Last Visit--}}
+                <div class ="col-md-6 grid-margin stretch-card">
+                    <div class="card-body">
+                        <h4 class="card-title">Last Visit</h4>
+                        <div class="accordion accordion-bordered" id="accordion-3" role="tablist">
+                            <div>
+
+                                @foreach($last_visit as $visit)
+                                    {{--                                {{substr($visit->created_at,0,10)}}--}}
+                                    @if(date('Y-m-d') != substr($visit->created_at,0,10))
+                                        <div class="card-header" role="tab" id="heading-4">
+                                            <a style="text-decoration: none" data-toggle="collapse" href="#GC{{$visit->id}}" aria-expanded="false" aria-controls="collapse-4">
+                                                <h5 class="mb-1 text-dark">
+                                                    <i class="icon-calendar mr-1"></i>
+                                                    {{substr($visit->created_at,0,10)}}
+                                                </h5>
+                                            </a>
+
+                                        </div>
+                                        <div id="GC{{$visit->id}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-3">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label class="text-info">Complains</label>
+                                                        <blockquote class="blockquote" >
+                                                            <small>{{$visit->consultation[0]->complains}}</small>
+                                                        </blockquote>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="text-info">Physical Examination</label>
+                                                        <blockquote class="blockquote">
+                                                            <small>{{$visit->consultation[0]->physical_examination}}</small>
+                                                        </blockquote>
+                                                    </div>
+                                                    @if($visit->consultation[0]->findings != "")
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">History</label>
+                                                            <blockquote class="blockquote" >
+                                                                <small>{{$visit->consultation[0]->findings}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                    @endif
+                                                    @if($visit->consultation[0]->diagnosis != "")
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Diagnosis</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>{{$visit->consultation[0]->diagnosis}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                    @endif
+                                                    <div class="col-md-6">
+                                                        <label class="text-info">Medication</label>
+                                                        <blockquote class="blockquote">
+                                                            <small>
+                                                                {{--                                                            @php($medication[] = $visit->medication)--}}
+                                                                <ul>
+                                                                    @foreach($visit->medications as $med)
+                                                                        <li><small>{{$med->drugs->name}}</small></li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </small>
+                                                        </blockquote>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <label class="text-info">Diagnosis</label>
+                                                        <blockquote class="blockquote">
+                                                            <small>
+                                                                {{--                                                            @php($medication[] = $visit->medication)--}}
+                                                                <ul>
+                                                                    @foreach($visit->diagnosis as $med)
+                                                                        <li><small>{{$med->diagnoses->name}}</small></li>
+                                                                    @endforeach
+                                                                    @if($visit->consultation[0]->other_diagnosis != "")
+                                                                        <li><small>{{$visit->consultation[0]->other_diagnosis}}</small></li>
+                                                                    @endif
+                                                                </ul>
+                                                            </small>
+                                                        </blockquote>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>

@@ -13,4 +13,6 @@ class Diagnose extends Model
     public  function patient_diagnoses(){
         return $this->hasMany('App\PatientDiagnosis');
     }
+
+
 }

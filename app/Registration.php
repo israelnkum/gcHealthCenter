@@ -17,4 +17,12 @@ class Registration extends Model
     public function consultation(){
         return $this->hasMany('App\Consultation');
     }
+    public function medications(){
+        return $this->hasMany('App\Medication');
+    }
+
+    public function diagnosis(){
+        return $this->hasMany('App\PatientDiagnosis');
+    }
+
 }

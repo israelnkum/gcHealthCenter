@@ -44,6 +44,7 @@
                                                 <i class="icon-user mr-1"></i>
                                                 {{$registered->patient->title." ".$registered->patient->first_name." ".$registered->patient->other_name." ".$registered->patient->last_name}}
                                             </small>
+                                            <br>
                                             <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->patient->phone_number}}</small>
                                         </div>
                                         <div class="col-md-6 text-right text-small">
@@ -308,6 +309,7 @@
                     </div>
                     {{--End Drug Modal--}}
                 </div>
+
             </div>
         @else
             <div class="text-center">

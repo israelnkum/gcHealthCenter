@@ -406,13 +406,14 @@ class PatientController extends Controller
 
 
     public function searchPatient(Request $request){
-        $data=Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+        $data=Patient::where('folder_number',$request->input("search"))
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')
             ->get();
 
         $patient_registrations =0;
         $patient_vitals =0;
+
         if (count($data) == 1){
             $patient_registrations = Registration::where('patient_id',$data[0]->id)->get();
             $patient_vitals = Vital::where('patient_id',$data[0]->id)->get();
@@ -420,6 +421,7 @@ class PatientController extends Controller
             $detention_records = DetentionRecord::where('patient_id',$data[0]->id)->get();
         }
 
+//        return $detention_records;
         $insuranceType = Insurance::all();
         $charges = Charge::all();
         return view('pages.patients.index')
@@ -440,10 +442,15 @@ class PatientController extends Controller
             ->get()
             ->groupBy('date');
 
-//        return $records;
-        return view('pages.patients.view-old-records')
-            ->with('patient',$patient)
-            ->with('records',$records);
+        if (count($records) == 0){
+            toastr()->error('No Records Uploaded for '.$patient->first_name.' '.$patient->other_name.' '.$patient->last_name);
+            return back();
+        }else{
+            return view('pages.patients.view-old-records')
+                ->with('patient',$patient)
+                ->with('records',$records);
+        }
+
     }
 
 

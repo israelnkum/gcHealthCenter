@@ -21,4 +21,8 @@ class Medication extends Model
     public function service_and_drugs(){
         return $this->belongsTo('App\ServiceAndDrugs');
     }
+
+    public function registration(){
+        return $this->belongsTo('App\Registration');
+    }
 }
