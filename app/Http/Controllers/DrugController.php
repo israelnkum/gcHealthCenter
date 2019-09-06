@@ -58,6 +58,12 @@ class DrugController extends Controller
         $totalNhisSale = Bill::sum('insurance_amount');
 
 
+        $not_seen = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',1)
+            ->where('medication',0)
+            ->get();
+
         $registration = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',1)
@@ -171,7 +177,8 @@ class DrugController extends Controller
             ->with('getBills',$getBills)
             ->with('detentionBill',$detentionBill)
             ->with('other_medication',$other_medication)
-            ->with('allPatientRegistration',$allPatientRegistration);
+            ->with('allPatientRegistration',$allPatientRegistration)
+            ->with('not_seen',$not_seen);
     }
 
     /**

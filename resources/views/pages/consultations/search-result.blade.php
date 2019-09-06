@@ -4,7 +4,7 @@
 
     <div class="content-wrapper">
         <div class="row">
-            <div class="col-md-6 offset-md-2 text-right @if(count($searchPatient) == 1 && count($registration)==0) offset-md-2 @endif grid-margin">
+            <div class="col-md-4 offset-md-2 text-right @if(count($searchPatient) == 1 && count($registration)==0) offset-md-2 @endif grid-margin">
                 <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
@@ -20,6 +20,35 @@
                             </div>
                         </div>
                     </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form action="{{route('searchConsultation')}}" method="get" class="mb-1 needs-validation form-sub" novalidate>
+                    @csrf
+                    <div class="form-group row mb-0">
+                        <div class="col-md-4 text-right">
+                            <label class="mt-3 text-danger">Not Seen</label>
+                        </div>
+                        <div class="col-md-6">
+                            <select required name="search" style="width: 100%" class="js-example-basic-single w-100 form-control font-weight-bold">
+                                <option value="">Select Record Date</option>
+                                @if(count($not_seen)>0)
+                                    @foreach($not_seen as $seen)
+                                        <option value="{{$seen->patient->folder_number}}">{{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            <div class="invalid-feedback">
+                                Select a patient
+                            </div>
+                        </div>
+                        <div class="col-md-1 ml-0">
+                            <button type="submit" class="btn-dark btn btn-sm  p-1 text-center">
+                                <i class="icon icon-magnifier"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
             @if(count($searchPatient) == 1 && count($registration)!=0)
@@ -108,7 +137,7 @@
 
             @if(count($registration) == 1)
                 <div class="row">
-                    <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-8 offset-md-2 @endif grid-margin stretch-card">
+                    <div class ="@if(\Request::is('patientRecord'))col-md-6 @else col-md-6 @endif grid-margin stretch-card">
                         <div class="card">
                             <div class="card-body">
                                 <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
@@ -412,6 +441,96 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    {{--Last Visit--}}
+                    <div class ="col-md-6 grid-margin stretch-card">
+                        <div class="card-body">
+                            <h4 class="card-title">Last Visit</h4>
+                            <div class="accordion accordion-bordered" id="accordion-3" role="tablist">
+                                <div>
+
+                                    @foreach($last_visit as $visit)
+                                        {{--                                {{substr($visit->created_at,0,10)}}--}}
+                                        @if(date('Y-m-d') != substr($visit->created_at,0,10))
+                                            <div class="card-header" role="tab" id="heading-4">
+                                                <a style="text-decoration: none" data-toggle="collapse" href="#GC{{$visit->id}}" aria-expanded="false" aria-controls="collapse-4">
+                                                    <h5 class="mb-1 text-dark">
+                                                        <i class="icon-calendar mr-1"></i>
+                                                        {{substr($visit->created_at,0,10)}}
+                                                    </h5>
+                                                </a>
+
+                                            </div>
+                                            <div id="GC{{$visit->id}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-3">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Complains</label>
+                                                            <blockquote class="blockquote" >
+                                                                <small>{{$visit->consultation[0]->complains}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Physical Examination</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>{{$visit->consultation[0]->physical_examination}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                        @if($visit->consultation[0]->findings != "")
+                                                            <div class="col-md-6">
+                                                                <label class="text-info">History</label>
+                                                                <blockquote class="blockquote" >
+                                                                    <small>{{$visit->consultation[0]->findings}}</small>
+                                                                </blockquote>
+                                                            </div>
+                                                        @endif
+                                                        @if($visit->consultation[0]->diagnosis != "")
+                                                            <div class="col-md-6">
+                                                                <label class="text-info">Diagnosis</label>
+                                                                <blockquote class="blockquote">
+                                                                    <small>{{$visit->consultation[0]->diagnosis}}</small>
+                                                                </blockquote>
+                                                            </div>
+                                                        @endif
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Medication</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>
+                                                                    {{--                                                            @php($medication[] = $visit->medication)--}}
+                                                                    <ul>
+                                                                        @foreach($visit->medications as $med)
+                                                                            <li><small>{{$med->drugs->name}}</small></li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </small>
+                                                            </blockquote>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Diagnosis</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>
+                                                                    {{--                                                            @php($medication[] = $visit->medication)--}}
+                                                                    <ul>
+                                                                        @foreach($visit->diagnosis as $med)
+                                                                            <li><small>{{$med->diagnoses->name}}</small></li>
+                                                                        @endforeach
+                                                                        @if($visit->consultation[0]->other_diagnosis != "")
+                                                                            <li><small>{{$visit->consultation[0]->other_diagnosis}}</small></li>
+                                                                        @endif
+                                                                    </ul>
+                                                                </small>
+                                                            </blockquote>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     @if(\Request::is('patientRecord'))
                         <div class="col-md-6 grid-margin stretch-card">

@@ -777,8 +777,13 @@ class DetainedRecordsController extends Controller
         $totalNhisSale = Bill::sum('insurance_amount');
         $drugs = Drug::all()->count();
 
+        $not_seen = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',1)
+            ->where('medication',0)
+            ->get();
         //get patient
-        $searchPatient = Patient::where('folder_number', 'like', '%' . $request->input("search") . '%')
+        $searchPatient = Patient::where('folder_number', $request->input("search"))
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
 
@@ -878,7 +883,8 @@ class DetainedRecordsController extends Controller
                 ->with('totalSales',$totalSales)
                 ->with('getBills',$getBills)
                 ->with('detentionBill',$detentionBill)
-                ->with('allPatientRegistration',$allPatientRegistration);
+                ->with('allPatientRegistration',$allPatientRegistration)
+                ->with('not_seen',$not_seen);
         }
         elseif($recentRegistration->medication == 1){
 
@@ -890,10 +896,6 @@ class DetainedRecordsController extends Controller
                 ->groupBy(function ($bill){
                     return substr($bill->created_at,0,10);
                 });
-
-
-
-
             return view('pages.pharmacy.bill')
                 ->with('vitals',$vitals)
                 ->with('recentRegistration',$recentRegistration)
@@ -901,7 +903,8 @@ class DetainedRecordsController extends Controller
                 ->with('totalNhisSale', $totalNhisSale)
                 ->with('totalSales', $totalSales)
                 ->with('getBills',$getBills)
-                ->with('detentionBill',$detentionBill);
+                ->with('detentionBill',$detentionBill)
+                ->with('not_seen',$not_seen);
         }
         elseif ($recentRegistration->medication == 2) {
             $recordMedication = DrugArrears::where('registration_id', $recentRegistration->id)
@@ -931,7 +934,8 @@ class DetainedRecordsController extends Controller
                 ->with('arrears', $arrears)
                 ->with('getBills',$getBills)
                 ->with('recordMedication',$recordMedication)
-                ->with('detentionBill',$detentionBill);
+                ->with('detentionBill',$detentionBill)
+                ->with('not_seen',$not_seen);
         }
 
 
@@ -1067,13 +1071,13 @@ class DetainedRecordsController extends Controller
             ->where('registration_id',$registration_id)
             ->where('type','Detention')->get();
 
-       $services =0;
+        $services =0;
 
-       /*
-        foreach ($allRecords as $record)
-        {
-            array_push($getAllRecordDate,substr($record->created_at,0,10));
-        }*/
+        /*
+         foreach ($allRecords as $record)
+         {
+             array_push($getAllRecordDate,substr($record->created_at,0,10));
+         }*/
 
 
         $allDateRecords= array_unique($getAllRecordDate);

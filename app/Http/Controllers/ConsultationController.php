@@ -43,6 +43,15 @@ class ConsultationController extends Controller
 //            ->orderBy('created_at','asc')
             ->get();
 
+        $not_seen = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',0)
+            ->where('type','Consultation')
+            ->get();
+
+//        return $not_seen;
+
+
         $last_visit =[];
         if (count($registration) != 0){
             $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')->where('patient_id',$registration[0]->patient_id)->get();
@@ -76,7 +85,8 @@ class ConsultationController extends Controller
             ->with('drugs',$drugs)
             ->with('allRegistrations',$allRegistrations)
             ->with('charges',$charges)
-            ->with('last_visit',$last_visit);
+            ->with('last_visit',$last_visit)
+            ->with('not_seen',$not_seen);
     }
 
     /**
@@ -446,7 +456,7 @@ class ConsultationController extends Controller
         $registration->save();
 
         toastr()->success('Consulting Successful');
-        return redirect()->route('consultation.index1');
+        return redirect()->route('consultation.index');
     }
 
     /**
@@ -621,6 +631,11 @@ class ConsultationController extends Controller
         $diagnosis = Diagnose::all();
         $drugs = Drug::all();
         $charges = Charge::all();
+        $not_seen = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',0)
+            ->where('type','Consultation')
+            ->get();
         $searchPatient= Patient::where('folder_number',$request->input("search"))
             ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
             ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
@@ -700,6 +715,13 @@ class ConsultationController extends Controller
                 ->whereDate('created_at', Carbon::today())
                 ->limit(1)
                 ->get();
+
+
+            $last_visit =[];
+            if (count($registration) != 0){
+                $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')->where('patient_id',$registration[0]->patient_id)->get();
+            }
+
 
             $previousRegistration = Registration::where('patient_id',$searchPatient[0]->id)->get();
 
@@ -788,7 +810,9 @@ class ConsultationController extends Controller
                 ->with('patient_id',$recentRegistration->patient_id)
                 ->with('lab_results',$recentConsultation->lab_results)
                 ->with('scanned_results',$recentConsultation->scanned_results)
-                ->with('services',$services);
+                ->with('services',$services)
+                ->with('last_visit',$last_visit)
+                ->with('not_seen',$not_seen);
         }else{
             return view('pages.consultations.search-result')
                 ->with('searchPatient',$searchPatient)
@@ -806,7 +830,8 @@ class ConsultationController extends Controller
                 ->with('otherMedication',$otherMedication)
                 ->with('patient_id',$recentRegistration->patient_id)
                 ->with('lab_results',$recentConsultation->lab_results)
-                ->with('scanned_results',$recentConsultation->scanned_results);
+                ->with('scanned_results',$recentConsultation->scanned_results)
+                ->with('not_seen',$not_seen);
         }
 
 
@@ -1306,7 +1331,7 @@ class ConsultationController extends Controller
                 ->with('scanned_results',$getRegistration[0]->scanned_results)
                 ->with('lab_results',$getRegistration[0]->lab_results);
         }else{
-            return view('pages.consultations.index')
+            return view('pages.consultations.index1')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
                 ->with('diagnosis',$diagnosis)

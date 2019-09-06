@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class ReportsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -96,7 +100,6 @@ class ReportsController extends Controller
                 $reports = Registration::with('patient')->where('detain',2)->get();
             }
         }
-
 
         if ($request->has('gender') && $request->input('gender') != ""){
             $reports = Patient::where('gender',$request->input('gender'))->get();
