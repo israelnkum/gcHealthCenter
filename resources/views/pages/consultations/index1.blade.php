@@ -27,14 +27,17 @@
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-4 text-right">
-                            <label class="mt-3 text-danger">Not Seen</label>
+                            <label class="mt-3 text-danger">Not Seen Patients</label>
                         </div>
                         <div class="col-md-6">
                             <select required name="search" style="width: 100%" class="js-example-basic-single w-100 form-control font-weight-bold">
                                 <option value="">Select Record Date</option>
                                 @if(count($not_seen)>0)
+                                    @php($i =1)
                                     @foreach($not_seen as $seen)
-                                        <option value="{{$seen->patient->folder_number}}">{{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+                                        <option value="{{$seen->patient->folder_number}}">{{$i}} {{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+
+                                        @php($i++)
                                     @endforeach
                                 @endif
                             </select>
@@ -159,14 +162,14 @@
                                             <div class="form-group row">
                                                 <div class="col-sm-6">
                                                     <label for="complains" class="text-info">Complains</label>
-                                                    <textarea style="font-size: 15px"  required  name="complains" class="form-control font-weight-bold" id="complains" rows="10"></textarea>
+                                                    <textarea style="font-size: 15px"  required  name="complains" class="form-control font-weight-bold" id="complains" rows="5"></textarea>
                                                     <div class="invalid-feedback">
                                                         Complains is required
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <label for="physical_examination" class="text-info">Physical Examination</label>
-                                                    <textarea style="font-size: 15px"  required  name="physical_examination" class="form-control font-weight-bold" id="physical_examination" rows="10"></textarea>
+                                                    <textarea style="font-size: 15px"  required  name="physical_examination" class="form-control font-weight-bold" id="physical_examination" rows="5"></textarea>
                                                     <div class="invalid-feedback">
                                                         Physical Examination is required
                                                     </div>
@@ -174,7 +177,7 @@
 
                                                 <div class="col-sm-6 mt-3">
                                                     <label for="findings" class="text-info">History</label>
-                                                    <textarea style="font-size: 15px"   name="findings" class="form-control font-weight-bold" id="findings" rows="8"></textarea>
+                                                    <textarea style="font-size: 15px"   name="findings" class="form-control font-weight-bold" id="findings" rows="5"></textarea>
                                                     <div class="invalid-feedback">
                                                         Finding is required
                                                     </div>
@@ -183,7 +186,7 @@
                                                 <div class="col-sm-6 mt-3">
                                                     <label for="select_diagnosis" class="text-info">Diagnosis</label>
                                                     <select  class="form-control font-weight-bold js-example-basic-multiple" multiple="multiple" style="width: 100%" name="diagnosis[]" id="select_diagnosis">
-                                                        {{--                                                    <option value="">Select Diagnosis</option>--}}
+{{--                                                        <option value=""></option>--}}
                                                         @foreach($diagnosis as $diag)
                                                             <option value="{{$diag->id}}">{{$diag->name}}</option>
                                                         @endforeach
@@ -192,7 +195,7 @@
                                                         Diagnosis is required
                                                     </div>
                                                     <label for="other_diagnosis_text" class="text-info mt-3">Other Diagnosis</label>
-                                                    <textarea style="font-size: 15px"  rows="3" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis"></textarea>
+                                                    <textarea style="font-size: 15px"  rows="2" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis"></textarea>
                                                     <div class="invalid-feedback">
                                                         Diagnosis is required
                                                     </div>
@@ -349,7 +352,7 @@
                                                         </div>
                                                     </div>
                                                 </div>--}}
-                                                <div class="col-md-6 mb-3">
+                                                <div class="col-md-6">
                                                     <label class="text-info">Select Service</label>
                                                     <select  class="col-12 form-control font-weight-bold mr-1 selectMedicine" multiple   name="service[]" id="service">
                                                         <option value=""></option>
@@ -370,16 +373,15 @@
                                                 </div>
                                             </div>
 
-                                            {{--<div class="form-group row">
-                                                <div class="col-sm-12 mt-3">
+                                            <div class="form-group row">
+                                                <div class="col-sm-12">
                                                     <label for="findings" class="text-info">Note</label>
-                                                    <textarea style="font-size: 15px"   name="notes" class="form-control font-weight-bold" id="notes" rows="8"></textarea>
+                                                    <textarea style="font-size: 15px"   name="notes" class="form-control font-weight-bold" id="notes" rows="4"></textarea>
                                                     <div class="invalid-feedback">
-                                                        Finding is required
+                                                        Note is required
                                                     </div>
                                                 </div>
-                                            </div>--}}
-
+                                            </div>
                                             <div class="form-group row mt-5">
                                                 <div class="col-sm-12 text-right">
                                                     <button class="btn btn-primary loading" type="submit" id="btn_finalize">Finalize</button>
@@ -474,6 +476,14 @@
                                                             </small>
                                                         </blockquote>
                                                     </div>
+                                                    @if($visit->consultation[0]->notes != "")
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Notes</label>
+                                                            <blockquote class="blockquote" >
+                                                                <small>{{$visit->consultation[0]->notes}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>

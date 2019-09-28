@@ -362,7 +362,7 @@
                                 <div>
                                     <form action="{{route('payment.update',$recentRegistration->id)}}" method="post" class="needs-validation" novalidate>
                                         @csrf
-                                        {{$recentRegistration->id}}
+{{--                                        {{$recentRegistration->id}}--}}
                                         {!! method_field('put') !!}
                                         <input type="hidden" value="{{$recentRegistration->patient->id}}" name="patient_id">
                                         <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">

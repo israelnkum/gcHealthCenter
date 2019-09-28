@@ -87,14 +87,14 @@
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label for="complains" class="text-info">Complains</label>
-                                                <textarea  name="complains" class="form-control" id="complains" rows="10">{{$consultation->complains}}</textarea>
+                                                <textarea  name="complains" class="form-control" id="complains" rows="5">{{$consultation->complains}}</textarea>
                                                 <div class="invalid-feedback">
                                                     Complains is
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <label for="physical_examination" class="text-info">Physical Examination</label>
-                                                <textarea   name="physical_examination" class="form-control" id="physical_examination" rows="10">{{$consultation->physical_examination}}</textarea>
+                                                <textarea   name="physical_examination" class="form-control" id="physical_examination" rows="5">{{$consultation->physical_examination}}</textarea>
                                                 <div class="invalid-feedback">
                                                     Physical Examination is
                                                 </div>
@@ -103,7 +103,7 @@
                                          <div class="form-group row">
                                              <div class="col-sm-6">
                                                  <label for="findings" class="text-info">History</label>
-                                                 <textarea  name="findings" class="form-control" id="findings" rows="10">{{$consultation->findings}}</textarea>
+                                                 <textarea  name="findings" class="form-control" id="findings" rows="5">{{$consultation->findings}}</textarea>
                                                  <div class="invalid-feedback">
                                                      Finding is
                                                  </div>
@@ -118,7 +118,12 @@
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
-                                                    Diagnosis is
+                                                    Diagnosis is required
+                                                </div>
+                                                <label for="other_diagnosis_text" class="text-info mt-3">Other Diagnosis</label>
+                                                <textarea style="font-size: 15px"  rows="3" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis"></textarea>
+                                                <div class="invalid-feedback">
+                                                    Diagnosis is required
                                                 </div>
                                             </div>
                                         </div>
@@ -275,7 +280,15 @@
                                                 </select>
                                             </div>
                                         </div>
-
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="findings" class="text-info">Note</label>
+                                                <textarea style="font-size: 15px"   name="notes" class="form-control font-weight-bold" id="notes" rows="4">{{$consultation->notes}}</textarea>
+                                                <div class="invalid-feedback">
+                                                    Note is required
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="form-group row mt-5">
                                             <div class="col-sm-12 text-right">
                                                 <button class="btn btn-primary" type="submit">Update</button>

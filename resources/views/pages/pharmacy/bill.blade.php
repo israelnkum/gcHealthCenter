@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
     <!-- partial -->
-
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">

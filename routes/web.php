@@ -181,3 +181,4 @@ Route::post('pay-arrears','PaymentController@payArrears')->name('payArrears');
  */
 
 Route::resource('review','ReviewController');
+Route::get('search-review','ReviewController@search_review')->name('search-review');

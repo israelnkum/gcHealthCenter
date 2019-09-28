@@ -230,12 +230,12 @@
                                         <p class="mb-0">{{$consultation->complains}}</p>
                                     </blockquote>
                                 </div>
-                               {{-- <div class="col-md-12 p-1">
+                                <div class="col-md-12 p-1">
                                     <label class="text-info">Findings</label>
                                     <blockquote class="blockquote">
                                         <p class="mb-0">{{$consultation->findings}}</p>
                                     </blockquote>
-                                </div>--}}
+                                </div>
                                 <div class="col-md-12">
                                     <label class="text-info">Physical Examination</label>
                                     <blockquote class="blockquote">

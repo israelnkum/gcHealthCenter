@@ -442,6 +442,8 @@ class PatientController extends Controller
             ->get()
             ->groupBy('date');
 
+//        return $records;
+
         if (count($records) == 0){
             toastr()->error('No Records Uploaded for '.$patient->first_name.' '.$patient->other_name.' '.$patient->last_name);
             return back();

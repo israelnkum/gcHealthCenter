@@ -32,8 +32,10 @@
                             <select required name="search" style="width: 100%" class="js-example-basic-single w-100 form-control font-weight-bold">
                                 <option value="">Select Record Date</option>
                                 @if(count($not_seen)>0)
+                                    @php($i=1)
                                     @foreach($not_seen as $seen)
-                                        <option value="{{$seen->patient->folder_number}}">{{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+                                        <option value="{{$seen->patient->folder_number}}">{{$i}} {{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+                                        @php($i++)
                                     @endforeach
                                 @endif
                             </select>

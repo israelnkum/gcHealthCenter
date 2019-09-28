@@ -14,6 +14,7 @@ use App\Patient;
 use App\PatientDiagnosis;
 use App\Payment;
 use App\Registration;
+use App\Review;
 use App\ScannedResult;
 use App\Service;
 use App\Vital;
@@ -43,6 +44,7 @@ class ConsultationController extends Controller
 //            ->orderBy('created_at','asc')
             ->get();
 
+
         $not_seen = Registration::with('patient')
             ->where('vitals',1)
             ->where('consult',0)
@@ -71,6 +73,7 @@ class ConsultationController extends Controller
             $getVitals =[];
         }
 
+//        return $allRegistrations;
 //        return $last_visit;
 
         $diagnosis = Diagnose::all();
@@ -114,8 +117,8 @@ class ConsultationController extends Controller
 
 
         /*
- * Start Calculating Consultation fee
- */
+         * Start Calculating Consultation fee
+         */
         $service_charge = Charge::where('name','Consultation')->first();
 
         //charge for consultation if only the person is not insured
@@ -236,6 +239,7 @@ class ConsultationController extends Controller
         $consultation ->findings=$request->input('findings');
         $consultation ->physical_examination=$request->input('physical_examination');
         $consultation ->other_diagnosis=$request->input('other_diagnosis');
+        $consultation ->notes=$request->input('notes');
         $consultation ->user_id=Auth::user()->id;
         $consultation->save();
 
@@ -668,8 +672,12 @@ class ConsultationController extends Controller
 
         if (!empty($recentRegistration)){
 
+//            return substr($recentRegistration->created_at,0,10);
+
             $recentConsultation = Consultation::where('patient_id',$recentRegistration->patient_id)
-                ->where('registration_id',$recentRegistration->id)->latest()->first();
+                ->where('registration_id',$recentRegistration->id)
+                ->whereDate('created_at',substr($recentRegistration->created_at,0,10))
+                ->latest()->first();
             $recentVitals = Vital::where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id',$recentRegistration->id)->latest()->first();
             $recentMedication = Medication::where('patient_id',$recentRegistration->patient_id)
@@ -679,11 +687,17 @@ class ConsultationController extends Controller
                 ->where('registration_id',$recentRegistration->id)->latest()->get();
 
 
-            $patientDiagnosis = PatientDiagnosis::with('diagnoses')->where('patient_id',$recentRegistration->patient_id)
-                ->where('registration_id', $recentRegistration->id)->get();
+            $patientDiagnosis = PatientDiagnosis::with('diagnoses')
+                ->where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id', $recentRegistration->id)
+                ->get();
 
-            $medication = Medication::with('drugs')->where('patient_id',$recentRegistration->patient_id)
-                ->where('registration_id', $recentRegistration->id)->get();
+            $medication = Medication::with('drugs')
+                ->where('patient_id',$recentRegistration->patient_id)
+                ->where('registration_id', $recentRegistration->id)
+                ->get();
+
+//            return $medication;
 
             $otherMedication = OtherMedication::where('patient_id',$recentRegistration->patient_id)
                 ->where('registration_id', $recentRegistration->id)->get();
@@ -693,6 +707,7 @@ class ConsultationController extends Controller
             $getDiagIds =[];
             $getMedIds  =[];
 
+//            return $medication;
             foreach ($recentMedication as $med){
                 array_push($getMedIds,$med->drugs_id);
             }
@@ -932,6 +947,7 @@ class ConsultationController extends Controller
         $getImplodedMedicine = "";
         $getImplodedDiagnosis = "";
         $registration = Registration::find($id);
+        $registration->consult =1;
         $patient = Patient::find($registration->patient_id);
 
         $consultation = Consultation::where('registration_id',$registration->id)
@@ -950,7 +966,8 @@ class ConsultationController extends Controller
         $services = Service::with('charge')->where('patient_id',$patient->id)
             ->where('registration_id',$registration->id)->latest()->get();
 
-//        return $services;
+        $registration->consult =1;
+        $registration->save();
         return view('pages.consultations.consult-edit')
             ->with('registration',$registration)
             ->with('patient',$patient)
@@ -988,6 +1005,7 @@ class ConsultationController extends Controller
         $consultation->findings=$request->input('findings');
         $consultation->physical_examination=$request->input('physical_examination');
         $consultation->other_diagnosis=$request->input('other_diagnosis');
+        $consultation ->notes=$request->input('notes');
 //        $consultation->type="Consultation";
         $consultation->user_id=Auth::user()->id;
 
@@ -1210,23 +1228,46 @@ class ConsultationController extends Controller
         //data contains patient id and the date of registration
         $data= explode(',',$request->input('data'));
 
+        $consultation ="";
+        $review ="";
 
         $getRegistration = Registration::where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
 
-        $vitals = Vital::with('user')->where('patient_id',$data[1])
-            ->whereDate('created_at',$data[0])->get();
-        $consultation = Consultation::where('patient_id',$data[1])
-            ->whereDate('created_at', $data[0])->first();
-        $patientDiagnosis = PatientDiagnosis::with('diagnoses')->where('patient_id',$data[1])
-            ->whereDate('created_at', $data[0])->get();
-        $medication = Medication::with('drugs')->where('patient_id',$data[1])
-            ->whereDate('created_at', $data[0])->get();
+//        return $getRegistration;
+        $vitals = Vital::with('user')
+            ->where('patient_id',$data[1])
+            ->where('registration_id',$getRegistration[0]->id)->get();
+
+        if ($getRegistration[0]->consult == 2){
+            $review = Review::where('patient_id',$data[1])
+                ->whereDate('created_at', $data[0])->first();
+            $patientDiagnosis = PatientDiagnosis::with('diagnoses')
+                ->where('patient_id',$data[1])
+                ->where('registration_id',$getRegistration[0]->id)
+                ->where('type','Review')
+                ->get();
+            $medication = Medication::with('drugs')
+                ->where('patient_id',$data[1])
+                ->where('registration_id',$getRegistration[0]->id)
+                ->where('type','Review')->get();
+        }else{
+            $consultation = Consultation::where('patient_id',$data[1])
+                ->whereDate('created_at', $data[0])->first();
+            $patientDiagnosis = PatientDiagnosis::with('diagnoses')
+                ->where('patient_id',$data[1])
+                ->where('registration_id',$getRegistration[0]->id)
+                ->where('type','Consultation')
+                ->get();
+            $medication = Medication::with('drugs')
+                ->where('patient_id',$data[1])
+                ->where('registration_id',$getRegistration[0]->id)
+                ->where('type','Consultation')->get();
+
+        }
+
         $getBills = Bill::where('patient_id',$data[1])
-            ->whereDate('created_at', $data[0])->get();
-
-
-//        return $medication;
+            ->where('registration_id',$getRegistration[0]->id)->get();
 
         $count_registration = Registration::with('patient')
             ->where('patient_id',$data[1])
@@ -1241,7 +1282,8 @@ class ConsultationController extends Controller
                 ->whereDate('created_at', $data[0])
                 ->get();
 
-        }else{
+        }
+        else{
             $registration = Registration::with('patient')
                 ->where('vitals', 1)
                 ->where('consult', 0)
@@ -1329,7 +1371,8 @@ class ConsultationController extends Controller
                 ->with('getBills',$getBills)
                 ->with('detentionBill',$detentionBill)
                 ->with('scanned_results',$getRegistration[0]->scanned_results)
-                ->with('lab_results',$getRegistration[0]->lab_results);
+                ->with('lab_results',$getRegistration[0]->lab_results)
+                ->with('review',$review);
         }else{
             return view('pages.consultations.index1')
                 ->with('registration',$registration)

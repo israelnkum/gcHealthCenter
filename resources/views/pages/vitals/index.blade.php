@@ -22,11 +22,6 @@
                     </div>
                 </form>
             </div>
-            {{--  <div class="col-md-4 text-right grid-margin ">
-                  <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#newPatient">
-                      <i class="icon icon-plus"></i> New Patient
-                  </button>
-              </div>--}}
         </div>
 
         <div class="row">

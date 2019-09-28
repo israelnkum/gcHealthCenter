@@ -228,7 +228,7 @@
                                                                     <small class="text-muted mb-0"><i class="icon-location-pin-outline mr-1"></i>{{$registered->insurance_number}}</small>
                                                                 </div>
                                                                 <?php
-                                                                $last_seen =\Carbon\Carbon::createFromTimeStamp(strtotime($registered->updated_at))->diffForHumans();
+                                                                $last_seen =\Carbon\Carbon::createFromTimeStamp(strtotime($registered->created_at))->diffForHumans();
                                                                 ?>
                                                                 <i class="icon-check font-weight-bold ml-auto px-1 py-1 text-info"> {!! $last_seen !!}</i>
                                                             </div>
@@ -238,8 +238,6 @@
                                                         <button class="btn btn-dark p-1" type="button" data-toggle="modal" data-target="#upload_lab_scans">Upload Labs/Scan</button>
                                                     </div>--}}
                                                 </div>
-
-
                                             </div>
                                             @if(count($registration)  == 0)
                                                 <div class="col-md-5 p-3" style="border-radius: 20px; border:solid black 1px;">

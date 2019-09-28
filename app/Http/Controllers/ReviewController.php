@@ -223,8 +223,8 @@ class ReviewController extends Controller
                         $medication->registration_id = $request->input('registration_id');
                         $medication->drugs_id = $med['drug_id'];
                         $medication->dosage = $med['dosage'];
-                        $medication->days = $med['days'];
-                        $medication->qty =$med['qty'];
+//                        $medication->days = $med['days'];
+//                        $medication->qty =$med['qty'];
                         $medication->qty_dispensed =0;
                         $medication->type ="Review";
                         $medication->user_id = Auth::user()->id;
@@ -250,8 +250,6 @@ class ReviewController extends Controller
                 }
             }
         }
-
-
 
         if (\Request::has('service')) {
             //insert selected service charge
@@ -302,6 +300,14 @@ class ReviewController extends Controller
 
     }
 
+
+    public function search_review(Request $request){
+        $searchPatient= Patient::where('folder_number',$request->input("search"))
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('last_name', 'like', '%' . $request->input("search") . '%')->get();
+
+
+    }
     /**
      * Display the specified resource.
      *

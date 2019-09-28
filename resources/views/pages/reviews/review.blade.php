@@ -5,7 +5,7 @@
     <div class="content-wrapper mb-5">
         <div class="row">
             <div class="col-md-6 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                <form class="needs-validation" novalidate action="{{route('search-review')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
@@ -218,9 +218,9 @@
                                                         Dosage is
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                {{--<div class="col-md-2">
                                                     <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
-                                                </div>
+                                                </div>--}}
                                                 <div class="col-md-1">
                                                     <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
                                                         <i class="icon-close"></i>
@@ -322,6 +322,12 @@
                                                                     @endif
                                                                 </ul>
                                                             </small>
+                                                        </blockquote>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="text-info">Notes</label>
+                                                        <blockquote class="blockquote">
+                                                            <small>{{$visit->consultation[0]->notes}}</small>
                                                         </blockquote>
                                                     </div>
                                                 </div>

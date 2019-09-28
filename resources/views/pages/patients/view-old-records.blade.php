@@ -57,28 +57,31 @@
                                                 <small>{{$date}}</small>
                                             </div>
                                         </div>
-                                        <div id="lightgallery-without-thumb" class="row lightGallery">
+                                        {{--<div id="lightgallery-without-thumb" class="row lightGallery">
                                             @foreach($record_files as $record)
                                                 <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" alt="{{$record->files}}"></a>
                                             @endforeach
-                                        </div>
+                                        </div>--}}
+                                        @foreach($record_files as $record)
+                                            <a target="_blank" href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile">{{$record->files}}</a>
+                                        @endforeach
                                     </blockquote>
                                 @endforeach
 
-                                    @foreach($records as $date => $record_files)
-                                        <blockquote class="blockquote">
-                                            <div class="row">
-                                                <div class="col-md-1 mb-2 text-white bg-dark text-right">
-                                                    <small>{{$date}}</small>
-                                                </div>
-                                            </div>
-                                            <div id="lightgallery-without-thumb" class="row lightGallery">
-                                                @foreach($record_files as $record)
-                                                    <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" alt="{{$record->files}}"></a>
-                                                @endforeach
-                                            </div>
-                                        </blockquote>
-                                    @endforeach
+{{--                                    @foreach($records as $date => $record_files)--}}
+{{--                                        <blockquote class="blockquote">--}}
+{{--                                            <div class="row">--}}
+{{--                                                <div class="col-md-1 mb-2 text-white bg-dark text-right">--}}
+{{--                                                    <small>{{$date}}</small>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                            <div id="lightgallery-without-thumb" class="row lightGallery">--}}
+{{--                                                @foreach($record_files as $record)--}}
+{{--                                                    <a href="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" class="image-tile"><img src="{{asset('public/old_records/'.$patient->registration_number.'/'.$record->files)}}" alt="{{$record->files}}"></a>--}}
+{{--                                                @endforeach--}}
+{{--                                            </div>--}}
+{{--                                        </blockquote>--}}
+{{--                                    @endforeach--}}
 
                             @else
                                 <h4 class="display-4">No Record Uploaded</h4>

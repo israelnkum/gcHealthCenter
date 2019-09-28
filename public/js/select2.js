@@ -12,12 +12,10 @@ $(document).ready(function () {
       allowClear: true,
     });
 
-    if ($(".js-example-basic-multiple").length) {
-      $(".js-example-basic-multiple").select2({
-        placeholder: "Nothing Selected",
-        allowClear: true,
-      });
-    }
+    $(".js-example-basic-multiple").select2({
+      placeholder: "Nothing Selected",
+      allowClear: true,
+    });
   })(jQuery);
 });
 

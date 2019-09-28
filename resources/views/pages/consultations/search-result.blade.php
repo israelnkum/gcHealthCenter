@@ -1081,6 +1081,11 @@
                                                 @endif
                                             </div>
                                             <div class="col-md-6">
+                                                <label class="text-info">Notes</label>
+                                                <blockquote class="blockquote">
+                                                    <p class="mb-0">{{$recentConsultation->notes}}</p>
+                                                </blockquote>
+
                                                 <label for="med" class="text-info">Medication</label>
                                                 <blockquote class="blockquote">
                                                     <table class="table-borderless table">

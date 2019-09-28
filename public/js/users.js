@@ -33,15 +33,6 @@ $(document).ready(function () {
             [10, 30, 50, 100, -1],
             [10, 30, 50, 100, "All"]
         ],
-        dom: 'Bfrtip',
-        buttons: [
-            // 'copy', 'csv', 'excel', 'pdf', 'print'
-            'excel','pdf'
-        ],
-        "iDisplayLength": 10,
-        "language": {
-            search: ""
-        },
 
     });
 
