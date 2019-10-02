@@ -222,49 +222,59 @@
                                     </label>
                                 </div>
                             </div>
-                            <h6 class="card-title text-danger">Consultation</h6>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="text-info">Complains</label>
-                                    <blockquote class="blockquote">
-                                        <p class="mb-0">{{$consultation->complains}}</p>
-                                    </blockquote>
+                            @if(!empty($consultation))
+                                <h6 class="card-title text-danger">Consultation</h6>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="text-info">Complains</label>
+                                        <blockquote class="blockquote">
+                                            <p class="mb-0">{{$consultation->complains}}</p>
+                                        </blockquote>
+                                    </div>
+                                    <div class="col-md-12 p-1">
+                                        <label class="text-info">Findings</label>
+                                        <blockquote class="blockquote">
+                                            <p class="mb-0">{{$consultation->findings}}</p>
+                                        </blockquote>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="text-info">Physical Examination</label>
+                                        <blockquote class="blockquote">
+                                            <p class="mb-0">{{$consultation->physical_examination}}</p>
+                                        </blockquote>
+                                    </div>
+                                    <?php
+                                    $other_diagnosis =$consultation->other_diagnosis;
+                                    ?>
                                 </div>
-                                <div class="col-md-12 p-1">
-                                    <label class="text-info">Findings</label>
-                                    <blockquote class="blockquote">
-                                        <p class="mb-0">{{$consultation->findings}}</p>
-                                    </blockquote>
-                                </div>
-                                <div class="col-md-12">
-                                    <label class="text-info">Physical Examination</label>
-                                    <blockquote class="blockquote">
-                                        <p class="mb-0">{{$consultation->physical_examination}}</p>
-                                    </blockquote>
-                                </div>
-                                <?php
-                                $other_diagnosis =$consultation->other_diagnosis;
-                                ?>
-                            </div>
-                            {{--End consulation--}}
+                                {{--End consulation--}}
 
-                            {{--Diagnosis--}}
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="text-info">Diagnosis</label>
-                                    <blockquote class="blockquote">
-                                        <ul>
-                                            @foreach($patientDiagnosis as $diagnosis)
-                                                <li>{{$diagnosis->diagnoses->name}}</li>
-                                            @endforeach
-                                            @if($other_diagnosis != "")
-                                                <li>{{$other_diagnosis}}</li>
-                                            @endif
-                                        </ul>
-                                    </blockquote>
+                                {{--Diagnosis--}}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="text-info">Diagnosis</label>
+                                        <blockquote class="blockquote">
+                                            <ul>
+                                                @foreach($patientDiagnosis as $diagnosis)
+                                                    <li>{{$diagnosis->diagnoses->name}}</li>
+                                                @endforeach
+                                                @if($other_diagnosis != "")
+                                                    <li>{{$other_diagnosis}}</li>
+                                                @endif
+                                            </ul>
+                                        </blockquote>
+                                    </div>
                                 </div>
-                            </div>
-                            {{--End Diagnosis--}}
+                                {{--End Diagnosis--}}
+                            @endif
+
+                            @if(!empty($review))
+                                <h6 class="card-title text-danger">Review</h6>
+                                <label class="text-info">Comment</label>
+                                <blockquote class="blockquote">
+                                    {{$review->comments}}
+                                </blockquote>
+                            @endif
                         </div>
                     </div>
                 </div>

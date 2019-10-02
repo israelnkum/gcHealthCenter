@@ -647,6 +647,7 @@ class ConsultationController extends Controller
             toastr()->error('Sorry! No Record Found');
         }
 
+
 //        return $searchPatient;
         $recentConsultation="";
         $recentVitals ="";
@@ -664,6 +665,7 @@ class ConsultationController extends Controller
                 ->latest()
                 ->first();
         }
+//        return $recentRegistration;
 
         if (empty($recentRegistration)){
             toastr()->error('Sorry! Patient has no registration');
@@ -738,6 +740,7 @@ class ConsultationController extends Controller
             }
 
 
+//            return $last_visit;
             $previousRegistration = Registration::where('patient_id',$searchPatient[0]->id)->get();
 
             /*
@@ -803,6 +806,7 @@ class ConsultationController extends Controller
                 ->where('registration_id',$recentConsultation->registration_id)
                 ->where('type','Consultation')
                 ->get();
+
             return view('pages.consultations.search-result')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
@@ -1224,7 +1228,12 @@ class ConsultationController extends Controller
     }
 
     public function patientRecord(Request $request){
-
+        $not_seen = Registration::with('patient')
+            ->where('vitals',1)
+            ->where('consult',0)
+            ->where('type','Consultation')
+            ->get();
+        $charges = Charge::all();
         //data contains patient id and the date of registration
         $data= explode(',',$request->input('data'));
 
@@ -1233,8 +1242,11 @@ class ConsultationController extends Controller
 
         $getRegistration = Registration::where('patient_id',$data[1])
             ->whereDate('created_at', $data[0])->get();
-
-//        return $getRegistration;
+        $last_visit =[];
+        if (count($getRegistration) != 0){
+            $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')->where('patient_id',$getRegistration[0]->patient_id)->get();
+        }
+//        return $last_visit;
         $vitals = Vital::with('user')
             ->where('patient_id',$data[1])
             ->where('registration_id',$getRegistration[0]->id)->get();
@@ -1251,7 +1263,9 @@ class ConsultationController extends Controller
                 ->where('patient_id',$data[1])
                 ->where('registration_id',$getRegistration[0]->id)
                 ->where('type','Review')->get();
-        }else{
+
+        }
+        else{
             $consultation = Consultation::where('patient_id',$data[1])
                 ->whereDate('created_at', $data[0])->first();
             $patientDiagnosis = PatientDiagnosis::with('diagnoses')
@@ -1281,9 +1295,7 @@ class ConsultationController extends Controller
                 ->where('patient_id',$data[1])
                 ->whereDate('created_at', $data[0])
                 ->get();
-
-        }
-        else{
+        }else{
             $registration = Registration::with('patient')
                 ->where('vitals', 1)
                 ->where('consult', 0)
@@ -1372,8 +1384,12 @@ class ConsultationController extends Controller
                 ->with('detentionBill',$detentionBill)
                 ->with('scanned_results',$getRegistration[0]->scanned_results)
                 ->with('lab_results',$getRegistration[0]->lab_results)
-                ->with('review',$review);
+                ->with('review',$review)
+                ->with('not_seen',$not_seen)
+                ->with('charges',$charges)
+                ->with('last_visit',$last_visit);
         }else{
+
             return view('pages.consultations.index1')
                 ->with('registration',$registration)
                 ->with('getVitals',$getVitals)
@@ -1387,7 +1403,10 @@ class ConsultationController extends Controller
                 ->with('allRegistrations',$allRegistrations)
                 ->with('count_registration',$count_registration)
                 ->with('scanned_results',$getRegistration[0]->scanned_results)
-                ->with('lab_results',$getRegistration[0]->lab_results);;
+                ->with('lab_results',$getRegistration[0]->lab_results)
+                ->with('not_seen',$not_seen)
+                ->with('charges',$charges)
+                ->with('last_visit',$last_visit);
         }
 
     }

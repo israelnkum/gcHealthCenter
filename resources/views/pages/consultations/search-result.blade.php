@@ -27,7 +27,7 @@
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-4 text-right">
-                            <label class="mt-3 text-danger">Not Seen</label>
+                            <label class="mt-3 text-danger">Not Seen Patients</label>
                         </div>
                         <div class="col-md-6">
                             <select required name="search" style="width: 100%" class="js-example-basic-single w-100 form-control font-weight-bold">
@@ -51,31 +51,31 @@
 
                 </form>
             </div>
-            @if(count($searchPatient) == 1 && count($registration)!=0)
-                <div class="col-md-2">
-                    <form action="{{route('patientRecord')}}" method="post" class="mb-1">
-                        @csrf
-                        <div class="form-group row mb-0">
-                            <div class="col-md-10">
-                                <select required name="data" class="js-example-basic-single w-100 form-control">
-                                    <option value="">Select Record Date</option>
-                                    @if(count($registration)  == 1)
-                                        @foreach($allRegistrations as $userRegistration)
-                                            <option @if(substr($userRegistration->created_at,0,10) == date('Y-m-d'))disabled @endif value="{{substr($userRegistration->created_at,0,10).",".$userRegistration->patient_id}}">{{substr($userRegistration->created_at,0,10)}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <div class="invalid-feedback">
-                                    Select a date
-                                </div>
-                            </div>
-                            <div class="col-md-1 ml-0">
-                                <button type="submit" class="btn-light btn btn-sm btn-rounded p-1 text-center"><i class="icon-magnifier"></i></button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            @endif
+            {{-- @if(count($searchPatient) == 1 && count($registration)!=0)
+                 <div class="col-md-2">
+                     <form action="{{route('patientRecord')}}" method="post" class="mb-1">
+                         @csrf
+                         <div class="form-group row mb-0">
+                             <div class="col-md-10">
+                                 <select required name="data" class="js-example-basic-single w-100 form-control">
+                                     <option value="">Select Record Date</option>
+                                     @if(count($registration)  == 1)
+                                         @foreach($allRegistrations as $userRegistration)
+                                             <option @if(substr($userRegistration->created_at,0,10) == date('Y-m-d'))disabled @endif value="{{substr($userRegistration->created_at,0,10).",".$userRegistration->patient_id}}">{{substr($userRegistration->created_at,0,10)}}</option>
+                                         @endforeach
+                                     @endif
+                                 </select>
+                                 <div class="invalid-feedback">
+                                     Select a date
+                                 </div>
+                             </div>
+                             <div class="col-md-1 ml-0">
+                                 <button type="submit" class="btn-light btn btn-sm btn-rounded p-1 text-center"><i class="icon-magnifier"></i></button>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
+             @endif--}}
         </div>
 
         @if(count($searchPatient)>1)
@@ -423,6 +423,15 @@
                                                                         </div>
                                                                     </blockquote>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-12">
+                                                            <label for="findings" class="text-info">Note</label>
+                                                            <textarea style="font-size: 15px"   name="notes" class="form-control font-weight-bold" id="notes" rows="4"></textarea>
+                                                            <div class="invalid-feedback">
+                                                                Note is required
                                                             </div>
                                                         </div>
                                                     </div>
