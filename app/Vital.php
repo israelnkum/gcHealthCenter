@@ -12,4 +12,8 @@ class Vital extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+
+    public function registration(){
+        return $this->belongsTo('App\Registration');
+    }
 }

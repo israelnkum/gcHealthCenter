@@ -803,9 +803,12 @@
 
         @elseif(count($data) > 1)
             <div class="row">
+                <div class="col-md-12">
+                    <h4 class="text-uppercase">Search Results</h4>
+                </div>
                 @foreach($data as $dat)
                     @if($dat->status != 1)
-                        <div class="col-md-6 grid-margin">
+                        <div class="col-md-4 grid-margin">
                             <div class="card">
                                 <h4 class="card-title mt-0"></h4>
                                 <div class="card-body">
@@ -815,14 +818,14 @@
 
                                             <div class="d-inline-block pt-3">
                                                 <div class="d-md-flex">
-                                                    <h5 class="mb-0 text-uppercase"><span class="text-danger">Folder Number:</span> {{$dat->folder_number}}</h5>
+                                                    <h6 class="mb-0 text-uppercase"><span class="text-danger">Folder Number:</span> {{$dat->folder_number}}</h6>
                                                 </div>
                                                 <small class="text-gray">{{$dat->phone_number}}</small>
                                             </div>
                                         </a>
                                         <div class="d-inline-block">
-                                            <div class=" px-4 py-2 rounded">
-                                                <a href="{{route('patients.edit',$dat->id)}}" class="text-dark" style="text-decoration: none;"><i class="icon-note icon-lg"></i></a>
+                                            <div class=" px-4 py-2">
+                                                <a href="{{route('patients.edit',$dat->id)}}" class="btn btn-link" style="text-decoration: none;"><i class="icon-note"></i> Edit</a>
                                             </div>
                                         </div>
                                     </div>

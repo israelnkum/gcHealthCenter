@@ -44,7 +44,7 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         //update medication table set total number to dispense
-        if (\Request::has('drug_id')) {
+        if ($request->has('drug_id')) {
             for ($i=0; $i<count($request->input('drug_id')); $i++) {
                 $med = Medication::where('drugs_id',$request->input('drug_id')[$i])
                     ->where('registration_id',$request->input('registration_id'))

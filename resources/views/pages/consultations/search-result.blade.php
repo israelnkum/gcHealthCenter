@@ -83,6 +83,7 @@
                 <div class="col-md-12">
                     <h4 class="display-4 text-info">Search Results</h4>
                 </div>
+
                 @foreach($searchPatient as $dat)
                     <div class="col-md-4 grid-margin">
                         <div class="card">
@@ -105,7 +106,7 @@
                                         </div>
                                     </div>
                                 </div>--}}
-                                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                                <form class="needs-validation" novalidate action="{{route('consultation.show',$dat->id)}}" method="get">
                                     @csrf
                                     <div class="d-inline-block pt-3">
                                         <div class="d-md-flex">
@@ -1062,7 +1063,7 @@
                                                     </ul>
                                                 </blockquote>
 
-                                                @if(count($scanned_results) !=0)
+                                                @if(!empty($scanned_results))
                                                     <label for="" class="text-info">Scan Result(s)</label>
                                                     <blockquote class="blockquote">
 
@@ -1075,7 +1076,7 @@
                                                         </div>
                                                     </blockquote>
                                                 @endif
-                                                @if(count($lab_results) !=0)
+                                                @if(!empty($lab_results))
                                                     <label for="" class="text-info">Lab Result(s)</label>
                                                     <blockquote class="blockquote">
                                                         <div id="lightgallery-without-thumb" class="row lightGallery">
@@ -1114,7 +1115,7 @@
                                                         </tbody>
                                                     </table>
                                                 </blockquote>
-                                                @if(count($otherMedication) != 0)
+                                                @if(!empty($otherMedication))
                                                     <label class="text-info">Other Medication</label>
                                                     <blockquote class="blockquote">
                                                         <div class="row">
@@ -1173,7 +1174,7 @@
                                                     </blockquote>
                                                 @endif
                                             </div>
-                                            @if(count($services)>0)
+                                            @if($services && count($services)>0)
                                                 <div class="col-md-6">
                                                     <label class="text-info">Services</label>
                                                     <blockquote class="blockquote">

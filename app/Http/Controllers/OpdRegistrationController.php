@@ -13,6 +13,7 @@ use App\Review;
 use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OpdRegistrationController extends Controller
 {
@@ -20,14 +21,22 @@ class OpdRegistrationController extends Controller
     {
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $data = Registration::with('vital','consultation', 'medications.drugs', 'diagnosis.diagnoses')
+                ->where('patient_id', $request->input('patient_id'))
+                ->whereDate('created_at','!=',date('Y-m-d'))->get();
+            echo json_encode($data);
+        }
+
     }
 
     /**
@@ -63,24 +72,27 @@ class OpdRegistrationController extends Controller
                     toastr()->error('Please Select Insured as charge option');
                     return back();
                 }else{
+                    DB::beginTransaction();
+                    try{
+                        //create new registration
+                        $register = new Registration();
+                        $register->patient_id = $request->input('patient_id');
+                        $register->isInsured = 1;
+                        $register->insurance_type = substr($request->input('insurance_type'), 0, strpos($request->input('insurance_type'), ','));
+                        $register->insurance_number = strtoupper($request->input('insurance_number'));
+                        $register->insurance_amount = str_replace(',', '', substr($request->input('insurance_type'), strpos($request->input('insurance_type'), ',')));
+                        $register->registration_fee = $charges->amount;
+                        $register->user_id = Auth::user()->id;
 
-                    //create new registration
-                    $register = new Registration();
-                    $register->patient_id = $request->input('patient_id');
-                    $register->isInsured = 1;
-                    $register->insurance_type = substr($request->input('insurance_type'), 0, strpos($request->input('insurance_type'), ','));
-                    $register->insurance_number = strtoupper($request->input('insurance_number'));
-                    $register->insurance_amount = str_replace(',', '', substr($request->input('insurance_type'), strpos($request->input('insurance_type'), ',')));
-                    $register->registration_fee = $charges->amount;
-                    $register->user_id = Auth::user()->id;
-                    if (\Request::has('review')){
-                        $register->consult=2;
-                        $register->type="Review";
-                    }
-                    if ($register->save()){
+                        if (\Request::has('review')){
+                            $register->consult=2;
+                            $register->type="Review";
+                        }
+                        $register->save();
+
                         /*
-                        *if registration is saved  then create vitals, consultation
-                        */
+                         *if registration is saved  then create vitals, consultation
+                         */
 
 
                         /*
@@ -138,10 +150,18 @@ class OpdRegistrationController extends Controller
                         $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
 
                         $bill->save();*/
+                        DB::commit();
+                        toastr()->success('Registration Successful');
+                        return redirect()->route('patients.show',[$request->input('patient_id')]);
 
+                    }catch (\Exception $exception){
+                        DB::rollback();
+                        toastr()->warning('Something Went Wrong!, Try Again');
+                        return back();
                     }
                 }
-            }else{
+            }else
+            {
                 if ($charges->name == "Insured"){
                     $this->validate($request, [
                         'insurance_type' => 'required',
@@ -151,22 +171,23 @@ class OpdRegistrationController extends Controller
 
 
                 /*
-                 * Create a new registration for non-insured
-                 */
-                $register = new Registration();
-                $register->patient_id = $request->input('patient_id');
-                $register->isInsured = 0;
-                $register->registration_fee = $charges->amount;
-                $register->user_id=Auth::user()->id;
-                if (\Request::has('review')){
-                    $register->consult=2;
-                    $register->type="Review";
-                }
-                if ($register->save()) {
+                  *if registration is saved  then create vitals, consultation
+                  */
+                DB::beginTransaction();
+                try{
                     /*
-                    *if registration is saved  then create vitals, consultation
-                    */
-
+             * Create a new registration for non-insured
+             */
+                    $register = new Registration();
+                    $register->patient_id = $request->input('patient_id');
+                    $register->isInsured = 0;
+                    $register->registration_fee = $charges->amount;
+                    $register->user_id=Auth::user()->id;
+                    if (\Request::has('review')){
+                        $register->consult=2;
+                        $register->type="Review";
+                    }
+                    $register->save();
 
                     /*
                      * Create a new vitals for non-insured
@@ -220,14 +241,19 @@ class OpdRegistrationController extends Controller
                     $bill->billed_by =Auth::user()->first_name." ".Auth::user()->last_name;
                     $bill->save();
 
+                    DB::commit();
+                    toastr()->success('Registration Successful');
+                    return redirect()->route('patients.show',[$request->input('patient_id')]);
+
+                }catch (\Exception $exception){
+                    DB::rollback();
+                    toastr()->warning('Something Went Wrong!');
+                    return back();
                 }
+
 
             }
         }
-
-        toastr()->success('Registration Successful');
-        return redirect()->route('patients.show',[$request->input('patient_id')]);
-
     }
 
     /**

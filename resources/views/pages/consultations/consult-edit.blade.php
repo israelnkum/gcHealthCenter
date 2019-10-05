@@ -121,7 +121,7 @@
                                                     Diagnosis is required
                                                 </div>
                                                 <label for="other_diagnosis_text" class="text-info mt-3">Other Diagnosis</label>
-                                                <textarea style="font-size: 15px"  rows="3" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis"></textarea>
+                                                <textarea style="font-size: 15px"  rows="3" class="form-control font-weight-bold" id="other_diagnosis_text" name="other_diagnosis">{{$consultation->other_diagnosis}}</textarea>
                                                 <div class="invalid-feedback">
                                                     Diagnosis is required
                                                 </div>

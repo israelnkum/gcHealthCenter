@@ -357,6 +357,7 @@
 <script src="{{asset('public/js/jquery.print.js')}}"></script>
 <script src="{{asset('public/js/todolist.js')}}"></script>
 <script src="{{asset('public/js/toastr.min.js')}}"></script>
+<script src="{{asset('public/js/last-visits.js')}}"></script>
 <!-- endinject -->
 
 

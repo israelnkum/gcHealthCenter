@@ -10,6 +10,10 @@ class Registration extends Model
         return $this->belongsTo('App\Patient');
     }
 
+    public function vital(){
+        return $this->hasMany('App\Vital');
+    }
+
     public function user(){
         return $this->belongsTo('App\User');
     }
