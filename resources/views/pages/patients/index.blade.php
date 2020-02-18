@@ -402,7 +402,7 @@
                                                                     </div>
                                                                 </form>
                                                             </div>
-                                                        @elseif(substr($registered->created_at,0,10) != date('Y-m-d') && $registered->detain == 1)
+                                                        @elseif($registered->detain == 1)
                                                             <div class="col-md-4 ">
                                                                 <h6>Patient is Detained, <span class="text-danger">You can add Vitals</span></h6>
                                                                 <form class="needs-validation form-sub p-3" style="border: dashed 1px"  novalidate method="post" action="{{route('addVital')}}">
@@ -540,19 +540,20 @@
                                         <div class="row">
                                             <div class="col-md-12 text-center">
                                                 <blockquote class="blockquote" style="border: dashed 1px;">
-                                                    <h5 class="text-uppercase">Previous Vitals</h5>
+                                                    <h5 class="text-uppercase">Vitals</h5>
                                                     <div class="table-responsive">
                                                         <table class="table table-striped">
                                                             <thead>
                                                             <tr>
                                                                 <th>N<u>o</u></th>
-                                                                <th>Date</th>
+                                                                <th>Date | Time</th>
                                                                 <th>Blood Pressure</th>
                                                                 <th>Weight</th>
                                                                 <th>Temperature</th>
                                                                 <th>Pulse</th>
                                                                 <th>RDT</th>
                                                                 <th>Glucose</th>
+                                                                <th>Type</th>
                                                             </tr>
                                                             </thead>
 
@@ -568,6 +569,7 @@
                                                                     <td>{{$vital->pulse}}</td>
                                                                     <td>{{$vital->RDT}}</td>
                                                                     <td>{{$vital->glucose}}</td>
+                                                                    <td>{{$vital->type}}</td>
                                                                 </tr>
                                                                 @php($i++)
                                                             @endforeach

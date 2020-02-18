@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Consultation;
+use App\Diagnose;
+use App\Exports\ConsultationExport;
+use App\Exports\PatientExport;
 use App\Patient;
-use App\Registration;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
 {
@@ -19,7 +23,7 @@ class ReportsController extends Controller
      */
     public function index()
     {
-        return view('pages.reports.index');
+        return view('pages.reports.patient-report');
     }
 
     /**
@@ -88,23 +92,112 @@ class ReportsController extends Controller
         //
     }
 
+    //consultation report view
+    public function consultation_report(){
+        $diagnosis = Diagnose::all();
+        return view('pages.reports.consultation-report',compact('diagnosis'));
+    }
 
-    public function patient_report(Request $request){
-        $reports = Patient::query();
-        if ($request->has('type') && $request->input('type') != ""){
-            if ($request->input('type') == "all"){
-                $reports = Patient::all();
-            }elseif ($request->input('type') == "detained"){
-                $reports = Registration::with('patient')->where('detain',1)->get();
-            }elseif ($request->input('type') == "discharged"){
-                $reports = Registration::with('patient')->where('detain',2)->get();
+    public function generateConsultationReport(Request $request, Consultation $consultQuery){
+
+        if ($request->has('btn_export')){
+            return Excel::download(new ConsultationExport($request),'Consultation'.time().'.xlsx');
+        }else {
+            $consultQuery = $consultQuery::query();
+            if ($request->has('from') && $request->input('from') != '') {
+                $from = \Carbon\Carbon::parse($request->from)->format('Y-m-d') . " 00:00:00";
+
+                if (empty($request->to)){
+                    $to =\Carbon\Carbon::today()->format('Y-m-d'). " 00:00:00";;
+                }else{
+                    $to = \Carbon\Carbon::parse($request->to)->format('Y-m-d') . " 23:59:59";
+
+                }
+
+                $consultQuery->whereBetween('created_at', [$from, $to]);
             }
-        }
 
-        if ($request->has('gender') && $request->input('gender') != ""){
-            $reports = Patient::where('gender',$request->input('gender'))->get();
-        }
 
-        return $reports;
+            if ($request->has('gender') && $request->input('gender') != '') {
+                $gender = $request->gender;
+                $consultQuery->whereHas('patient', function ($q) use ($gender) {
+                    $q->where('gender', $gender);
+                });
+            }
+
+            if ($request->has('marital_status') && $request->input('marital_status') != '') {
+
+                $marital_status = $request->marital_status;
+                $consultQuery->whereHas('patient', function ($q) use ($marital_status) {
+                    $q->where('marital_status', $marital_status);
+                });
+            }
+
+            if ($request->has('religion') && $request->input('religion') != '') {
+
+                $religion = $request->religion;
+                $consultQuery->whereHas('patient', function ($q) use ($religion) {
+                    $q->where('religion', $religion);
+                });
+            }
+
+           /* if ($request->has('diagnosis') && $request->input('diagnosis') != '') {
+                $consultations = $consultQuery->get();
+                foreach ($consultations as $consultation){
+                    foreach ($consultation->patient->patientDiagnosis as $diagnosis){
+                        $registration_id = $diagnosis->patient_id;
+                        $consultQuery->whereHas('patient', function ($q) use ($registration_id) {
+                            $q->where('id', $registration_id);
+                        });
+                    }
+
+                }
+
+                return $consultQuery->get();
+            }
+            return $consultQuery->get()->count();*/
+            $data = $consultQuery->simplePaginate(50);
+
+            session()->flashInput($request->input());
+            $diagnosis = Diagnose::all();
+            return view('pages.reports.consultation-report',compact('diagnosis'))
+                ->with('data', $data)
+                ->withInput($request->all);
+        }
+    }
+
+    public function patient_report(Request $request, Patient $patientQuery){
+
+        if ($request->has('btn_export')){
+            return Excel::download(new PatientExport($request),'Patients'.time().'.xlsx');
+        }else {
+            session()->flashInput($request->input());
+            $patientQuery = $patientQuery::query();
+            if ($request->has('type') && $request->input('type') != '') {
+                $type = $request->type;
+                $from = \Carbon\Carbon::parse($request->from)->format('Y-m-d') . " 00:00:00";
+                $to = \Carbon\Carbon::parse($request->to)->format('Y-m-d') . " 23:59:59";
+
+                $patientQuery->whereHas('registration', function ($q) use ($type, $from, $to) {
+                    $q->where('detain', $type)->whereBetween('created_at', [$from, $to]);
+                });
+            }
+            if ($request->has('gender') && $request->input('gender') != '') {
+                $patientQuery->where('gender', $request->input('gender'));
+            }
+            if ($request->has('marital_status') && $request->input('marital_status') != '') {
+                $patientQuery->where('marital_status', $request->input('marital_status'));
+            }
+            if ($request->has('religion') && $request->input('religion') != '') {
+                $patientQuery->where('religion', $request->input('religion'));
+            }
+
+            $data = $patientQuery->simplePaginate(50);
+
+
+            return view('pages.reports.patient-report')
+                ->with('data', $data)
+                ->withInput($request->all);
+        }
     }
 }

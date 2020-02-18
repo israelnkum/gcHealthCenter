@@ -8,116 +8,169 @@
                 <div class="card-body mt-5">
                     <h4 class="card-title">Generate Reports</h4>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-2">
+                            <ul class="list-unstyled list-group-flush">
+                                <li class="list-group-item">
+                                    <a   data-toggle="collapse" href="#patient" aria-expanded="false" aria-controls="collapse-4">
+                                        <i class="icon icon-people"></i> Patients
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a data-toggle="collapse" href="#consultation" aria-expanded="false" aria-controls="collapse-4">
+                                        <i class="icon icon-energy"></i> Consultation
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a  data-toggle="collapse"  href="#staff" aria-expanded="false" aria-controls="collapse-4">
+                                        <i class="icon icon-people"></i>  Staff
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-10">
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
                                 <div>
-                                    <div class="" role="tab" id="heading-4">
-                                        <a  class="badge badge-dark" data-toggle="collapse" href="#patient" aria-expanded="false" aria-controls="collapse-4">
-                                            <i class="icon icon-people"></i> Patients
-                                        </a>
-                                        <a  class="badge badge-success" data-toggle="collapse" href="#consultation" aria-expanded="false" aria-controls="collapse-4">
-                                            <i class="icon icon-energy"></i> Consultation
-                                        </a>
-                                        <a  data-toggle="collapse" class="badge  badge-info" href="#staff" aria-expanded="false" aria-controls="collapse-4">
-                                            <i class="icon icon-people"></i>  Staff
-                                        </a>
-                                    </div>
                                     <div id="patient" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                         <div class="card-body">
                                             <h4>Patients</h4>
-
                                             <div>
                                                 <form action="{{route('patients-reports')}}" method="get" >
                                                     <div class="form-row">
                                                         <div class="col-md-2">
-                                                            <label for="Type">Type</label>
-                                                            <select name="type" id="Type" class="form-control selectMedicine" style="width: 100%;">
+                                                            <label for="patient-type">Type</label>
+                                                            <select name="type" id="patient-type" class="form-control selectMedicine " style="width: 100%;">
                                                                 <option value=""></option>
-                                                                <option value="all">All Patients</option>
-                                                                <option value="detained">Detained Patients</option>
-                                                                <option value="discharged">Discharged Patients</option>
+                                                                {{--                                        <option {{ old('type') == 'All' ? 'selected' : '' }} value="All">All</option>--}}
+                                                                <option {{ old('type') == '1' ? 'selected' : '' }} value="1">Detained Patients</option>
+                                                                <option {{ old('type') == '2' ? 'selected' : '' }} value="2">Discharged Patients</option>
                                                             </select>
+                                                        </div>
+                                                        <div class="col-md-2 date-between ">
+                                                            <label for="age_between">Date (FROM)</label>
+                                                            <div id="datepicker-popup" class="input-group date datepicker">
+                                                                <input type="text"  value="{{ old('from')}}"  name="from" placeholder="From" class="form-control">
+                                                                <span class="input-group-addon input-group-append border-left">
+                                                                    <span class="icon-calendar input-group-text"></span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2 date-between" >
+                                                            <label for="age_between">Date (TO)</label>
+                                                            <div id="datepicker-popup1" class="input-group date datepicker">
+                                                                <input placeholder="To" value="{{ old('to')}}" name="to"  type="text" class="form-control">
+                                                                <span class="input-group-addon input-group-append border-left">
+                                                                            <span class="icon-calendar input-group-text"></span>
+                                                                        </span>
+                                                            </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label for="Type">Gender</label>
-                                                            <select name="gender" id="Type" class="form-control selectMedicine" style="width: 100%;">
+                                                            <select name="gender" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
                                                                 <option value=""></option>
-                                                                <option value="Male">Male</option>
-                                                                <option value="Female">Female</option>
+                                                                <option {{ old('gender') == 'Male' ? 'selected' : '' }}  value="Male">Male</option>
+                                                                <option {{ old('gender') == 'Female' ? 'selected' : '' }}  value="Female">Female</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label for="Type">Marital Status</label>
-                                                            <select name="" id="Type" class="form-control selectMedicine" style="width: 100%;">
-                                                                <option value="">~Select Marital Status~</option>
-                                                                <option value="Single">Single</option>
-                                                                <option value="Married">Married</option>
-                                                                <option value="Divorced">Divorced</option>
-                                                                <option value="Widowed">Widowed</option>
+                                                            <select name="marital_status" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
+                                                                <option value=""></option>
+                                                                <option {{ old('marital_status') == 'Single' ? 'selected' : '' }}  value="Single">Single</option>
+                                                                <option {{ old('marital_status') == 'Married' ? 'selected' : '' }} value="Married">Married</option>
+                                                                <option {{ old('marital_status') == 'Divorced' ? 'selected' : '' }} value="Divorced">Divorced</option>
+                                                                <option {{ old('marital_status') == 'Widowed' ? 'selected' : '' }} value="Widowed">Widowed</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label for="Type">Religion</label>
-                                                            <select name="" id="Type" class="form-control selectMedicine" style="width: 100%;">
+                                                            <select name="religion" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
                                                                 <option value="">~Select Religion~</option>
-                                                                <option value="Christianity">Christianity</option>
-                                                                <option value="Islam">Islam</option>
-                                                                <option value="Hinduism">Hinduism</option>
-                                                                <option value="Buddhism">Buddhism</option>
-                                                                <option value="Non Religious">Non Religious</option>
+                                                                <option {{ old('religion') == 'Christianity' ? 'selected' : '' }} value="Christianity">Christianity</option>
+                                                                <option {{ old('religion') == 'Islam' ? 'selected' : '' }} value="Islam">Islam</option>
+                                                                <option {{ old('religion') == 'Hinduism' ? 'selected' : '' }} value="Hinduism">Hinduism</option>
+                                                                <option {{ old('religion') == 'Buddhism' ? 'selected' : '' }} value="Buddhism">Buddhism</option>
+                                                                <option {{ old('religion') == 'Non Religious' ? 'selected' : '' }} value="Non Religious">Non Religious</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <label for="age_between">Age(Between)</label>
                                                             <div class="row">
-                                                                <div class="col-md-4">
+                                                                <div class="col-md-6">
                                                                     <input type="number" min="1" class="form-control" id="age_between" placeholder="10">
                                                                 </div>
-                                                                <div class="col-md-4">
+                                                                <div class="col-md-6">
                                                                     <input type="number" min="1" class="form-control" id="age_between" placeholder="20">
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        {{--<div class="col-md-2">
-                                                            <label for="Type">Age</label>
-                                                            <div id="datepicker-popup" class="input-group date datepicker">
-                                                                <input type="text" class="form-control">
-                                                                <span class="input-group-addon input-group-append border-left">
-                                                                    <span class="icon-calendar input-group-text"></span>
-                                                                </span>
-                                                            </div>
-                                                        </div>--}}
-                                                    </div>
-                                                    {{--<div class="form-row">
-                                                        <div class="col-md-6">
-                                                            <label for="age_between">Date (Between)</label>
-                                                            <div class="row">
-                                                                <div class="col-md-4">
-                                                                    <div id="datepicker-popup" class="input-group date datepicker">
-                                                                        <input type="text" placeholder="From" class="form-control">
-                                                                        <span class="input-group-addon input-group-append border-left">
-                                                                    <span class="icon-calendar input-group-text"></span>
-                                                                </span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div id="datepicker-popup1" class="input-group date datepicker">
-                                                                        <input placeholder="To" type="text" class="form-control">
-                                                                        <span class="input-group-addon input-group-append border-left">
-                                                                            <span class="icon-calendar input-group-text"></span>
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>--}}
-                                                    <div class="form-row">
-                                                        <div class="col-md-2">
-                                                            <button class="btn btn-dark mt-4" type="submit">Generate</button>
+                                                        <div class="col-md-2 text-left mt-2">
+                                                            <button class="btn  mt-4" type="submit">Filter</button>
                                                         </div>
                                                     </div>
                                                 </form>
                                             </div>
+                                            @if(!empty($data))
+                                                <div>
+                                                    <button name="btn_export" value="export" type="submit" class="btn btn-success"> <i class="icon icon-docs"></i> Export</button>
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="patients_table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <div class="form-check form-check-flat">
+                                                                        <label class="form-check-label">
+                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllCharges">
+                                                                        </label>
+                                                                    </div>
+                                                                </th>
+                                                                <th>Patient Info</th>
+                                                                <th>Other Info</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @php
+                                                                $i=1;
+                                                            @endphp
+                                                            @foreach($data as $datum)
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="form-check form-check-flat">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" value="{{$datum->id}}" class="form-check-input checkItemCharge" name="selected_charges[]" id="remember">
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-uppercase">
+                                                                        <i class="icon icon-user"></i> {{$datum->first_name." ".$datum->other_name." ".$datum->last_name}}
+                                                                        <br>
+                                                                        <i class="icon icon-folder"></i> {{$datum->folder_number}}
+                                                                        <br>
+                                                                        <i class="icon icon-phone"></i> {{$datum->phone_number}}
+                                                                    </td>
+                                                                    <td>{{$datum->date_of_birth}}
+                                                                        <br>
+                                                                        {{$datum->gender}}
+                                                                        <br>
+                                                                        {{$datum->marital_status}}
+                                                                    </td>
+                                                                    <td>
+                                                                        <a role="button" href="{{route('patients.edit',$datum->id)}}" class="btn btn-sm btn-secondary edit_charge">
+                                                                            <i class="icon icon-pencil"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                @php
+                                                                    $i = $i+1;
+                                                                @endphp
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                        <span class="float-right">{{ $data->appends(Request::all())->links() }}</span>
+
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <div id="consultation" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">

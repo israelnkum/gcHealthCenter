@@ -522,6 +522,7 @@ class DetainedRecordsController extends Controller
                     $diagnosis->registration_id = $request->input('registration_id');
                     $diagnosis->diagnoses_id = $key;
                     $diagnosis->user_id = Auth::user()->id;
+                    $diagnosis->type ="Detention";
                     $diagnosis->save();
                 }
             }
@@ -1045,17 +1046,15 @@ class DetainedRecordsController extends Controller
 
         $patient =Patient::find($patient_id);
 
-
         $getAllRecordDate = [];
         $allRecords=DetentionRecord::where('patient_id',$patient_id)
             ->where('registration_id',$registration_id)
             ->get();
 
-        // $patient;
+//       return $allRecords;
         $recentRecord = DetentionRecord::where('patient_id',$patient_id)
             ->where('registration_id',$registration_id)
             ->first();
-
 
 
         $recentMedication = [];
@@ -1073,16 +1072,10 @@ class DetainedRecordsController extends Controller
 
         $services =0;
 
-        /*
-         foreach ($allRecords as $record)
-         {
-             array_push($getAllRecordDate,substr($record->created_at,0,10));
-         }*/
-
 
         $allDateRecords= array_unique($getAllRecordDate);
 
-        return view('pages.detention_records.view_detention_record')
+        return view('pages.detention_records.view_detention_record',compact('allRecords'))
             ->with('recentRecord',$recentRecord)
             ->with('allDateRecords', $allDateRecords)
             ->with('patient',$patient)

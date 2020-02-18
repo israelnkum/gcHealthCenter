@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Bill;
 use App\Drug;
 use App\DrugType;
+use App\Exports\DrugExport;
 use App\Medication;
 use App\OtherMedication;
 use App\Payment;
@@ -14,6 +15,7 @@ use App\Vital;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DrugController extends Controller
@@ -31,7 +33,7 @@ class DrugController extends Controller
     {
         $suppliers = Supplier::all();
         $drug_types = DrugType::all();
-        $drugs = Drug::with('supplier','drug_type')->get();
+        $drugs = Drug::with('supplier','drug_type')->simplePaginate(100);
 
 //        return $drugs;
         return view('pages.pharmacy.index')
@@ -40,6 +42,36 @@ class DrugController extends Controller
             ->with('drugs',$drugs);
     }
 
+    public function filterDrugs(Request $request, Drug $drugQuery){
+        if ($request->has('btn_export')){
+            return Excel::download(new DrugExport($request),'Drugs_'.time().'.xlsx');
+        }else{
+            session()->flashInput($request->input());
+            $drugQuery = $drugQuery::query();
+            if($request->has('type_id')&& $request->input('type_id') != '' )
+            {
+                $drugQuery->where('drug_type_id', $request->input('type_id'));
+            }
+            if($request->has('unit_of_pricing')&& $request->input('unit_of_pricing') != '' )
+            {
+                $drugQuery->where('unit_of_pricing', $request->input('unit_of_pricing'));
+            }
+            if($request->has('supplier_id')&& $request->input('supplier_id') != '' )
+            {
+                $drugQuery->where('supplier_id', $request->input('supplier_id'));
+            }
+
+            $drugs = $drugQuery->simplePaginate(100);
+            $suppliers = Supplier::all();
+            $drug_types = DrugType::all();
+
+            return view('pages.pharmacy.index')
+                ->with('suppliers',$suppliers)
+                ->with('drug_types',$drug_types)
+                ->with('drugs',$drugs);
+        }
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -250,9 +282,6 @@ class DrugController extends Controller
 
     }
 
-
-
-
     public function upload_drug(Request $request)
     {
         set_time_limit(36000);
@@ -349,9 +378,10 @@ class DrugController extends Controller
      */
     public function edit($id)
     {
-        $drugs = Drug::find($id);
-
-        return $drugs;
+        $drug = Drug::find($id);
+        $drug_types= DrugType::all();
+        $suppliers = Supplier::all();
+        return view('pages.pharmacy.drugs.edit',compact('drug_types','drug','suppliers'));
     }
 
     /**
@@ -363,33 +393,38 @@ class DrugController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $drug =Drug::find($id);
+       DB::beginTransaction();
+       try{
+           $drug =Drug::find($id);
+           $drug->name = $request->input('name');
+           $drug->drug_type_id = $request->input('type_id');
+           $drug->qty_in_stock = $drug->qty_in_stock+ $request->input('receiving_stock');
 
 
-
-        $drug->name = $request->input('name');
-        $drug->drug_type_id = $request->input('type_id');
-        $drug->qty_in_stock = $drug->qty_in_stock+ $request->input('receiving_stock');
-
-
-        $drug->unit_of_pricing = $request->input('unit_of_pricing');
-        if (\Request::has('no_of_tablet')){
+           $drug->unit_of_pricing = $request->input('unit_of_pricing');
+           if (\Request::has('no_of_tablet')){
 //                $drug->no_of_tablet = $request->input('no_of_tablet');
-            $drug->no_of_tablet  = $request->input('no_of_tablet');
-            $drug->qty_in_tablet =  $drug->qty_in_tablet+$request->input('receiving_stock')*10;
-        }
+               $drug->no_of_tablet  = $request->input('no_of_tablet');
+               $drug->qty_in_tablet =  $drug->qty_in_tablet+$request->input('receiving_stock')*10;
+           }
 
-        $drug->retail_price = $request->input('retail_price');
-        $drug->supplier_id = $request->input('supplier_id');
-        $drug->cost_price = $request->input('cost_price');
+           $drug->retail_price = $request->input('retail_price');
+           $drug->supplier_id = $request->input('supplier_id');
+           $drug->cost_price = $request->input('cost_price');
 
 //        $drug->nhis_amount = $request->input('nhis_amount');
-        $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
-        $drug->user_id = Auth::user()->id;
+           $drug->expiry_date = str_replace('/','-',$request->input('expiry_date'));
+           $drug->user_id = Auth::user()->id;
 
-        $drug->save();
-        toastr()->success('Drug Updated');
-        return redirect('/drugs');
+           $drug->save();
+
+           DB::commit();
+           toastr()->success('Drug Updated');
+       }catch (\Exception $exception){
+           DB::rollBack();
+           toastr()->warning('Something went wrong, Try again!');
+       }
+        return back();
     }
 
 
@@ -415,7 +450,6 @@ class DrugController extends Controller
     }
 
     public function downloadUploadFormat(){
-
         $pathToFile = public_path('Upload_Format.xlsx');
         return response()->download($pathToFile, 'Upload_Format.xlsx');
     }

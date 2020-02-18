@@ -1,6 +1,4 @@
 $(document).ready(function () {
-
-
     $("#select_drug_only").select2({
         dropdownParent: $('#add_drug .modal-content')
     });
@@ -220,11 +218,6 @@ $(document).ready(function () {
      */
 
 
-
-
-
-
-
     /*
     Start Drug
      */
@@ -257,37 +250,16 @@ $(document).ready(function () {
 
 
     let drug_table = $('#drug_table').DataTable({
-        "aLengthMenu": [
-            [10, 30, 50, 100, -1],
-            [10, 30, 50, 100, "All"]
-        ],
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'pageLength',
-            },
-            {
-                extend: 'excel',
-                exportOptions: {
-                    columns: [1,3,4,5,6,7,8]
-                }
-            },
-            {
-                extend: 'pdf',
-                exportOptions: {
-                    columns: [1,3,4,5,6,7,8]
-                }
-            }
-        ],
-        "iDisplayLength": 10,
+        dom: 'frtip',
+        "iDisplayLength": 100,
         "language": {
             search: ""
         },
     });
-    drug_table.column(2).visible(false);
-    drug_table.column(9).visible(false);
-    drug_table.column(10).visible(false);
-    drug_table.column(11).visible(false);
+   drug_table.column(2).visible(false);
+    drug_table.column(5).visible(false);
+    drug_table.column(6).visible(false);
+ //   drug_table.column(11).visible(false);
     drug_table.on('click','.edit',function () {
         $tr = $(this).closest('tr');
 
@@ -315,4 +287,10 @@ $(document).ready(function () {
      */
 
 
+
+    //filter Drugs
+
+    $('.filter-drugs').change(function () {
+        $('#filter-drug-form').submit();
+    });
 });

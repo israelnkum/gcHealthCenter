@@ -386,7 +386,7 @@
                                                             {{$med->item}}
                                                             <input type="hidden" name="item[]" value="{{$med->item}}">
                                                         </td>
-                                                        <td>{{$med->dosage}} days</td>
+                                                        <td>{{$med->dosage}}</td>
                                                         <td>
                                                             {{$med->amount}}
                                                             <input type="hidden" name="insurance" value="{{$med->insurance_amount}}">

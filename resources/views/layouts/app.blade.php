@@ -40,7 +40,7 @@
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
                     <form class="search-field d-none d-md-flex" action="#">
                         <div class="form-group mb-0">
-                            <span id="ct"></span>
+                            <span id="ct">d</span>
                         </div>
                     </form>
                     <ul class="navbar-nav navbar-nav-right mr-0 ml-auto">
@@ -265,12 +265,17 @@
 
 
                         <li class="nav-item">
-                            <a href="{{route('reports.index')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
+                            <a href="javascript:void(0)" class="nav-link"><i class="link-icon icon-drop">
+                                </i><span class="menu-title">Reports</span><i class="menu-arrow"></i>
+                            </a>
+                            <div class="submenu">
+                                <ul class="submenu-item">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('reports.index')}}?{{Hash::make(time())}}">Patients Reports</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('consultation-reports')}}?{{Hash::make(time())}}">Consultation</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('drugs.index')}}?{{Hash::make(time())}}">Diagnosis</a></li>
+                                </ul>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
-                        </li>
-
                         @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin")
                             <li class="nav-item">
                                 <a href="{{route('users.index')}}?{{Hash::make(time())}}" class="nav-link">
@@ -312,9 +317,9 @@
 <script src="{{asset('public/vendors/js/vendor.bundle.base.js')}}"></script>
 <script src="{{asset('public/vendors/js/vendor.bundle.addons.js')}}"></script>
 <!-- endinject -->
-{{--<script src="{{asset('public/js/dashboard.js')}}"></script>--}}
+<script src="{{asset('public/js/dashboard.js')}}"></script>
 <!-- inject:js -->
-@if(!\Request::is('reports'))
+@if(!\Request::is('reports') && !\Request::is('patients/create') && !\Request::is('filter-patient') && !\Request::is('patients-reports') && !\Request::is('consultation-reports') && !\Request::is('g-consultation-reports') )
     <script src="{{asset('public/js/mask.init.js')}}"></script>
 @endif
 <script src="{{asset('public/js/template.js')}}"></script>
@@ -360,7 +365,10 @@
 <script src="{{asset('public/js/last-visits.js')}}"></script>
 <!-- endinject -->
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.0.6/highcharts.js" charset="utf-8"></script>
+@if(\Request::is('home'))
+    {!! $statistics->script() !!}
+@endif
 <script type="text/javascript">
     function display_c(){
         var refresh=1000; // Refresh rate in milli seconds

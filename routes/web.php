@@ -34,6 +34,7 @@ Route::get('/search-patient','PatientController@searchPatient')->name('searchPat
 Route::get('/view-old-records/{id}','PatientController@viewOldRecord')->name('view-old-records');
 Route::post('/upload-labs-scans/{id}','PatientController@uploadLabScanResult')->name('upload-labs-scans');
 Route::post('/upload-detention-labs-scans/{id}','PatientController@uploadDetentionLabScanResult')->name('upload-detention-labs-scans');
+Route::get('/filter-patient','PatientController@filterPatients')->name('filter-patients');
 
 
 /*
@@ -50,6 +51,9 @@ Route::resource('registration','OpdRegistrationController');
 
 Route::resource('reports','ReportsController');
 Route::get('patients-reports','ReportsController@patient_report')->name('patients-reports');
+Route::get('consultation-reports','ReportsController@consultation_report')->name('consultation-reports');
+Route::get('g-consultation-reports','ReportsController@generateConsultationReport')->name('gen-consultation-rpt');
+
 
 
 
@@ -88,6 +92,7 @@ Route::get('/upload_format','DrugController@downloadUploadFormat')->name('upload
 Route::post('/bulk-delete-drug','DrugController@bulk_deleteDrug')->name('bulk_deleteDrug');
 //Route::post('/search-consultation','ConsultationController@searchConsultation')->name('searchConsultation');
 Route::post('/bulk-upload','DrugController@upload_drug')->name('upload_drug');
+Route::get('/filter-drugs','DrugController@filterDrugs')->name('filter-drugs');
 
 
 /*

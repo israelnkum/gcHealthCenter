@@ -1,9 +1,13 @@
 @extends('layouts.app')
 @section('content')
     <!-- partial -->
-
     <div class="content-wrapper">
         <div class="row">
+{{--            <div class="col-12">--}}
+{{--                @component('partials.breadcrumb')--}}
+{{--                    <li class="breadcrumb-item active" aria-current="page"><span>Dashboard</span></li>--}}
+{{--                @endcomponent--}}
+{{--            </div>--}}
             <div class="col-12 grid-margin">
                 <div class="card card-statistics">
                     <div class="card-body p-0">
@@ -72,10 +76,9 @@
                         <div class="col-md-7">
                             <div class="card-body d-flex flex-column h-100">
                                 <div class="d-flex flex-row">
-                                    <h4 class="card-title">Year-wise performance</h4>
+                                    <h4 class="card-title">PATIENTS | Graphical Representation</h4>
                                 </div>
-                                <p>Performance of the team is 75% higher this year!</p>
-                                <canvas id="chart-activity" class="mt-auto"></canvas>
+                                {!! $statistics->container() !!}
                             </div>
                         </div>
                         <div class="col-md-5 border-right">

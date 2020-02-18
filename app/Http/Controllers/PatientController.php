@@ -6,6 +6,7 @@ use App\Bill;
 use App\Charge;
 use App\Consultation;
 use App\DetentionRecord;
+use App\Exports\PatientExport;
 use App\Insurance;
 use App\LabResult;
 use App\OldRecord;
@@ -18,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PatientController extends Controller
 {
@@ -85,14 +87,54 @@ class PatientController extends Controller
      */
     public function create()
     {
-        $data=Patient::all();
+        $data=Patient::simplePaginate(50);
         $insuranceType = Insurance::all();
+
 
         $charges = Charge::all();
         return view('pages.patients.patients')
             ->with('data',$data)
             ->with('insuranceType',$insuranceType)
             ->with('charges',$charges);
+    }
+
+    public function filterPatients(Request $request, Patient $patientQuery){
+        if ($request->has('btn_export')){
+            return Excel::download(new PatientExport($request),'Patients'.time().'.xlsx');
+        }else{
+            session()->flashInput($request->input());
+            $patientQuery = $patientQuery::query();
+            if($request->has('type')&& $request->input('type') != '' )
+            {
+                $type = $request->type;
+                $from =  \Carbon\Carbon::parse($request->from)->format('Y-m-d')." 00:00:00";
+                $to = \Carbon\Carbon::parse($request->to)->format('Y-m-d')." 23:59:59";
+
+                $patientQuery->whereHas('registration', function ($q) use($type,$from,$to){
+                    $q->where('detain', $type)->whereBetween('created_at',[$from,$to]);
+                });
+            }
+            if($request->has('gender')&& $request->input('gender') != '' )
+            {
+                $patientQuery->where('gender', $request->input('gender'));
+            }
+            if($request->has('marital_status')&& $request->input('marital_status') != '' )
+            {
+                $patientQuery->where('marital_status', $request->input('marital_status'));
+            }
+            if($request->has('religion')&& $request->input('religion') != '' )
+            {
+                $patientQuery->where('religion', $request->input('religion'));
+            }
+
+            $data = $patientQuery->simplePaginate(50);
+
+
+            return view('pages.patients.patients')
+                ->with('data',$data)
+                ->withInput($request->all);
+        }
+
     }
 
     /**

@@ -474,34 +474,36 @@
                                             <div id="GC{{$visit->id}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-3">
                                                 <div class="card-body">
                                                     <div class="row">
+                                                        @foreach($visit->consultation as $consult)
                                                         <div class="col-md-6">
                                                             <label class="text-info">Complains</label>
                                                             <blockquote class="blockquote" >
-                                                                <small>{{$visit->consultation[0]->complains}}</small>
+                                                                <small>{{$consult->complains}}</small>
                                                             </blockquote>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label class="text-info">Physical Examination</label>
                                                             <blockquote class="blockquote">
-                                                                <small>{{$visit->consultation[0]->physical_examination}}</small>
+                                                                <small>{{$consult->physical_examination}}</small>
                                                             </blockquote>
                                                         </div>
-                                                        @if($visit->consultation[0]->findings != "")
+                                                        @if($consult->findings != "")
                                                             <div class="col-md-6">
                                                                 <label class="text-info">History</label>
                                                                 <blockquote class="blockquote" >
-                                                                    <small>{{$visit->consultation[0]->findings}}</small>
+                                                                    <small>{{$consult->findings}}</small>
                                                                 </blockquote>
                                                             </div>
                                                         @endif
-                                                        @if($visit->consultation[0]->diagnosis != "")
+                                                        @if($consult->diagnosis != "")
                                                             <div class="col-md-6">
                                                                 <label class="text-info">Diagnosis</label>
                                                                 <blockquote class="blockquote">
-                                                                    <small>{{$visit->consultation[0]->diagnosis}}</small>
+                                                                    <small>{{$consult->diagnosis}}</small>
                                                                 </blockquote>
                                                             </div>
                                                         @endif
+                                                        @endforeach
                                                         <div class="col-md-6">
                                                             <label class="text-info">Medication</label>
                                                             <blockquote class="blockquote">
@@ -525,8 +527,8 @@
                                                                         @foreach($visit->diagnosis as $med)
                                                                             <li><small>{{$med->diagnoses->name}}</small></li>
                                                                         @endforeach
-                                                                        @if($visit->consultation[0]->other_diagnosis != "")
-                                                                            <li><small>{{$visit->consultation[0]->other_diagnosis}}</small></li>
+                                                                        @if($consult->other_diagnosis != "")
+                                                                            <li><small>{{$consult->other_diagnosis}}</small></li>
                                                                         @endif
                                                                     </ul>
                                                                 </small>

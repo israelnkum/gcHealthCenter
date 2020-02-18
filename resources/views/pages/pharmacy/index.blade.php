@@ -111,9 +111,9 @@
         </div>--}}
         <div class="row profile-page">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="profile-body">
+                <div class="card"  style="background: lightgrey;">
+                    <div class="card-body ">
+                        <div class="profile-body ">
                             <ul class="nav tab-switch mt-0" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" id="drugs-tab" data-toggle="pill" href="#drugs" role="tab" aria-controls="drugs"  aria-selected="false">All Drugs</a>
@@ -127,103 +127,181 @@
                                 </li>
                             </ul>
                             <div class="row ">
-                                <div class="col-md-12">
-                                    <div class="tab-content tab-body" id="profile-log-switch">
+                                <div class="col-md-12 ">
+                                    <div class="tab-content tab-body " id="profile-log-switch">
                                         {{--Start Drug TAb--}}
 
-                                        <div class="tab-pane active fade show  fade" id="drugs" role="tabpanel" aria-labelledby="drugs-tab">
-                                            <div class="card-body">
-                                                <form action="{{route('bulk_deleteDrug')}}" id="bulkDeleteDrugForm" method="POST">
-                                                    @csrf
-                                                    <div class="row">
-                                                        <div class="col-md-6 text-left">
-                                                            <h4 class="card-title">All Drugs</h4>
-                                                        </div>
-                                                        <div class="col-md-6 text-right mb-3">
-                                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDrug" id="deleteSelectedDrugs" disabled>
-                                                                <i class="icon icon-trash"></i> Delete Selected
-                                                            </button>
-                                                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#upload_drugs">
-                                                                <i class="icon icon-cloud-upload"></i> Bulk Upload
-                                                            </button>
-                                                            <!-- Button trigger modal -->
-                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newDrugModal">
-                                                                <i class="icon icon-plus"></i> New Drug
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="table-responsive">
-                                                        <table class="table" id="drug_table">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>
-                                                                    <div class="form-check form-check-flat">
-                                                                        <label class="form-check-label">
-                                                                            <input type="checkbox"  class="form-check-input"  id="checkAllDrugs">
-                                                                        </label>
+                                        <div class="tab-pane active  fade show  fade" id="drugs" role="tabpanel" aria-labelledby="drugs-tab">
+                                            <div class="card-body " >
+                                                <div class="row " >
+                                                    {{--<div class="col-md-12 blockquote " style="font-size: 15px">
+                                                        <form method="get" id="filter-drug-form" action="{{route('filter-drugs')}}" class="needs-validation" novalidate>
+                                                            @csrf
+                                                            <div class="form-row">
+                                                                <div class="col-md-2">
+                                                                    <label for="filter-drug-type" >Drug Type</label>
+                                                                    <select id="filter-drug-type" title="Select Drug Type" name="type_id" class="js-example-basic-single form-control filter-drugs" style="width: 100%">
+                                                                        <option value="">~Select Type~</option>
+                                                                        @foreach($drug_types as $type)
+                                                                            <option {{ old('type_id') == $type->id ? 'selected' : '' }} value="{{$type->id}}">{{$type->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Drug Type is required.
                                                                     </div>
-                                                                </th>
-                                                                <th>N<u>o</u></th>
-                                                                <th>ID</th>
-                                                                <th>Name</th>
-                                                                <th>Supplier</th>
-                                                                <th>Type</th>
-                                                                <th>Qty In Stock</th>
-                                                                <th>Cost Price</th>
-                                                                <th>Retail Price</th>
-                                                                <th>Supplier ID</th>
-                                                                <th>Drug type ID</th>
-                                                                <th>Unit Of Pricing</th>
-                                                                <th>Insurance</th>
-                                                                {{--<th>Expiry Date</th>--}}
-                                                                <th>Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @php
-                                                                $i=1;
-                                                            @endphp
-                                                            @foreach($drugs as $drug)
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="form-check form-check-flat">
-                                                                            <label class="form-check-label">
-                                                                                <input type="checkbox" value="{{$drug->id}}" class="form-check-input checkDrugItem" name="selected_drugs[]" id="remember">
-                                                                            </label>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>{!! $i !!}</td>
-                                                                    <td>{{$drug->id}}</td>
-                                                                    <td>{{$drug->name}}</td>
-                                                                    <td>{{$drug->supplier->name}}</td>
-                                                                    <td>{{$drug->drug_type->name}}</td>
-                                                                    @if($drug->unit_of_pricing == "Blister (x10tabs)")
-                                                                        <td>{{$drug->qty_in_tablet}}</td>
-                                                                    @else
-                                                                        <td>{{$drug->qty_in_stock}}</td>
-                                                                    @endif
-                                                                    <td>{{$drug->cost_price}}</td>
-                                                                    <td>{{$drug->retail_price}}</td>
-                                                                    <td>{{$drug->supplier_id}}</td>
-                                                                    <td>{{$drug->drug_type_id}}</td>
-                                                                    <td>{{$drug->unit_of_pricing}}</td>
-                                                                    <td>{{$drug->nhis_amount}}</td>
-                                                                    {{--                                                                    <td>{{$drug->expiry_date}}</td>--}}
-                                                                    <td>
-                                                                        <button type="button" class="btn btn-sm btn-secondary edit">
-                                                                            <i class="icon icon-pencil"></i>
-                                                                        </button>
-                                                                    </td>
-                                                                </tr>
-                                                                @php
-                                                                    $i = $i+1;
-                                                                @endphp
-                                                            @endforeach
-                                                            </tbody>
-                                                        </table>
+                                                                </div>
+
+                                                                <div class="col-md-2">
+                                                                    <label for="filter-unit-of-pricing">Unit Of Pricing</label>
+                                                                    <select id="filter-unit-of-pricing" title="Select Supplier" name="unit_of_pricing" class="js-example-basic-single form-control filter-drugs" style="width: 100%">
+                                                                        <option value="">~Select~</option>
+                                                                        <option {{ old('unit_of_pricing') == 'Blister (x10tabs)' ? 'selected' : '' }} value="Blister (x10tabs)">Blister (x10tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == '10ml' ? 'selected' : '' }} value="10ml">10ml</option>
+                                                                        <option {{ old('unit_of_pricing') == '20ml' ? 'selected' : '' }} value="20ml">20ml</option>
+                                                                        <option {{ old('unit_of_pricing') == '30GR' ? 'selected' : '' }} value="30GR">30GR</option>
+                                                                        <option {{ old('unit_of_pricing') == '6 PESS' ? 'selected' : '' }} value="6 PESS">6 PESS</option>
+                                                                        <option {{ old('unit_of_pricing') == '15G' ? 'selected' : '' }} value="15G">15G</option>
+                                                                        <option {{ old('unit_of_pricing') == 'AMPOULE' ? 'selected' : '' }} value="AMPOULE">AMPOULE</option>
+                                                                        <option {{ old('unit_of_pricing') == 'VIAL' ? 'selected' : '' }} value="VIAL">VIAL</option>
+                                                                        <option {{ old('unit_of_pricing') == 'BOTTLE' ? 'selected' : '' }} value="BOTTLE">BOTTLE</option>
+                                                                        <option {{ old('unit_of_pricing') == 'SATCHET' ? 'selected' : '' }} value="SATCHET">SATCHET</option>
+                                                                        <option {{ old('unit_of_pricing') == 'BOTTLE/SATCHET' ? 'selected' : '' }} value="BOTTLE/SATCHET">BOTTLE/SATCHET</option>
+                                                                        <option {{ old('unit_of_pricing') == 'DOSE' ? 'selected' : '' }} value="DOSE">DOSE</option>
+                                                                        <option {{ old('unit_of_pricing') == 'SUPP' ? 'selected' : '' }} value="SUPP">SUPP</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK' ? 'selected' : '' }} value="PACK">PACK</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK (6caps)' ? 'selected' : '' }} value="PACK (6caps)">PACK (6caps)</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK (9tabs)' ? 'selected' : '' }} value="PACK (9tabs)">PACK (9tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK (14tabs)' ? 'selected' : '' }} value="PACK (14tabs)">PACK (14tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK (28tabs)' ? 'selected' : '' }} value="PACK (28tabs)">PACK (28tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == 'PACK (30tabs)' ? 'selected' : '' }} value="PACK (30tabs)">PACK (30tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == '1 course' ? 'selected' : '' }} value="1 course">1 course</option>
+                                                                        <option {{ old('unit_of_pricing') == '1 course (6tabs)' ? 'selected' : '' }} value="1 course (6tabs)">1 course (6tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == '1 course (24tabs)' ? 'selected' : '' }} value="1 course (24tabs)">1 course (24tabs)</option>
+                                                                        <option {{ old('unit_of_pricing') == '2 course (12tabs)' ? 'selected' : '' }} value="2 course (12tabs)">2 course (12tabs)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label for="">Supplier</label>
+                                                                    <select title="Select Supplier" name="supplier_id" class="js-example-basic-single form-control filter-drugs" style="width: 100%">
+                                                                        <option value="">~Select Supplier~</option>
+                                                                        @foreach($suppliers as $type)
+                                                                            <option {{ old('supplier_id') == $type->id ? 'selected' : '' }} value="{{$type->id}}">{{$type->name}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <div class="invalid-feedback">
+                                                                        Supplier is required.
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <button class="btn btn-primary mt-4">Filter</button>
+                                                                    <button class="btn btn-success mt-4" type="submit" value="export" name="btn_export">Export</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>--}}
+                                                    <div class="col-md-12 " >
+                                                        <form action="{{route('bulk_deleteDrug')}}" id="bulkDeleteDrugForm" method="POST">
+                                                            @csrf
+                                                            <div class="row">
+                                                                <div class="col-md-6 text-left">
+                                                                    <h4 class="card-title">All Drugs</h4>
+                                                                </div>
+                                                                <div class="col-md-6 text-right mb-3">
+                                                                    <button type="button" class="btn btn-link text-danger" data-toggle="modal" data-target="#deleteDrug" id="deleteSelectedDrugs" disabled>
+                                                                        <i class="icon icon-trash"></i> Delete Selected
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-link text-dark" data-toggle="modal" data-target="#upload_drugs">
+                                                                        <i class="icon icon-cloud-upload"></i> Bulk Upload
+                                                                    </button>
+                                                                    <!-- Button trigger modal -->
+                                                                    <button type="button" class="btn btn-link" data-toggle="modal" data-target="#newDrugModal">
+                                                                        <i class="icon icon-plus"></i> New Drug
+                                                                    </button>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <span >{{ $drugs->appends(Request::all())->links() }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="table-responsive">
+                                                                <table class="table" id="drug_table">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th>
+                                                                            <div class="form-check form-check-flat">
+                                                                                <label class="form-check-label">
+                                                                                    <input type="checkbox"  class="form-check-input"  id="checkAllDrugs">
+                                                                                </label>
+                                                                            </div>
+                                                                        </th>
+                                                                        <th>N<u>o</u></th>
+                                                                        <th>ID</th>
+                                                                        <th>Name</th>
+                                                                        {{--                                                                        <th>Supplier</th>--}}
+                                                                        {{--                                                                        <th>Type</th>--}}
+                                                                        {{--                                                                        <th>Qty In Stock</th>--}}
+                                                                        <th>.</th>
+                                                                        {{--                                                                        <th>Retail Price</th>--}}
+                                                                        <th>Supplier ID</th>
+                                                                        <th>Drug type ID</th>
+                                                                        <th>.</th>
+                                                                        {{--<th>Expiry Date</th>--}}
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    @php
+                                                                        $i=1;
+                                                                    @endphp
+                                                                    @foreach($drugs as $drug)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <div class="form-check form-check-flat">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" value="{{$drug->id}}" class="form-check-input checkDrugItem" name="selected_drugs[]" id="remember">
+                                                                                    </label>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>{!! $i !!}</td>
+                                                                            <td>{{$drug->id}}</td>
+                                                                            <td>
+                                                                                <h6>{{$drug->name}}</h6>
+                                                                                <h6>{{$drug->supplier->name}}</h6>
+                                                                                <h6>{{$drug->drug_type->name}}</h6>                                                                            </td>
+                                                                            <td>
+                                                                                @if($drug->unit_of_pricing == "Blister (x10tabs)")
+                                                                                    <h6>Qty in Stock: {{$drug->qty_in_tablet}}</h6>
+                                                                                @else
+                                                                                    <h6>Qty in Stock: {{$drug->qty_in_stock}}</h6>
+                                                                                @endif
+                                                                                <h6>Cost Price: {{$drug->cost_price}}</h6>
+                                                                                <h6>Retail Price: {{$drug->retail_price}}</h6>
+                                                                            </td>
+                                                                            <td>{{$drug->supplier_id}}</td>
+                                                                            <td>{{$drug->drug_type_id}}</td>
+                                                                            <td>
+                                                                                <h6>Unit of Pricing: {{$drug->unit_of_pricing}} </h6>
+                                                                                <h6>Insurance: {{$drug->nhis_amount}} </h6>
+                                                                            </td>
+                                                                            {{--                                                                    <td>{{$drug->expiry_date}}</td>--}}
+                                                                            <td>
+                                                                                <a href="{{route('drugs.edit',$drug->id)}}" class="btn btn-sm btn-secondary ">
+                                                                                   Edit
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        @php
+                                                                            $i = $i+1;
+                                                                        @endphp
+                                                                    @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </form>
                                                     </div>
-                                                </form>
+                                                    <div class="col-md-12">
+                                                        <span >{{ $drugs->appends(Request::all())->links() }}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         {{--End Drug TAb--}}

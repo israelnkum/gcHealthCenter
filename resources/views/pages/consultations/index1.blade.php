@@ -35,7 +35,7 @@
                                 @if(count($not_seen)>0)
                                     @php($i =1)
                                     @foreach($not_seen as $seen)
-                                        <option value="{{$seen->patient->folder_number}}">{{$i}} {{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}</option>
+                                        <option value="{{$seen->patient->folder_number}}">{{$seen->patient->first_name." ".$seen->patient->other_name." ".$seen->patient->last_name}}, {{$seen->patient->folder_number}}</option>
 
                                         @php($i++)
                                     @endforeach

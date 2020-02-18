@@ -29,24 +29,29 @@ $(document).ready(function () {
     });
 
     let table = $('#patients_table').DataTable({
-        "aLengthMenu": [
-            [10, 30, 50, 100, -1],
-            [10, 30, 50, 100, "All"]
-        ],
-        dom: 'Bfrtip',
-        buttons: [
+        dom: 'frti',
+      /*  buttons: [
             // 'copy', 'csv', 'excel', 'pdf', 'print'
             'excel','pdf'
-        ],
-        "iDisplayLength": 10,
+        ],*/
+        "iDisplayLength": 50,
         "language": {
             search: ""
         },
 
     });
 
-    table.column(2).visible(false);
+   /* $('#patient-type').change(function () {
+        if ($('#patient-type').val() === "All" || $('#patient-type').val() === "" ){
+            $('.date-between').fadeOut(1000).slideUp(1000);
+        }else{
+            $('.date-between').fadeIn(1000).slideDown(1000);
+        }
+    });*/
 
+    $('.filterPatient').change(function () {
+        $('#filterPatientForm').submit();
+    });
 
     $('#insurance').click(function () {
         if (!$(this).is(':checked')){

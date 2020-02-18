@@ -20,4 +20,8 @@ class Consultation extends Model
     public function scanned_results(){
         return $this->hasMany('App\ScannedResult');
     }
+
+    public function user(){
+        return $this->belongsTo('App\User');
+    }
 }

@@ -213,7 +213,7 @@
                                         @foreach($medication as $med)
                                             <tr class=" txtMult">
                                                 <td id="d_name">{{$med->drugs->name}}</td>
-                                                <td>{{$med->dosage}} days</td>
+                                                <td>{{$med->dosage}}</td>
                                                 <td>
                                                     @if($registration->isInsured ==0)
                                                         @if($med->drugs->unit_of_pricing == "Blister (x10tabs)")

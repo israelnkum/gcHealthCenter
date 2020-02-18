@@ -73,7 +73,7 @@
                                     @endforeach
                                 </select>
 
-                                <input type="hidden" value="{{$search_patient[0]->folder_number}}" name="folder_number">
+{{--                                <input type="hidden" value="{{$search_patient[0]->folder_number}}" name="folder_number">--}}
                                 <button class="btn btn-success mt-1 btn-block" type="submit">Search</button>
                             </div>
                         </div>

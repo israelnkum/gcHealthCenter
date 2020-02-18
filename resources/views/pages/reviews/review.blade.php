@@ -34,7 +34,7 @@
                         <div class="card-body">
                             @foreach($registration as $registered)
                                 <h6 class="text-uppercase">Patient Info</h6>
-                                <div class="row">
+                                <div class="row" style="font-size: 20px;">
                                     <div class="col-md-6">
                                         <small class="mb-1 text-primary" >
                                             <i class="icon-folder mr-1"></i> {{$registered->patient->folder_number}}
@@ -47,7 +47,7 @@
                                         <br>
                                         <small class="text-muted mb-0" ><i class="icon-phone mr-1"></i>{{$registered->patient->phone_number}}</small>
                                     </div>
-                                    <div class="col-md-6 text-right text-small">
+                                    <div class="col-md-6 text-right" style="font-size: 15px;">
                                         Date Of Birth: <span class="font-weight-bold">{{$registered->patient->date_of_birth}}</span><br>
                                         Age: <span class="font-weight-bold">{{$registered->patient->age}}</span><br>
                                         Gender: <span class="font-weight-bold">{{$registered->patient->gender}}</span><br>
@@ -56,7 +56,7 @@
                                 </div>
                                 <hr>
                                 <h6 class="text-uppercase">Vital Signs</h6>
-                                <div class="row">
+                                <div class="row" style="font-size: 20px;">
                                     <div class="col-md-8">
                                         <small>Blood Pressure(BP) - <span class="text-danger">{{$getVitals[0]->blood_pressure}} mmHg</span></small>
                                     </div>
@@ -77,6 +77,7 @@
                                     <div class="col-md-6 text-right">
                                         <small>RDT - <span class="text-danger">{{$getVitals[0]->RDT}}</span></small>
                                     </div>
+{{--                                    {{$getVitals[0]->created_at}}--}}
                                 </div>
                             @endforeach
                             <hr>
@@ -86,10 +87,10 @@
                                 <input type="hidden" value="{{$registration[0]->patient_id}}" name="patient_id">
                                 <input type="hidden" value="{{$registration[0]->id}}" name="registration_id">
 
-                                <div class="form-group row">
+                                <div class="form-group row" style="font-size: 20px;">
                                     <div class="col-md-12 mb-3">
                                         <label for="" class="text-info">Comment</label>
-                                        <textarea name="comments " id="" cols="30" class="form-control" rows="5"></textarea>
+                                        <textarea name="comments" style="font-size: 20px;" id="" cols="30" class="form-control font-weight-normal" rows="5"></textarea>
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <label class="text-info">Select Service</label>
@@ -266,70 +267,72 @@
                                         <div id="GC{{$visit->id}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-3">
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <label class="text-info">Complains</label>
-                                                        <blockquote class="blockquote" >
-                                                            <small>{{$visit->consultation[0]->complains}}</small>
-                                                        </blockquote>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label class="text-info">Physical Examination</label>
-                                                        <blockquote class="blockquote">
-                                                            <small>{{$visit->consultation[0]->physical_examination}}</small>
-                                                        </blockquote>
-                                                    </div>
-                                                    @if($visit->consultation[0]->findings != "")
+                                                    @foreach($visit->consultation as $con)
                                                         <div class="col-md-6">
-                                                            <label class="text-info">History</label>
+                                                            <label class="text-info">Complains</label>
                                                             <blockquote class="blockquote" >
-                                                                <small>{{$visit->consultation[0]->findings}}</small>
+                                                                <small>{{$con->complains}}</small>
                                                             </blockquote>
                                                         </div>
-                                                    @endif
-                                                    @if($visit->consultation[0]->diagnosis != "")
+                                                         <div class="col-md-6">
+                                                             <label class="text-info">Physical Examination</label>
+                                                             <blockquote class="blockquote">
+                                                                 <small>{{$con->physical_examination}}</small>
+                                                             </blockquote>
+                                                         </div>
+                                                         @if($con->findings != "")
+                                                             <div class="col-md-6">
+                                                                 <label class="text-info">History</label>
+                                                                 <blockquote class="blockquote" >
+                                                                     <small>{{$con->findings}}</small>
+                                                                 </blockquote>
+                                                             </div>
+                                                         @endif
+                                                         @if($con->diagnosis != "")
+                                                             <div class="col-md-6">
+                                                                 <label class="text-info">Diagnosis</label>
+                                                                 <blockquote class="blockquote">
+                                                                     <small>{{$con->diagnosis}}</small>
+                                                                 </blockquote>
+                                                             </div>
+                                                         @endif
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Medication</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>
+                                                                                                                                @php($medication[] = $visit->medication)
+                                                                    <ul>
+                                                                        @foreach($visit->medications as $med)
+                                                                            <li><small>{{$med->drugs->name}}</small></li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </small>
+                                                            </blockquote>
+                                                        </div>
+
                                                         <div class="col-md-6">
                                                             <label class="text-info">Diagnosis</label>
                                                             <blockquote class="blockquote">
-                                                                <small>{{$visit->consultation[0]->diagnosis}}</small>
+                                                                <small>
+                                                                                                                                @php($medication[] = $visit->medication)
+                                                                    <ul>
+                                                                        @foreach($visit->diagnosis as $med)
+                                                                            <li><small>{{$med->diagnoses->name}}</small></li>
+                                                                        @endforeach
+                                                                        @if($con->other_diagnosis != "")
+                                                                            <li><small>{{$con->other_diagnosis}}</small></li>
+                                                                        @endif
+                                                                    </ul>
+                                                                </small>
                                                             </blockquote>
                                                         </div>
-                                                    @endif
-                                                    <div class="col-md-6">
-                                                        <label class="text-info">Medication</label>
-                                                        <blockquote class="blockquote">
-                                                            <small>
-                                                                {{--                                                            @php($medication[] = $visit->medication)--}}
-                                                                <ul>
-                                                                    @foreach($visit->medications as $med)
-                                                                        <li><small>{{$med->drugs->name}}</small></li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            </small>
-                                                        </blockquote>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <label class="text-info">Diagnosis</label>
-                                                        <blockquote class="blockquote">
-                                                            <small>
-                                                                {{--                                                            @php($medication[] = $visit->medication)--}}
-                                                                <ul>
-                                                                    @foreach($visit->diagnosis as $med)
-                                                                        <li><small>{{$med->diagnoses->name}}</small></li>
-                                                                    @endforeach
-                                                                    @if($visit->consultation[0]->other_diagnosis != "")
-                                                                        <li><small>{{$visit->consultation[0]->other_diagnosis}}</small></li>
-                                                                    @endif
-                                                                </ul>
-                                                            </small>
-                                                        </blockquote>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label class="text-info">Notes</label>
-                                                        <blockquote class="blockquote">
-                                                            <small>{{$visit->consultation[0]->notes}}</small>
-                                                        </blockquote>
-                                                    </div>
+                                                        <div class="col-md-6">
+                                                            <label class="text-info">Notes</label>
+                                                            <blockquote class="blockquote">
+                                                                <small>{{$con->notes}}</small>
+                                                            </blockquote>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>

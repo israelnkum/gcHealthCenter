@@ -28440,6 +28440,7 @@ div.tagsinput span.tag a {
 
 .profile-page .profile-body {
   padding-top: 50px;
+
 }
 
 .profile-page .profile-body .tab-switch {
@@ -28464,6 +28465,7 @@ div.tagsinput span.tag a {
   -moz-transition-property: color, border-color;
   -o-transition-property: color, border-color;
   transition-property: color, border-color;
+
 }
 
 .profile-page .profile-body .tab-switch .nav-item .nav-link.active {
@@ -28493,6 +28495,7 @@ div.tagsinput span.tag a {
   flex-direction: row;
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
+
 }
 
 .profile-page .profile-body .tab-body .stages .file-icon-wrapper .file-icon {
@@ -28506,11 +28509,13 @@ div.tagsinput span.tag a {
   align-items: center;
   -webkit-justify-content: center;
   justify-content: center;
+
 }
 
 .profile-page .profile-body .tab-body .stages .file-icon-wrapper .file-icon i {
   font-size: 43px;
   margin-right: 0;
+
 }
 
 /*-------------------------------------------------------------------*/

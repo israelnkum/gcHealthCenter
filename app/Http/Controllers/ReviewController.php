@@ -43,19 +43,24 @@ class ReviewController extends Controller
 //            ->orderBy('created_at','asc')
             ->get();
 
+
         $last_visit =[];
         if (count($registration) != 0){
             $getVitals = Vital::where('patient_id',$registration[0]->patient_id)
                 ->whereDate('created_at', Carbon::today())->get();
-            $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')->where('patient_id',$registration[0]->patient_id)->get();
+            $last_visit = Registration::with('consultation','medications.drugs','diagnosis.diagnoses')
+                ->where('patient_id',$registration[0]->patient_id)
+                ->get();
 
         }
+
 
         $diagnosis = Diagnose::all();
         $drugs = Drug::where('qty_in_stock','>',0)
             ->where('retail_price','>',0)->get();
         $charges = Charge::all();
 
+//        return  $last_visit;
         return view('pages.reviews.review')
             ->with('registration',$registration)
             ->with('getVitals',$getVitals)
