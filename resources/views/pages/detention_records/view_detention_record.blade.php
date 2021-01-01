@@ -2,28 +2,41 @@
 @section('content')
     <!-- partial -->
     <div class="content-wrapper">
-        @if(count($recentRecord)>0)
+        @if(!empty($recentRecord))
+            <div class="row">
+                <div class="col-md-8 offset-md-2 grid-margin">
+                    <form class="needs-validation form-sub" novalidate action="{{route('searchConsultation')}}" method="get">
+                        @csrf
+                        <div class="form-group row mb-0">
+                            <div class="col-md-12 text-right">
+                                <input type="hidden" value="{{$patient->folder_number}}"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
+                                <button class="btn btn-primary loading" type="submit">Go Back</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-2 grid-margin stretch-card offset-md-1">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{route('view_detention')}}" method="post" class="needs-validation" novalidate>
+                            <form action="{{route('view_detention')}}" method="post" class="needs-validation form-sub" novalidate>
                                 @csrf
                                 <div class="form-group row">
                                     <div class="col-md-12">
                                         <label for="">Previous Record</label>
                                         <select class="js-example-basic-single form-control" required name="info" id="">
                                             <option value="">~Select~</option>
-                                            @foreach($allDateRecords as $record)
+                                            {{--@foreach($allDateRecords as $record)
                                                 <option value="{{$patient->id.",".$recentRecord[0]->registration_id.",".$record}}">{{$record}}</option>
-                                            @endforeach
+                                            @endforeach--}}
                                         </select>
                                         <div class="invalid-feedback">
                                             Date required
                                         </div>
                                     </div>
                                     <div class="col-md-12 mt-3">
-                                        <button class="btn btn-info btn-block" type="submit">Search</button>
+                                        <button class="btn btn-info btn-block loading" type="submit">Search</button>
                                     </div>
                                 </div>
                             </form>
@@ -36,83 +49,61 @@
                             <h4 class="card-title">
                                 {{$patient->title." ".$patient->first_name." ".$patient->other_name." ".$patient->last_name}}
                             </h4>
-                            @foreach($recentRecord as $record)
-                                <div class="text-right">
+                            <div class="text-right">
                                     <span class="badge badge-dark mb-3  font-weight-bold">
-                                       Date:  {{substr($record->created_at,0,10)}}
+                                       Date:  {{substr($recentRecord->created_at,0,10)}}
 
-                                       Time:  {{date("g:i a", strtotime($record->created_at))}}
+                                       Time:  {{date("g:i a", strtotime($recentRecord->created_at))}}
                                     </span>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        @if($record->complains != "")
-                                            <label for="">Complains</label>
-                                            <blockquote class="blockquote" style="font-size: 15px;">
-                                                {{$record->complains}}
-                                            </blockquote>
-                                        @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                        @if($record->physical_examination != "")
-                                            <label for="">Physical Examination</label>
-                                            <blockquote class="blockquote" style="font-size: 15px;">
-                                                {{$record->physical_examination}}
-                                            </blockquote>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    {{--<div class="col-md-6">
-                                        <label for="">Findings</label>
-                                        <blockquote class="blockquote">
-                                            {{$record->findings}}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @if($recentRecord->complains != "")
+                                        <label for="">Complains</label>
+                                        <blockquote class="blockquote" style="font-size: 15px;">
+                                            {{$recentRecord->complains}}
                                         </blockquote>
-                                    </div>--}}
-                                    <div class="col-md-6">
-                                        @if($record->other_diagnosis != "")
-                                            <label for="">Other Diagnosis</label>
-                                            <blockquote class="blockquote">
-                                                {{$record->other_diagnosis}}
-                                            </blockquote>
-                                        @endif
-                                    </div>
+                                    @endif
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <?php
-                                        $labs=explode(',',$record->labs)
-                                        ?>
-                                        @if(count($labs)>1)
-                                            <label for="">Lab Result(s)</label>
-                                            <blockquote class="blockquote">
-                                                <div id="lightgallery-without-thumb" class="row lightGallery">
-                                                    @foreach($labs as $lab)
-                                                        {{--                                                    {{$lab}}--}}
-                                                        <a href="{{asset('public/labs/'.$lab)}}" class="image-tile"><img src="{{asset('public/labs/'.$lab)}}" alt="{{$lab}}"></a>
-                                                    @endforeach
-                                                </div>
-                                            </blockquote>
-                                        @endif
-                                    </div>
-                                    <div class="col-md-6">
-                                        <?php
-                                        $scans=explode(',',$record->ultra_sound_scan)
-                                        ?>
-                                        @if(count($scans) > 1)
-                                            <label for="">Scan Result(s)</label>
-                                            <blockquote class="blockquote">
-                                                <div id="lightgallery" class="row lightGallery">
-                                                    @foreach($scans as $scan)
-                                                        <a href="{{asset('public/scan/'.$scan)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan)}}" alt="{{$scan}}"></a>
-                                                    @endforeach
-                                                </div>
-                                            </blockquote>
-                                        @endif
-                                    </div>
+                                <div class="col-md-6">
+                                    @if($recentRecord->physical_examination != "")
+                                        <label for="">Physical Examination</label>
+                                        <blockquote class="blockquote" style="font-size: 15px;">
+                                            {{$recentRecord->physical_examination}}
+                                        </blockquote>
+                                    @endif
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @if($recentRecord->findings != "")
+                                        <label for="">History</label>
+                                        <blockquote class="blockquote">
+                                            {{$recentRecord->findings}}
+                                        </blockquote>
+                                    @endif
+                                </div>
+                                <div class="col-md-6">
+                                    @if($recentRecord->other_diagnosis != "")
+                                        <label for="">Other Diagnosis</label>
+                                        <blockquote class="blockquote">
+                                            {{$recentRecord->other_diagnosis}}
+                                        </blockquote>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="">Medication</label>
+                                    <blockquote class="blockquote">
+                                        @foreach($recentMedication as $medication)
+                                            <p><i>.</i> {{$medication->drugs->name}}</p>
+                                        @endforeach
+                                    </blockquote>
+                                </div>
+                                <div class="col-md-6">
+                                    @if($services != 0)
                                         @foreach($services as $service)
                                             @if($service != null)
                                                 @if($service->created_at == $record->created_at)
@@ -120,14 +111,40 @@
                                                 @endif
                                             @endif
                                         @endforeach
-                                    </div>
+                                    @endif
                                 </div>
-                                {{--  <div class="row">
-                                      <div class="col-md-12 text-right">
-                                          <a href="{{$record->id}}" class="btn btn-success">Edit</a>
-                                      </div>
-                                  </div>--}}
-                            @endforeach
+
+
+                                <div class="col-sm-6">
+                                    <label>Scanned Result(s)</label>
+                                    @if($scanned_results)
+                                        <div id="lightgallery" class="row lightGallery">
+                                            @foreach($scanned_results as $scan)
+
+                                                <a href="{{asset('public/scan/'.$scan->file_name)}}" class="image-tile"><img src="{{asset('public/scan/'.$scan->file_name)}}" alt="{{$scan->file_name}}"></a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Lab Result(s)</label>
+                                    @if($lab_results)
+                                        <div id="lightgallery-without-thumb" class="row lightGallery">
+                                            @foreach($lab_results as $scan)
+
+                                                <a href="{{asset('public/labs/'.$scan->file_name)}}" class="image-tile"><img src="{{asset('public/labs/'.$scan->file_name)}}" alt="{{$scan->file_name}}"></a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                </div>
+                            </div>
+                            {{--  <div class="row">
+                                  <div class="col-md-12 text-right">
+                                      <a href="{{$record->id}}" class="btn btn-success">Edit</a>
+                                  </div>
+                              </div>--}}
                         </div>
                     </div>
                 </div>
@@ -136,12 +153,12 @@
             <div class="row">
                 <div class ="col-md-12 text-center">
                     <h6 class="display-4">Sorry! No record Found</h6>
-                    <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                    <form class="needs-validation form-sub" novalidate action="{{route('searchConsultation')}}" method="get">
                         @csrf
                         <div class="form-group row mb-0">
                             <div class="col-md-12 ">
                                 <input type="hidden"  class="form-control" name="search" value="{{$patient->folder_number}}">
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success loading">
                                     <i class="icon icon-arrow-left-circle"></i> Go Back
                                 </button>
                             </div>

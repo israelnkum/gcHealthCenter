@@ -4,14 +4,14 @@
     <div class=" content-wrapper">
         <div class=" row">
             <div class=" col-md-8 offset-md-2 text-right grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchPatientForDrugDispersion')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class=" input-group">
                                 <input type="text" required class=" form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class=" input-group-prepend">
-                                    <button type="submit" class=" input-group-text btn"><i class=" icon-magnifier"></i></button>
+                                    <button type="submit" class="loading input-group-text btn"><i class=" icon-magnifier"></i></button>
                                 </div>
                                 <div class=" invalid-feedback">
                                     Search by Folder Number or Patient's Last Name or Phone Number
@@ -84,7 +84,7 @@
         @if(!empty($registration))
             <div class="row">
                 <div class="col-md-8">
-                    <form action="{{route('out-standing-medication')}}" class="needs-validation" novalidate method="get">
+                    <form action="{{route('out-standing-medication')}}" class="needs-validation form-sub" novalidate method="get">
                         @csrf
                         <label for="" class="text-danger">Outstanding Medication</label>
                         <div class="form-group row">
@@ -102,13 +102,13 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class=" input-group-text btn"><i class=" icon-magnifier"></i></button>
+                                <button type="submit" class="loading input-group-text btn"><i class=" icon-magnifier"></i></button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <form action="{{route('payment.store')}}" method="post" class=" needs-validation" novalidate>
+            <form action="{{route('payment.store')}}" method="post" class="form-sub needs-validation" novalidate>
                 @csrf
                 <div class="row">
                     <table class=" table table-borderless d-none">
@@ -295,7 +295,7 @@
                                             <div class=" input-group">
                                                 <input type="text"   required class="amount_paid_input form-control"  name="amount_paid" placeholder="Amount Paid">
                                                 <div class=" input-group-prepend bg-info text-white">
-                                                    <button type="submit" class=" input-group-text btn text-white">
+                                                    <button type="submit" class="loading input-group-text btn text-white">
                                                         Dispense
                                                     </button>
                                                 </div>

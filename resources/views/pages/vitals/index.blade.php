@@ -5,14 +5,14 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-8 offset-md-2 text-right grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchRegistrationForVitals')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchRegistrationForVitals')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                    <button type="submit" class="input-group-text btn loading"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
                                     Search by Folder Number or Patient's Last Name or Phone Number
@@ -77,7 +77,7 @@
                                             <div id="GC{{$registered->patient->registration_number}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                                 <div class="card-body">
                                                     <h4></h4>
-                                                    <form class="needs-validation" novalidate method="post" action="{{route('vitals.update',$registered->id)}}">
+                                                    <form class="needs-validation form-sub" novalidate method="post" action="{{route('vitals.update',$registered->id)}}">
                                                         @csrf
                                                         {!! method_field('put') !!}
                                                         <input type="hidden" name="registration_id" value="{{$registered->id}}">
@@ -162,7 +162,7 @@
 
                                                         <div class="form-group row">
                                                             <div class="col-sm-10 text-right">
-                                                                <button class="btn btn-primary">Add Vital</button>
+                                                                <button class="btn btn-primary loading">Add Vital</button>
                                                             </div>
                                                         </div>
                                                     </form>

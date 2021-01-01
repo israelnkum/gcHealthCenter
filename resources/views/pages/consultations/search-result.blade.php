@@ -975,7 +975,7 @@
                                                         @foreach($medication as $med)
                                                             <tr>
                                                                 <td>{{$med->drugs->name}}</td>
-                                                                <td>{{$med->dosage}} x {{$med->days}} days</td>
+                                                                <td>{{$med->dosage}}</td>
                                                             </tr>
                                                         @endforeach
                                                         </tbody>

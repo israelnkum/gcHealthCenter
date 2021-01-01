@@ -54,13 +54,11 @@ class PaymentController extends Controller
                 $med->qty_dispensed = $request->input('qty_dispensed')[$i];
                 $med->save();
 
-
                 //start drug stock update
                 $update_drug_stock = Drug::find($med->drugs_id);
                 if ($update_drug_stock->unit_of_pricing == "Blister (x10tabs)"){
                     $update_drug_stock->qty_in_tablet = $update_drug_stock->qty_in_tablet -$request->input('qty_dispensed')[$i];
                     $update_drug_stock->save();
-
                 }else{
                     $update_drug_stock->qty_in_stock = $update_drug_stock->qty_in_stock -$request->input('qty_dispensed')[$i];
                     $update_drug_stock->save();
@@ -203,13 +201,86 @@ class PaymentController extends Controller
     public function update(Request $request, $id)
     {
 
+        $registration = Registration::find($id);
+
+        $total_drug_bill = 0;
+
         //update medication table set total number to dispense
         if (\Request::has('medication_id')) {
+
+            //loop through the medicine dispensed
             for ($i=0; $i<count($request->input('medication_id')); $i++) {
                 $med = Medication::find($request->input('medication_id')[$i]);
-                $med->qty_dispensed = $med->qty_dispensed+$request->input('qty_dispensed')[$i];
-                $med->save();
 
+                //update qty if it is zero
+                if ($med->qty == 0){
+
+                    $drugs = Drug::find($med->drugs_id);
+
+                    $drugArrears = DrugArrears::where('patient_id',$registration->patient_id)
+                        ->where('registration_id',$registration->id)
+                        ->where('medication_id',$med->id)->first();
+
+                    if ($drugArrears->qty == 0){
+                        $drugArrears->qty = $request->input('qty_to_dispensed')[$i];
+                    }else{
+                        $drugArrears->qty = $drugArrears->qty + $request->input('qty_to_dispensed')[$i];
+                    }
+
+                    //check if patient is insured
+                    if ($registration->isInsured != 1) {
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = $drugs->retail_price/10;
+                            $total_drug_bill +=   $drugArrears->total_amount_to_pay = ($drugs->retail_price/10) * ($request->input('qty_to_dispensed')[$i]);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price;
+                            $total_drug_bill +=   $drugArrears->total_amount_to_pay = ($drugs->retail_price) * ($request->input('qty_to_dispensed')[$i]);
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                        }
+                    }else{ // if patient is not insured
+                        if ($drugs->unit_of_pricing == "Blister (x10tabs)"){
+                            $drugArrears->amount = ($drugs->retail_price-$drugs->nhis_amount)/10;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount/10;
+                            $total_drug_bill +=   $drugArrears->total_amount_to_pay = (($drugs->retail_price-$drugs->nhis_amount)/10)*($request->input('qty_to_dispensed')[$i]);
+                        }else{
+                            $drugArrears->amount = $drugs->retail_price-$drugs->nhis_amount;
+                            $drugArrears->insurance_amount = $drugs->nhis_amount;
+                            $total_drug_bill +=  $drugArrears->total_amount_to_pay = (($drugs->retail_price) - ($drugs->nhis_amount))*($request->input('qty_to_dispensed')[$i]);
+                        }
+                    }
+
+                    $drugArrears->qty_dispensed = $med->qty_dispensed;
+                    $drugArrears->save();
+
+//                    return $drugArrears;
+
+                    $med->qty = $request->input('qty_to_dispensed')[$i];
+                    $med->qty_dispensed = $med->qty_dispensed+$request->input('qty_dispensed')[$i];
+
+
+
+
+                    //add total drug price to the current bill
+                    $payment = Payment::where('registration_id',$registration->id)
+                        ->where('patient_id',$registration->patient_id)
+                        ->first();
+
+                    $payment->grand_total = $payment->grand_total+$total_drug_bill;
+                    $payment->arrears = str_replace('-','',$payment->arrears)+$total_drug_bill;
+                    $payment->save();
+                }
+                else{
+
+                    $med->qty_dispensed = $med->qty_dispensed+$request->input('qty_dispensed')[$i];
+
+                    $updateDrugArrears = DrugArrears::where('medication_id',$med->id)->first();
+//                    $updateDrugArrears->qty = $request->input('qty_to_dispensed')[$i];
+                    $updateDrugArrears->qty_dispensed = $updateDrugArrears->qty_dispensed+$request->input('qty_dispensed')[$i];
+                    $updateDrugArrears->save();
+                }
+
+                $med->save();
 
 
                 //start drug stock update

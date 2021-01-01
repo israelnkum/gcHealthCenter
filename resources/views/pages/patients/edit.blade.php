@@ -5,14 +5,14 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchPatient')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchPatient')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                    <button type="submit" class="input-group-text btn loading"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
                                     Search by Folder Number or Patient Name or Phone Number
@@ -189,7 +189,7 @@
                                                 </div>
 
                                                 <div class="mt-1 text-right">
-                                                    <button type="submit" class="btn btn-dark">Edit Info</button>
+                                                    <button type="submit" class="btn btn-dark loading">Edit Info</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -231,7 +231,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="icon icon-close"></i> Close
                     </button>
-                    <button type="submit" id="btn_submit_bulk_delete" class="btn btn-success">
+                    <button type="submit" id="btn_submit_bulk_delete" class="btn btn-success loading">
                         <i class="icon icon-trash"></i> Yes! Delete
                     </button>
                 </div>

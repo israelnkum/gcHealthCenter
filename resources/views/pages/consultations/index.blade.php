@@ -5,14 +5,14 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-6 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 ">
                             <div class="input-group">
                                 <input required type="text"  class="form-control font-weight-bold" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                    <button type="submit" class="input-group-text btn loading"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
                                     Search by Folder Number or Patient's Last Name or Phone Number
@@ -135,7 +135,7 @@
                             <div id="GC{{$registered->patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                 <div class="card-body">
                                     {{--  New Consultaion Form --}}
-                                    <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.store')}}">
+                                    <form class="needs-validation form-sub" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('consultation.store')}}">
                                         @csrf
                                         <input required type="hidden" name="registration_id" value="{{$registered->id}}">
                                         <input required type="hidden" name="patient_id" value="{{$registered->patient->id}}">
@@ -366,7 +366,7 @@
 
                                         <div class="form-group row mt-5">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-primary" type="submit" id="btn_finalize">Finalize</button>
+                                                <button class="btn btn-primary loading" type="submit" id="btn_finalize">Finalize</button>
                                             </div>
                                         </div>
                                     </form>

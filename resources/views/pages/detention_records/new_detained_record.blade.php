@@ -5,12 +5,12 @@
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-8 offset-md-2 grid-margin">
-                <form class="needs-validation" novalidate action="{{route('searchConsultation')}}" method="get">
+                <form class="needs-validation form-sub" novalidate action="{{route('searchConsultation')}}" method="get">
                     @csrf
                     <div class="form-group row mb-0">
                         <div class="col-md-12 text-right">
                             <input type="hidden" value="{{$registration->patient->folder_number}}"  class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
-                            <button class="btn btn-primary" type="submit">Go Back</button>
+                            <button class="btn btn-primary loading" type="submit">Go Back</button>
                         </div>
                     </div>
                 </form>
@@ -81,8 +81,8 @@
                             </div>
                             <div id="GC{{$registration->patient->registration_number}}" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
                                 <div class="card-body">
-                                    {{--  New Consultaion Form --}}
-                                    <form class="needs-validation" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('records.store')}}">
+                                    {{--  New Detention Record Form --}}
+                                    <form class="needs-validation form-sub" enctype="multipart/form-data" id="consultation_form" novalidate method="post" action="{{route('records.store')}}">
                                         @csrf
                                         <input  type="hidden" name="registration_id" value="{{$registration->id}}">
                                         <input  type="hidden" name="patient_id" value="{{$registration->patient->id}}">
@@ -243,9 +243,9 @@
                                                                 Dosage is
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        {{--<div class="col-md-2">
                                                             <input type="number" name="other_days" style="width: 70px;" min="1" placeholder="Days" class="form-control">
-                                                        </div>
+                                                        </div>--}}
                                                         <div class="col-md-1">
                                                             <button data-repeater-delete type="button" class="btn btn-danger p-2 icon-btn" >
                                                                 <i class="icon-close"></i>
@@ -293,7 +293,7 @@
 
                                         <div class="form-group row mt-5">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-primary" type="submit" id="btn_finalize">Finalize</button>
+                                                <button class="btn btn-primary loading" type="submit" id="btn_finalize">Finalize</button>
                                             </div>
                                         </div>
                                     </form>

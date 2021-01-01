@@ -264,12 +264,12 @@
                         @endif
 
 
-                        <li class="nav-item">
+                        {{--<li class="nav-item">
                             <a href="{{route('reports.index')}}?{{Hash::make(time())}}" class="nav-link"><i class="link-icon icon-note"></i><span class="menu-title">Reports</span></a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link"><i class="link-icon icon-notebook"></i><span class="menu-title">Archive</span></a>
-                        </li>
+                        </li>--}}
 
                         @if(Auth::user()->role == "Super Admin" || Auth::user()->role == "Admin")
                             <li class="nav-item">
@@ -298,7 +298,7 @@
             @yield('content')
             <footer class="footer">
                 <div class="w-100 clearfix">
-                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">&copy; {{date('Y')}} GC Health Clinic. All rights reserved.</span>
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">&copy; {{date('Y')}} GC Health Centre. All rights reserved.</span>
                     <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Powered by ANA Technologies</span>
                 </div>
             </footer>
@@ -373,13 +373,11 @@
         display_c();
     }
 
-
     $('.form-sub').submit(function () {
         $('.loading').text("Loading...");
         $('.loading').attr('disabled',true);
         // $('.loading-spin').fadeIn(1000).slideDown(1000);
     });
-
     /*
     * Form Validation
      */

@@ -15,7 +15,7 @@
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                    <button type="submit" class="input-group-text btn loading"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
                                     Search by Folder Number or Patient's Last Name or Phone Number
@@ -112,7 +112,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class=" input-group-text btn"><i class=" icon-magnifier"></i></button>
+                                <button type="submit" class="loading input-group-text btn"><i class=" icon-magnifier"></i></button>
                             </div>
                         </div>
                     </form>
@@ -291,9 +291,9 @@
                                             @if($recentRegistration->detain == 2)
                                                 @if($arrears->amount_paid > $arrears->grand_total)
                                                     <span>Change: GH₵{{$arrears->amount_paid-$arrears->grand_total}}</span>
-                                                    @else
+                                                @else
                                                     <span>Arrears: GH₵{{str_replace('-','',$arrears->arrears)}}</span>
-                                                    @endif
+                                                @endif
                                             @elseif($arrears->amount_paid > $arrears->grand_total)
                                                 <span>Change: GH₵{{str_replace('-','',$arrears->change)-$detentionBill}}</span>
                                             @else
@@ -360,8 +360,9 @@
                             @if(count($medication) !=0)
                                 <h4 class="card-title">Dispense Drugs</h4>
                                 <div>
-                                    <form action="{{route('payment.update',2)}}" method="post" class="needs-validation" novalidate>
+                                    <form action="{{route('payment.update',$recentRegistration->id)}}" method="post" class="needs-validation" novalidate>
                                         @csrf
+                                        {{$recentRegistration->id}}
                                         {!! method_field('put') !!}
                                         <input type="hidden" value="{{$recentRegistration->patient->id}}" name="patient_id">
                                         <input type="hidden" value="{{$recentRegistration->id}}" name="registration_id">
@@ -391,10 +392,17 @@
                                                             <input type="hidden" name="insurance" value="{{$med->insurance_amount}}">
                                                             <input type="hidden" name="price[]" value="{{$med->amount}}">
                                                         </td>
-                                                        <td>{{$med->qty}}</td>
+                                                        <td>
+                                                            @if($med->qty == 0)
+                                                                <input type="number" name="qty_to_dispensed[]" required min="1" value="0" class="form-control" style="width: 70px;">
+                                                            @else
+                                                                {{$med->qty}}
+                                                                <input type="hidden" name="qty_to_dispensed[]" required  value="0" class="form-control" style="width: 70px;">
+                                                            @endif
+                                                        </td>
                                                         <td>{{$med->qty_dispensed}}</td>
                                                         <td>
-                                                            <input required name="qty_dispensed[]" value="0" min="0" max="{{$med->qty-$med->qty_dispensed}}" type="number" style="width: 80px;" class="val3 form-control">
+                                                            <input required name="qty_dispensed[]" value="0" min="0" @if($med->qty !=0) max="{{$med->qty-$med->qty_dispensed}}" @endif type="number" style="width: 70px;" class="val3 form-control">
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -471,7 +479,7 @@
                                                             <input type="text" min="0" required class="form-control"  name="amount_paid" placeholder="Amount Paid">
                                                         @endif
                                                         <div class="input-group-prepend bg-info text-white">
-                                                            <button type="submit" class="input-group-text btn text-white">
+                                                            <button type="submit" class="loading input-group-text btn text-white">
                                                                 Dispense
                                                             </button>
                                                         </div>
@@ -488,7 +496,7 @@
                             @elseif(count($medication)== 0 && $arrears->arrears !=0)
                                 {{--if patient has arrears--}}
                                 <h4 class="card-title">Pay Arrears</h4>
-                                <form action="{{route('payArrears')}}" method="post" class="needs-validation" novalidate>
+                                <form action="{{route('payArrears')}}" method="post" class="needs-validation form-sub" novalidate>
                                     @csrf
                                     <input name="arrears" hidden type="number" value="{{$arrears->arrears}}">
                                     <input type="hidden" value="{{$recentRegistration->patient->id}}" name="patient_id">
@@ -507,7 +515,7 @@
                                                 Amount required
                                             </div>
 
-                                            <button class="btn btn-info mt-3">Pay Arrears</button>
+                                            <button class="btn btn-info mt-3 loading">Pay Arrears</button>
                                         </div>
                                     </div>
                                 </form>

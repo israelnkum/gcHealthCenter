@@ -12,7 +12,7 @@
                             <div class="input-group">
                                 <input type="text" required class="form-control" name="search" placeholder=" Search by Folder Number or Patient's Last Name or Phone Number">
                                 <div class="input-group-prepend">
-                                    <button type="submit" class="input-group-text btn"><i class="icon-magnifier"></i></button>
+                                    <button type="submit" class="input-group-text btn loading"><i class="icon-magnifier"></i></button>
                                 </div>
                                 <div class="invalid-feedback">
                                     Search by Folder Number or Patient's Last Name or Phone Number
@@ -1108,7 +1108,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="icon icon-close"></i> Close
                     </button>
-                    <button type="submit" id="btn_submit_bulk_delete" class="btn btn-success">
+                    <button type="submit" id="btn_submit_bulk_delete" class="btn btn-success loading">
                         <i class="icon icon-trash"></i> Yes! Delete
                     </button>
                 </div>

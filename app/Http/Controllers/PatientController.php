@@ -124,15 +124,21 @@ class PatientController extends Controller
 
 //            return $record;
 
-            $expNum =$record->registration_number;
-//            return $expNum;
+            $expNum =$record->folder_number;
+
             if ($expNum == '' ){
                 $folderNumber=  $patient->registration_number = substr(date('Y'),'2').'1';
             } else {
-                if (substr($expNum,0,2) == substr(date('Y'),2)){
-                    $folderNumber=  $patient->registration_number =  $expNum+1;
+
+                $folder_year = substr($expNum,3,strpos($expNum,'/'));
+                $current_year = substr(date('Y'),2);
+                $current_folder_number = substr($expNum,6);
+
+                if ($folder_year ==$current_year){
+//                    $folderNumber=   substr(date('Y'),'2').'01';
+                    $folderNumber=  $current_year."".($current_folder_number+1);
                 }else{
-                    $folderNumber=  $patient->registration_number =  substr(date('Y'),'2').'01';
+                    $folderNumber=   substr(date('Y'),'2').'01';
                 }
 //                return $record;
             }
