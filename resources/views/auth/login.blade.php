@@ -84,7 +84,7 @@
                 <div class="col-lg-3 mx-auto text-center">
                     <div class="auto-form-wrapper" style="background:ghostwhite;">
                         <div class="text-center mb-2">
-                            <img height="auto" width="200" src="{{asset('public/images/logo.jpeg')}}" class="img-fluid" alt="">
+                            <img height="auto" width="200" src="{{asset('/images/logo.jpeg')}}" class="img-fluid" alt="">
                         </div>
                         <form novalidate class="needs-validation" method="POST" action="{{ route('login') }}">
                             @csrf

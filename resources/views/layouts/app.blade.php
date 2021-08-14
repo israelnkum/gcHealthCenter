@@ -10,19 +10,19 @@
     <title>{{ config('app.name', 'GC Health Center') }}</title>
 
     <!-- plugins:css -->
-    <link rel="stylesheet" href="{{asset('public/vendors/iconfonts/simple-line-icon/css/simple-line-icons.css')}}">
-    <link rel="stylesheet" href="{{asset('public/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css')}}">
-    <link rel="stylesheet" href="{{asset('public/vendors/css/vendor.bundle.base.css')}}">
-    <link rel="stylesheet" href="{{asset('public/vendors/css/vendor.bundle.addons.css')}}">
+    <link rel="stylesheet" href="{{asset('/vendors/iconfonts/simple-line-icon/css/simple-line-icons.css')}}">
+    <link rel="stylesheet" href="{{asset('/vendors/iconfonts/flag-icon-css/css/flag-icon.min.css')}}">
+    <link rel="stylesheet" href="{{asset('/vendors/css/vendor.bundle.base.css')}}">
+    <link rel="stylesheet" href="{{asset('/vendors/css/vendor.bundle.addons.css')}}">
 
-    <link rel="stylesheet" href="{{asset('public/vendors/lightgallery/css/lightgallery.css')}}">
-    <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
-    {{--    <link rel="stylesheet" href="{{asset('public/css/jquery.dataTables.min.css')}}">--}}
-    <link rel="stylesheet" href="{{asset('public/css/buttons.dataTables.min.css')}}">
-    <link rel="stylesheet" href="{{asset('public/css/toastr.min.css')}}">
+    <link rel="stylesheet" href="{{asset('/vendors/lightgallery/css/lightgallery.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/style.css')}}">
+    {{--    <link rel="stylesheet" href="{{asset('/css/jquery.dataTables.min.css')}}">--}}
+    <link rel="stylesheet" href="{{asset('/css/buttons.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/toastr.min.css')}}">
 
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{asset('public/images/logo.jpeg')}}" />
+    <link rel="shortcut icon" href="{{asset('/images/logo.jpeg')}}" />
 </head>
 <body onload=display_ct();>
 <div class="container-scroller">
@@ -34,8 +34,8 @@
         <div class="nav-top flex-grow-1">
             <div class="container d-flex flex-row h-100 align-items-center">
                 <div class="text-center navbar-brand-wrapper d-flex align-items-center">
-                    <a class="navbar-brand brand-logo" href="{{route('home')}}"><img src="{{asset('public/images/logo.jpeg')}}" alt="logo"/></a>
-                    <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="{{asset('public/images/logo.jpeg')}}" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo" href="{{route('home')}}"><img src="{{asset('/images/logo.jpeg')}}" alt="logo"/></a>
+                    <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="{{asset('/images/logo.jpeg')}}" alt="logo"/></a>
                 </div>
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
                     <form class="search-field d-none d-md-flex" action="#">
@@ -82,7 +82,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item preview-item">
                                     <div class="preview-thumbnail">
-                                        <img src="public/images/faces/face4.jpg" alt="image" class="profile-pic">
+                                        <img src="/images/faces/face4.jpg" alt="image" class="profile-pic">
                                     </div>
                                     <div class="preview-item-content flex-grow">
                                         <h6 class="preview-subject ellipsis font-weight-medium">David Grey
@@ -96,7 +96,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item preview-item">
                                     <div class="preview-thumbnail">
-                                        <img src="public/images/faces/face2.jpg" alt="image" class="profile-pic">
+                                        <img src="/images/faces/face2.jpg" alt="image" class="profile-pic">
                                     </div>
                                     <div class="preview-item-content flex-grow">
                                         <h6 class="preview-subject ellipsis font-weight-medium">Tim Cook
@@ -110,7 +110,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item preview-item">
                                     <div class="preview-thumbnail">
-                                        <img src="public/images/faces/face3.jpg" alt="image" class="profile-pic">
+                                        <img src="/images/faces/face3.jpg" alt="image" class="profile-pic">
                                     </div>
                                     <div class="preview-item-content flex-grow">
                                         <h6 class="preview-subject ellipsis font-weight-medium"> Johnson
@@ -180,7 +180,7 @@
                         </li>--}}
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                                {{--<img src="public/images/faces/face4.jpg" alt="profile"/>--}}
+                                {{--<img src="/images/faces/face4.jpg" alt="profile"/>--}}
                                 {{--<span class="nav-profile-name text-capitalize">{{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>--}}
                                 @if(Auth::user()->updated == 1 && Auth::user()->first_name != "")
                                     <span class="text-capitalize">Hi {{Auth::user()->first_name ." ".Auth::user()->last_name}}</span>
@@ -314,36 +314,36 @@
 </div>
 <!-- container-scroller -->
 
-<script src="{{asset('public/vendors/js/vendor.bundle.base.js')}}"></script>
-<script src="{{asset('public/vendors/js/vendor.bundle.addons.js')}}"></script>
+<script src="{{asset('/vendors/js/vendor.bundle.base.js')}}"></script>
+<script src="{{asset('/vendors/js/vendor.bundle.addons.js')}}"></script>
 <!-- endinject -->
-<script src="{{asset('public/js/dashboard.js')}}"></script>
+<script src="{{asset('/js/dashboard.js')}}"></script>
 <!-- inject:js -->
 @if(!\Request::is('reports') && !\Request::is('patients/create') && !\Request::is('filter-patient') && !\Request::is('patients-reports') && !\Request::is('consultation-reports') && !\Request::is('g-consultation-reports') )
-    <script src="{{asset('public/js/mask.init.js')}}"></script>
+    <script src="{{asset('/js/mask.init.js')}}"></script>
 @endif
-<script src="{{asset('public/js/template.js')}}"></script>
-<script src="{{asset('public/js/formpickers.js')}}"></script>
-<script src="{{asset('public/js/form-addons.js')}}"></script>
-<script src="{{asset('public/js/todolist.js')}}"></script>
-<script src="{{asset('public/js/file-upload.js')}}"></script>
-<script src="{{asset('public/js/select2.js')}}"></script>
+<script src="{{asset('/js/template.js')}}"></script>
+<script src="{{asset('/js/formpickers.js')}}"></script>
+<script src="{{asset('/js/form-addons.js')}}"></script>
+<script src="{{asset('/js/todolist.js')}}"></script>
+<script src="{{asset('/js/file-upload.js')}}"></script>
+<script src="{{asset('/js/select2.js')}}"></script>
 
-<script src="{{asset('public/js/form-repeater.js')}}"></script>
-<script src="{{asset('public/js/repeater.js')}}"></script>
+<script src="{{asset('/js/form-repeater.js')}}"></script>
+<script src="{{asset('/js/repeater.js')}}"></script>
 
-<script src="{{asset('public/js/users.js')}}"></script>
-<script src="{{asset('public/js/preferences.js')}}"></script>
-<script src="{{asset('public/js/patients.js')}}"></script>
-<script src="{{asset('public/js/vitals.js')}}"></script>
+<script src="{{asset('/js/users.js')}}"></script>
+<script src="{{asset('/js/preferences.js')}}"></script>
+<script src="{{asset('/js/patients.js')}}"></script>
+<script src="{{asset('/js/vitals.js')}}"></script>
 
-<script src="{{asset('public/js/drugs.js')}}"></script>
-<script src="{{asset('public/js/dispensed.js')}}"></script>
-<script src="{{asset('public/js/consultation.js')}}"></script>
-<script src="{{asset('public/js/form-validation.js')}}"></script>
-<script src="{{asset('public/js/bt-maxLength.js')}}"></script>
-<script src="{{asset('public/vendors/lightgallery/js/lightgallery-all.min.js')}}"></script>
-<script src="{{asset('public/js/light-gallery.js')}}"></script>
+<script src="{{asset('/js/drugs.js')}}"></script>
+<script src="{{asset('/js/dispensed.js')}}"></script>
+<script src="{{asset('/js/consultation.js')}}"></script>
+<script src="{{asset('/js/form-validation.js')}}"></script>
+<script src="{{asset('/js/bt-maxLength.js')}}"></script>
+<script src="{{asset('/vendors/lightgallery/js/lightgallery-all.min.js')}}"></script>
+<script src="{{asset('/js/light-gallery.js')}}"></script>
 
 <script>
     /* Create Repeater */
@@ -352,17 +352,17 @@
     });
 </script>
 
-<script src="{{asset('public/js/dataTables/dataTables.buttons.min.js')}}"></script>
-<script src="{{asset('public/js/dataTables/buttons.flash.min.js')}}"></script>
-<script src="{{asset('public/js/dataTables/jszip.min.js')}}"></script>
-<script src="{{asset('public/js/dataTables/pdfmake.min.js')}}"></script>
-<script src="{{asset('public/js/dataTables/vfs_fonts.js')}}"></script>
+<script src="{{asset('/js/dataTables/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('/js/dataTables/buttons.flash.min.js')}}"></script>
+<script src="{{asset('/js/dataTables/jszip.min.js')}}"></script>
+<script src="{{asset('/js/dataTables/pdfmake.min.js')}}"></script>
+<script src="{{asset('/js/dataTables/vfs_fonts.js')}}"></script>
 <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-<script src="{{asset('public/js/dataTables/buttons.print.min.js')}}"></script>
-<script src="{{asset('public/js/jquery.print.js')}}"></script>
-<script src="{{asset('public/js/todolist.js')}}"></script>
-<script src="{{asset('public/js/toastr.min.js')}}"></script>
-<script src="{{asset('public/js/last-visits.js')}}"></script>
+<script src="{{asset('/js/dataTables/buttons.print.min.js')}}"></script>
+<script src="{{asset('/js/jquery.print.js')}}"></script>
+<script src="{{asset('/js/todolist.js')}}"></script>
+<script src="{{asset('/js/toastr.min.js')}}"></script>
+<script src="{{asset('/js/last-visits.js')}}"></script>
 <!-- endinject -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.0.6/highcharts.js" charset="utf-8"></script>

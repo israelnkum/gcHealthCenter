@@ -105,45 +105,51 @@
                                 </thead>
                                 <tbody>
                                 @foreach($data as $datum)
-                                    <tr>
-                                        <td class="text-uppercase">
-                                            <i class="icon icon-user"></i> {{$datum->patient->first_name." ".$datum->patient->other_name." ".$datum->patient->last_name}}
-                                            <br>
-                                            <i class="icon icon-folder"></i> {{$datum->patient->folder_number}}
-                                            <br>
-                                            <i class="icon icon-phone"></i> {{$datum->patient->phone_number}}
-                                        </td>
-                                        <td>
+                                    @isset($datum->patient)
+                                        <tr>
+                                            <td class="text-uppercase">
+                                                <i class="icon icon-user"></i> {{$datum->patient->first_name." ".$datum->patient->other_name." ".$datum->patient->last_name}}
+                                                <br>
+                                                <i class="icon icon-folder"></i> {{$datum->patient->folder_number}}
+                                                <br>
+                                                <i class="icon icon-phone"></i> {{$datum->patient->phone_number}}
+                                            </td>
+                                            <td>
+                                                @foreach ($datum->patient->patientDiagnosis as $diagnosis)
+                                                    @isset($diagnosis->diagnoses)
+                                                        {{$diagnosis->diagnoses['name']}}<br>
+                                                    @endisset
+                                                @endforeach
+                                                {{--
+                                                      {{$datum->other_diagnosis}}--}}
 
-                                            
-                                            @foreach ($datum->patient->patientDiagnosis as $diagnosis)
-                                                {{$diagnosis->diagnoses['name']}}<br>
-                                            @endforeach
-                                          {{--
-                                                {{$datum->other_diagnosis}}--}}
-
-{{--                                                @foreach ($datum->patient->medication as $med)--}}
-{{--                                                    {{$med->drugs->name}}<br>--}}
-{{--                                                @endforeach--}}
-                                        </td>
-                                        <td class="">
+                                                {{--                                                @foreach ($datum->patient->medication as $med)--}}
+                                                {{--                                                    {{$med->drugs->name}}<br>--}}
+                                                {{--                                                @endforeach--}}
+                                            </td>
+                                            <td class="">
                                             <textarea rows="10" cols="20" class="form-control" name="" id="" >
                                                 {{$datum->findings}}
                                             </textarea>
-                                        </td>
-                                        <td>
+                                            </td>
+                                            <td>
                                             <textarea rows="10" cols="10" class="form-control" name="" id="" >
                                                 {{$datum->complains}}
                                             </textarea>
-                                        </td>
-                                        <td>
+                                            </td>
+                                            <td>
                                             <textarea rows="10" cols="10" class="form-control" name="" id="" >
                                                 {{$datum->physical_examination}}
                                             </textarea>
-                                        </td>
-                                        <td>{{$datum->notes}}</td>
-                                        <td>{{$datum->user['first_name']." ".$datum->user['last_name']}}</td>
-                                    </tr>
+                                            </td>
+                                            <td>{{$datum->notes}}</td>
+                                            <td>
+                                                @isset($datum->user)
+                                                    {{$datum->user['first_name']." ".$datum->user['last_name']}}
+                                                @endisset
+                                            </td>
+                                        </tr>
+                                    @endisset
                                 @endforeach
                                 </tbody>
                             </table>

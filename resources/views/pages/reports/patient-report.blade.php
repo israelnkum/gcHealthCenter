@@ -65,19 +65,35 @@
                                     <option {{ old('religion') == 'Non Religious' ? 'selected' : '' }} value="Non Religious">Non Religious</option>
                                 </select>
                             </div>
-                            {{--<div class="col-md-2">
-                                <label for="age_between">Age(Between)</label>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <input type="number" min="1" class="form-control" id="age_between" placeholder="10">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="number" min="1" class="form-control" id="age_between" placeholder="20">
-                                    </div>
-                                </div>
-                            </div>--}}
+                            <div class="col-md-2">
+                                <label for="Type">Services</label>
+                                <select name="service" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
+                                    <option value="">~Select Service~</option>
+                                    @foreach($services as $service)
+                                        <option {{ old('service') == $service->id ? 'selected' : '' }} value="{{$service->id}}">{{$service->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="Type">Drugs</label>
+                                <select name="drug" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
+                                    <option value="">~Select Drug~</option>
+                                    @foreach($drugs as $drug)
+                                        <option {{ old('drug') == $drug->id ? 'selected' : '' }} value="{{$drug->id}}">{{$drug->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="Type">Diagnoses</label>
+                                <select name="diagnosis" id="Type" class="form-control selectMedicine filterPatient" style="width: 100%;">
+                                    <option value="">~Select Drug~</option>
+                                    @foreach($diagnoses as $diagnose)
+                                        <option {{ old('diagnosis') == $diagnose->id ? 'selected' : '' }} value="{{$diagnose->id}}">{{$diagnose->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col-md-4 text-left mt-2">
-                                <button class="btn  mt-4 btn-secondary" type="submit">Filter</button>
+                                <button class="btn  mt-4 btn-primary" type="submit">Filter</button>
 
                                 <button name="btn_export" value="export" type="submit" class="btn btn-success mt-4"> <i class="icon icon-docs"></i> Export</button>
 
@@ -87,7 +103,7 @@
 
                     @if(!empty($data))
                         <div class="text-center mb-0 text-capitalize">
-                          <h4>Search result</h4>
+                            <h4>Search result</h4>
                         </div>
                         <div class="table-responsive">
                             <table class="table" id="patients_table">
